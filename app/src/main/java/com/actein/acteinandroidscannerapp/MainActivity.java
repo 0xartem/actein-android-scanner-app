@@ -1,4 +1,4 @@
-package com.astein.asteinandroidscannerapp;
+package com.actein.acteinandroidscannerapp;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;

@@ -2,8 +2,8 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ActeinAndroidScannerApp.iml" filepath="$PROJECT_DIR$/ActeinAndroidScannerApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/astein-android-scanner-app.iml" filepath="$PROJECT_DIR$/astein-android-scanner-app.iml" />
     </modules>
   </component>
 </project>
