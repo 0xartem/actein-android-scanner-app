@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">Actein Android Scanner App</string>
+    <string name="app_name">Scanner</string>
+    <string name="ok_button_caption">OK</string>
+    <string name="vr_booth_text">Virtual Reality Booth</string>
 </resources>
