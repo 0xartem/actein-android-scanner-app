@@ -17,7 +17,6 @@
         android:id="@+id/serverAddressEditText"
         android:hint="@string/serverAddressHint"
         android:inputType="textUri"
-        android:layout_gravity="center_vertical"
         android:layout_marginBottom="20dp" />
 
     <EditText

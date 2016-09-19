@@ -1,5 +1,9 @@
 <resources>
-    <string name="app_name">Scanner</string>
-    <string name="ok_button_caption">OK</string>
-    <string name="vr_booth_text">Virtual Reality Booth</string>
+    <string name="app_name">Actein QR Code Scanner</string>
+    <string name="okButtonCaption">OK</string>
+    <string name="serverAddressHint">Server Address</string>
+    <string name="philipsHueBridgeAddressHint">Philips Hue Bridge Address</string>
+    <string name="toastEmptyServerAddress">Please enter correct server address</string>
+    <string name="toastEmptyPhilipsHueBridge">Please enter correct philips hue bridge address</string>
+    <string name="vrBoothText">Virtual Reality Booth</string>
 </resources>

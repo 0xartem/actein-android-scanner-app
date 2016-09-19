@@ -1,21 +1,22 @@
 package com.actein.scanner;
 
 import android.app.Activity;
-//import android.support.v7.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.SpinnerAdapter;
+import android.widget.Toast;
 
 import com.actein.scanner.Booth.VRBoothsInfo;
+import com.actein.scanner.Utils.StringUtils;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.regex.Pattern;
 
-public class MainActivity extends Activity { //AppCompatActivity {
+public class MainActivity extends Activity
+{
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -23,23 +24,36 @@ public class MainActivity extends Activity { //AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        final Button okButton = (Button) findViewById(R.id.ok_button);
-        final Spinner boothsSpinner = (Spinner) findViewById(R.id.booths_spinner);
+        mServerAddressEditText = (EditText) findViewById(R.id.serverAddressEditText);
+        mPhilipsHueBridgeAddressEditText = (EditText) findViewById(R.id.philipsHueBridgeAddressEditText);
+        mBoothsSpinner = (Spinner) findViewById(R.id.boothsSpinner);
+        mOkButton = (Button) findViewById(R.id.okButton);
 
-
-        m_vrBoothsInfo = new VRBoothsInfo(getResources().getText(R.string.vr_booth_text));
-        ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<CharSequence>(this, android.R.layout.simple_spinner_item, m_vrBoothsInfo.getBoothsNames());
+        VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getResources().getText(R.string.vrBoothText));
+        ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, vrBoothsInfo.getBoothsNames());
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        boothsSpinner.setAdapter(spinnerAdapter);
+        mBoothsSpinner.setAdapter(spinnerAdapter);
 
-        okButton.setOnClickListener(new Button.OnClickListener()
-        {
+        mOkButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v)
             {
+                if (!StringUtils.isNetworkAddressValid(mServerAddressEditText.getText().toString().trim()))
+                {
+                    Toast.makeText(getApplicationContext(), R.string.toastEmptyServerAddress, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
+                if (!StringUtils.isNetworkAddressValid(mPhilipsHueBridgeAddressEditText.getText().toString()))
+                {
+                    Toast.makeText(getApplicationContext(), R.string.toastEmptyPhilipsHueBridge, Toast.LENGTH_SHORT).show();
+                    return;
+                }
+
                 Intent intent = new Intent("com.google.zxing.client.android.SCAN");
                 intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivityForResult(intent, 0);
+                startActivity(intent);
+                //startActivityForResult(intent, 0);
             }
         });
     }
@@ -61,5 +75,8 @@ public class MainActivity extends Activity { //AppCompatActivity {
         }
     }
 
-    private VRBoothsInfo m_vrBoothsInfo;
+    private EditText mServerAddressEditText;
+    private EditText mPhilipsHueBridgeAddressEditText;
+    private Button mOkButton;
+    private Spinner mBoothsSpinner;
 }
