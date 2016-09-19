@@ -1,4 +1,4 @@
-package com.actein.scanner.Utils;
+package com.actein.scanner.utils;
 
 import android.util.Patterns;
 

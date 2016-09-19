@@ -1,7 +1,5 @@
-package com.actein.scanner.Booth;
+package com.actein.scanner.booth;
 
-
-import com.actein.scanner.R;
 
 import java.util.ArrayList;
 import java.util.List;

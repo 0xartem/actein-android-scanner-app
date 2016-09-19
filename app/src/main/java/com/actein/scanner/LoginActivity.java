@@ -10,19 +10,18 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.actein.scanner.Booth.VRBoothsInfo;
-import com.actein.scanner.Utils.StringUtils;
+import com.actein.scanner.booth.VRBoothsInfo;
+import com.actein.scanner.utils.StringUtils;
+import com.google.zxing.client.android.CaptureActivity;
 
-import java.util.regex.Pattern;
-
-public class MainActivity extends Activity
+public class LoginActivity extends Activity
 {
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_login);
 
         mServerAddressEditText = (EditText) findViewById(R.id.serverAddressEditText);
         mPhilipsHueBridgeAddressEditText = (EditText) findViewById(R.id.philipsHueBridgeAddressEditText);
@@ -50,9 +49,10 @@ public class MainActivity extends Activity
                     return;
                 }
 
-                Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-                intent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivity(intent);
+                //Intent intent = new Intent("com.google.zxing.client.android.SCAN");
+                Intent captureIntent = new Intent(LoginActivity.this, CaptureActivity.class);
+                captureIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
+                startActivity(captureIntent);
                 //startActivityForResult(intent, 0);
             }
         });
