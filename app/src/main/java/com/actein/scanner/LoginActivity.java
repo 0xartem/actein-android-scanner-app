@@ -13,6 +13,7 @@ import android.widget.Toast;
 import com.actein.scanner.booth.VRBoothsInfo;
 import com.actein.scanner.utils.StringUtils;
 import com.google.zxing.client.android.CaptureActivity;
+import com.google.zxing.integration.android.IntentIntegrator;
 
 public class LoginActivity extends Activity
 {
@@ -49,11 +50,11 @@ public class LoginActivity extends Activity
                     return;
                 }
 
-                //Intent intent = new Intent("com.google.zxing.client.android.SCAN");
-                Intent captureIntent = new Intent(LoginActivity.this, CaptureActivity.class);
-                captureIntent.putExtra("SCAN_MODE", "QR_CODE_MODE");
-                startActivity(captureIntent);
-                //startActivityForResult(intent, 0);
+                IntentIntegrator intentIntegrator = new IntentIntegrator(LoginActivity.this);
+                intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
+                intentIntegrator.setPrompt(getResources().getText(R.string.qrCodeScanPrompt).toString());
+                Intent scanIntent = intentIntegrator.createScanIntent();
+                startActivity(scanIntent);
             }
         });
     }
@@ -65,8 +66,10 @@ public class LoginActivity extends Activity
         {
             if (resultCode == RESULT_OK)
             {
-                String contents = getIntent().getStringExtra("SCAN_RESULT");
-                String format = getIntent().getStringExtra("SCAN_RESULT_FORMAT");
+                String contents = data.getStringExtra("SCAN_RESULT");
+                String format = data.getStringExtra("SCAN_RESULT_FORMAT");
+                Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_LONG).show();
+                Toast.makeText(getApplicationContext(), format, Toast.LENGTH_LONG).show();
             }
             else if (resultCode == RESULT_CANCELED)
             {

@@ -31,6 +31,9 @@ import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.result.supplement.SupplementalInfoRetriever;
 import com.google.zxing.client.android.share.ShareActivity;
+import com.google.zxing.client.result.ParsedResult;
+import com.google.zxing.client.result.ParsedResultType;
+import com.google.zxing.client.result.ResultParser;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -445,6 +448,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     inactivityTimer.onActivity();
     lastResult = rawResult;
     ResultHandler resultHandler = ResultHandlerFactory.makeResultHandler(this, rawResult);
+
+    ParsedResult parsedResult = ResultParser.parseResult(rawResult);
+    if (parsedResult.getType() != ParsedResultType.CALENDAR)
+    {
+        Toast.makeText(getApplicationContext(), "Invalid qr code", Toast.LENGTH_LONG).show();
+        return;
+    }
 
     boolean fromLiveScan = barcode != null;
     if (fromLiveScan) {
