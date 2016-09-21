@@ -6,5 +6,5 @@
     <string name="toastEmptyServerAddress">Please enter correct server address</string>
     <string name="toastEmptyPhilipsHueBridge">Please enter correct philips hue bridge address</string>
     <string name="vrBoothText">Virtual Reality Booth</string>
-    <string name="qrCodeScanPrompt">Please place a qr code inside the viewfinder rectangle to scan it</string>
+    <string name="qrCodeScanPrompt">Please place a qr code inside the viewfinder rectangle to scan it.</string>
 </resources>

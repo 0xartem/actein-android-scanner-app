@@ -29,7 +29,7 @@ public class LoginActivity extends Activity
         mBoothsSpinner = (Spinner) findViewById(R.id.boothsSpinner);
         mOkButton = (Button) findViewById(R.id.okButton);
 
-        VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getResources().getText(R.string.vrBoothText));
+        VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getString(R.string.vrBoothText));
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, vrBoothsInfo.getBoothsNames());
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBoothsSpinner.setAdapter(spinnerAdapter);
