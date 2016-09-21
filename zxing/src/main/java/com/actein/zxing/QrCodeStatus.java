@@ -1,8 +1,9 @@
 package com.actein.zxing;
 
 public enum QrCodeStatus {
-    QrCodeNotStartedYet,
-    QrCodeExpired,
-    WrongLocation,
-    Success
+    QR_CODE_INVALID,
+    QR_CODE_NOT_STARTED_YET,
+    QR_CODE_EXPIRED,
+    WRONG_LOCATION,
+    SUCCESS
 }

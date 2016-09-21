@@ -1,36 +1,48 @@
 package com.actein.zxing;
 
+import com.actein.zxing.utils.DateTimeUtils;
 import com.google.zxing.client.result.CalendarParsedResult;
 
 import java.util.Date;
 
 public class QrCodeValidator
 {
-    public QrCodeValidator(CalendarParsedResult calendarParsedResult)
+    public QrCodeValidator(CalendarParsedResult calendarParsedResult, QrCodeSettings settings)
     {
         mCalendarParsedResult = calendarParsedResult;
+        mSettings = settings;
     }
 
     public QrCodeStatus getQrCodeStatus()
     {
-        Date now = new Date();
-        if (mCalendarParsedResult.getStart().after(now))
+        if (mCalendarParsedResult.getStart() == null
+                || mCalendarParsedResult.getEnd() == null
+                || mCalendarParsedResult.getLocation() == null)
         {
-            return QrCodeStatus.QrCodeNotStartedYet;
+            return QrCodeStatus.QR_CODE_INVALID;
         }
 
-        if (mCalendarParsedResult.getEnd().before(now))
+        Date now = DateTimeUtils.getCurrentInternetDateTime();
+        Date nowMinus5Min = DateTimeUtils.dateTimeMinus5Minutes(now);
+
+        if (!mSettings.isAllowStartBeforeAppointment() && mCalendarParsedResult.getStart().after(nowMinus5Min))
         {
-            return QrCodeStatus.QrCodeExpired;
+            return QrCodeStatus.QR_CODE_NOT_STARTED_YET;
         }
 
-        if (mCalendarParsedResult.getLocation().equals(""))
+        if (!mSettings.isAllowStartAfterExpiration() && mCalendarParsedResult.getEnd().before(now))
         {
-            return QrCodeStatus.WrongLocation;
+            return QrCodeStatus.QR_CODE_EXPIRED;
         }
 
-        return QrCodeStatus.Success;
+        if (!mCalendarParsedResult.getLocation().equals("Larvik VR Activity Center"))
+        {
+            return QrCodeStatus.WRONG_LOCATION;
+        }
+
+        return QrCodeStatus.SUCCESS;
     }
 
+    private QrCodeSettings mSettings;
     private CalendarParsedResult mCalendarParsedResult;
 }
