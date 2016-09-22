@@ -19,7 +19,6 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
             QrCodeProcessingCallback callback,
             ResultHandler parsedResultHandler,
             Bitmap barCode) {
-        mContext = context;
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
@@ -27,6 +26,7 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
         mProgressDialog = new ProgressDialog(context);
         mProgressDialog.setMessage(context.getString(R.string.progress_dialog_message));
         mProgressDialog.setIndeterminate(true);
+        mProgressDialog.setCancelable(false);
     }
 
     @Override
@@ -64,7 +64,6 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
         return QrCodeStatus.QR_CODE_INVALID;
     }
 
-    private Context mContext;
     private QrCodeProcessingCallback mCallback;
     private ResultHandler mParsedResultHandler;
     private Bitmap mBarCode;
