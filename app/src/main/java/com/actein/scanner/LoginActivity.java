@@ -59,25 +59,6 @@ public class LoginActivity extends Activity
         });
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data)
-    {
-        if (requestCode == 0)
-        {
-            if (resultCode == RESULT_OK)
-            {
-                String contents = data.getStringExtra("SCAN_RESULT");
-                String format = data.getStringExtra("SCAN_RESULT_FORMAT");
-                Toast.makeText(getApplicationContext(), contents, Toast.LENGTH_LONG).show();
-                Toast.makeText(getApplicationContext(), format, Toast.LENGTH_LONG).show();
-            }
-            else if (resultCode == RESULT_CANCELED)
-            {
-                ;
-            }
-        }
-    }
-
     private EditText mServerAddressEditText;
     private EditText mPhilipsHueBridgeAddressEditText;
     private Button mOkButton;
