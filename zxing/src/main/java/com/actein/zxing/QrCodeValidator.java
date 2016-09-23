@@ -25,12 +25,12 @@ public class QrCodeValidator
         Date now = DateTimeUtils.getCurrentInternetDateTime();
         Date nowMinus5Min = DateTimeUtils.dateTimeMinus5Minutes(now);
 
-        if (!mSettings.isAllowStartBeforeAppointment() && mCalendarParsedResult.getStart().after(nowMinus5Min))
+        if (!mSettings.isAllowEarlyQrCodes() && mCalendarParsedResult.getStart().after(nowMinus5Min))
         {
             return QrCodeStatus.QR_CODE_NOT_STARTED_YET;
         }
 
-        if (!mSettings.isAllowStartAfterExpiration() && mCalendarParsedResult.getEnd().before(now))
+        if (!mSettings.isAllowExpiredQrCodes() && mCalendarParsedResult.getEnd().before(now))
         {
             return QrCodeStatus.QR_CODE_EXPIRED;
         }

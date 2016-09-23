@@ -36,6 +36,9 @@ public final class PreferencesActivity extends Activity {
 
   public static final String KEY_CUSTOM_PRODUCT_SEARCH = "preferences_custom_product_search";
 
+  public static final String KEY_ALLOW_EARLY_QR_CODES = "preferences_allow_early_qr_codes";
+  public static final String KEY_ALLOW_EXPIRED_QR_CODES = "preferences_allow_expired_qr_codes";
+
   public static final String KEY_PLAY_BEEP = "preferences_play_beep";
   public static final String KEY_VIBRATE = "preferences_vibrate";
   public static final String KEY_COPY_TO_CLIPBOARD = "preferences_copy_to_clipboard";

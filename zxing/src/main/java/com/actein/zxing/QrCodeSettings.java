@@ -1,20 +1,24 @@
 package com.actein.zxing;
 
+import android.content.SharedPreferences;
+
+import com.google.zxing.client.android.PreferencesActivity;
+
 public class QrCodeSettings {
 
-    public QrCodeSettings(boolean allowStartBeforeAppointment, boolean allowStartAfterExpiration) {
-        mAllowStartBeforeAppointment = allowStartBeforeAppointment;
-        mAllowStartAfterExpiration = allowStartAfterExpiration;
+    public QrCodeSettings(SharedPreferences prefs) {
+        mAllowEarlyQrCodes = prefs.getBoolean(PreferencesActivity.KEY_ALLOW_EARLY_QR_CODES, false);
+        mAllowExpiredQrCodes = prefs.getBoolean(PreferencesActivity.KEY_ALLOW_EXPIRED_QR_CODES, false);
     }
 
-    public boolean isAllowStartBeforeAppointment() {
-        return mAllowStartBeforeAppointment;
+    public boolean isAllowEarlyQrCodes() {
+        return mAllowEarlyQrCodes;
     }
 
-    public boolean isAllowStartAfterExpiration() {
-        return mAllowStartAfterExpiration;
+    public boolean isAllowExpiredQrCodes() {
+        return mAllowExpiredQrCodes;
     }
 
-    private boolean mAllowStartBeforeAppointment;
-    private boolean mAllowStartAfterExpiration;
+    private boolean mAllowEarlyQrCodes;
+    private boolean mAllowExpiredQrCodes;
 }

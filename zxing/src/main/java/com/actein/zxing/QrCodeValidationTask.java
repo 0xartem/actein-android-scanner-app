@@ -4,6 +4,7 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
+import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.google.zxing.client.android.R;
@@ -22,6 +23,8 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
+
+        mQrCodeSettings = new QrCodeSettings(PreferenceManager.getDefaultSharedPreferences(context));
 
         mProgressDialog = new ProgressDialog(context);
         mProgressDialog.setMessage(context.getString(R.string.progress_dialog_message));
@@ -54,7 +57,7 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
 
             QrCodeValidator qrCodeValidator = new QrCodeValidator(
                     (CalendarParsedResult) parsedResult,
-                    new QrCodeSettings(false, false)
+                    mQrCodeSettings
             );
 
             return qrCodeValidator.getQrCodeStatus();
@@ -65,6 +68,7 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
     }
 
     private QrCodeProcessingCallback mCallback;
+    private QrCodeSettings mQrCodeSettings;
     private ResultHandler mParsedResultHandler;
     private Bitmap mBarCode;
     private ProgressDialog mProgressDialog;
