@@ -8,7 +8,7 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:orientation="vertical"
-    tools:context=".LoginActivity"
+    tools:context=".activity.SetupActivity"
     android:gravity="center">
 
     <EditText
@@ -25,6 +25,14 @@
         android:id="@+id/philipsHueBridgeAddressEditText"
         android:hint="@string/philipsHueBridgeAddressHint"
         android:inputType="textUri"
+        android:layout_marginBottom="20dp" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/adminPasswordEditText"
+        android:hint="@string/adminPasswordHint"
+        android:inputType="textPassword"
         android:layout_marginBottom="20dp" />
 
     <Spinner

@@ -1,10 +1,11 @@
-package com.actein.scanner;
+package com.actein.scanner.activity;
 
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 
-import com.actein.scanner.utils.Preferences;
+import com.actein.scanner.R;
+import com.actein.zxing.data.Preferences;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 public class LaunchActivity extends Activity
@@ -15,9 +16,9 @@ public class LaunchActivity extends Activity
     {
         super.onCreate(savedInstanceState);
 
-        if (!Preferences.previouslyStarted(getBaseContext()))
+        if (!Preferences.appPreviouslyStarted(LaunchActivity.this))
         {
-            startActivity(new Intent(LaunchActivity.this, LoginActivity.class));
+            startActivity(new Intent(LaunchActivity.this, SetupActivity.class));
         }
         else
         {
@@ -26,7 +27,6 @@ public class LaunchActivity extends Activity
             intentIntegrator.setPrompt(getString(R.string.qrCodeScanPrompt));
             Intent scanIntent = intentIntegrator.createScanIntent();
             startActivity(scanIntent);
-            //startActivity(new Intent(this, CaptureActivity.class));
         }
     }
 }

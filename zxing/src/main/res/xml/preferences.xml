@@ -16,7 +16,9 @@
  -->
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-  <PreferenceCategory android:title="@string/preferences_qr_settings_title">
+  <PreferenceCategory
+      android:key="preferences_qr_settings"
+      android:title="@string/preferences_qr_settings_title">
     <CheckBoxPreference
       android:key="preferences_allow_early_qr_codes"
       android:defaultValue="false"
@@ -27,7 +29,18 @@
         android:title="@string/preferences_allow_expired_qr_codes_title"/>
   </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/preferences_actions_title">
+  <PreferenceCategory
+      android:key="preferences_user_settings"
+      android:title="@string/preferences_user_settings_title">
+    <Preference android:key="preferences_change_user" />
+    <EditTextPreference
+      android:key="preferences_change_admin_pwd"
+      android:title="@string/preferences_change_admin_pwd_title"/>
+  </PreferenceCategory>
+
+  <PreferenceCategory
+      android:key="preferences_actions"
+      android:title="@string/preferences_actions_title">
     <CheckBoxPreference
         android:key="preferences_play_beep"
         android:defaultValue="true"
@@ -52,7 +65,9 @@
         android:summary="@string/preferences_history_summary"/>
   </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/preferences_general_title">
+  <PreferenceCategory
+      android:key="preferences_general"
+      android:title="@string/preferences_general_title">
     <ListPreference
         android:entries="@array/preferences_front_light_options"
         android:entryValues="@array/preferences_front_light_values"
@@ -70,7 +85,9 @@
         android:title="@string/preferences_orientation_title"/>
   </PreferenceCategory>
 
-  <PreferenceCategory android:title="@string/preferences_device_bug_workarounds_title">
+  <PreferenceCategory
+      android:key="preferences_device_bug_workarounds"
+      android:title="@string/preferences_device_bug_workarounds_title">
     <CheckBoxPreference
         android:key="preferences_disable_continuous_focus"
         android:defaultValue="true"

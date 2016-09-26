@@ -90,6 +90,13 @@
     <string name="preferences_allow_early_qr_codes_title">Allow early QR codes</string>
     <string name="preferences_allow_expired_qr_codes_title">Allow expired QR codes</string>
 
+    <string name="preferences_user_settings_title">User settings</string>
+    <string name="preferences_change_user_user">Log out of admin</string>
+    <string name="preferences_change_user_admin">Log in as admin</string>
+    <string name="preferences_enter_admin_pwd_msg_title">Please enter admin password</string>
+    <string name="preferences_password_incorrect_msg">The password is incorrect"</string>
+    <string name="preferences_change_admin_pwd_title">Change password</string>
+
     <string name="preferences_actions_title">When a qr code is found\u2026</string>
     <string name="preferences_auto_focus_title">Use auto focus</string>
 

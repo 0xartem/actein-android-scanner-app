@@ -6,7 +6,7 @@ public class StringUtils
 {
     public static boolean isNetworkAddressValid(String address)
     {
-        if (address.length() > 0
+        if (!address.isEmpty()
                 && (Patterns.IP_ADDRESS.matcher(address).matches()
                 || Patterns.DOMAIN_NAME.matcher(address).matches()))
         {

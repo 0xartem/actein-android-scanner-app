@@ -19,6 +19,7 @@ package com.google.zxing.client.android;
 import com.actein.zxing.QrCodeProcessingCallback;
 import com.actein.zxing.QrCodeStatus;
 import com.actein.zxing.QrCodeValidationTask;
+import com.actein.zxing.model.User;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.Result;
@@ -360,6 +361,13 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.capture, menu);
+        if (!User.isAdmin(CaptureActivity.this))
+        {
+            MenuItem shareItem = menu.findItem(R.id.menu_share);
+            shareItem.setVisible(false);
+            MenuItem historyItem = menu.findItem(R.id.menu_history);
+            historyItem.setVisible(false);
+        }
         return super.onCreateOptionsMenu(menu);
     }
 
