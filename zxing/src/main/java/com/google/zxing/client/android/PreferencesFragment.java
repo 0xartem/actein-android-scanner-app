@@ -27,7 +27,10 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import com.actein.zxing.model.User;
 import com.google.zxing.integration.android.IntentIntegrator;
@@ -104,8 +107,25 @@ public final class PreferencesFragment extends PreferenceFragment
             {
                 AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
                 builder.setTitle(R.string.preferences_enter_admin_pwd_msg_title);
+
                 final EditText input = new EditText(PreferencesFragment.this.getActivity());
                 input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
+                input.setOnEditorActionListener(new TextView.OnEditorActionListener()
+                {
+                    @Override
+                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
+                    {
+                        if (actionId == EditorInfo.IME_ACTION_DONE ||
+                            ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) &&
+                             (event.getAction() == KeyEvent.ACTION_DOWN)))
+                        {
+                            onPasswordEntered(v.getText().toString());
+                            return true;
+                        }
+                        return false;
+                    }
+                });
+
                 builder.setView(input);
 
                 builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener()
@@ -113,26 +133,7 @@ public final class PreferencesFragment extends PreferenceFragment
                     @Override
                     public void onClick(DialogInterface dialog, int which)
                     {
-                        try
-                        {
-                            if (User.isAdminPasswordCorrect(mActivity, input.getText().toString()))
-                            {
-                                User.changeUser(mActivity);
-                                runCaptureActivity();
-                            }
-                            else
-                            {
-                                new AlertDialog.Builder(mActivity)
-                                        .setTitle(R.string.msg_error)
-                                        .setMessage(R.string.preferences_password_incorrect_msg)
-                                        .setNeutralButton(R.string.button_ok, null)
-                                        .show();
-                            }
-                        }
-                        catch (Exception ex)
-                        {
-                            Log.e(TAG, ex.getMessage(), ex);
-                        }
+                        onPasswordEntered(input.getText().toString());
                     }
                 });
                 builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener()
@@ -147,6 +148,30 @@ public final class PreferencesFragment extends PreferenceFragment
             }
 
             return true;
+        }
+
+        private void onPasswordEntered(String password)
+        {
+            try
+            {
+                if (User.isAdminPasswordCorrect(mActivity, password))
+                {
+                    User.changeUser(mActivity);
+                    runCaptureActivity();
+                }
+                else
+                {
+                    new AlertDialog.Builder(mActivity)
+                            .setTitle(R.string.msg_error)
+                            .setMessage(R.string.preferences_password_incorrect_msg)
+                            .setNeutralButton(R.string.button_ok, null)
+                            .show();
+                }
+            }
+            catch (Exception ex)
+            {
+                Log.e(TAG, ex.getMessage(), ex);
+            }
         }
 
         private void runCaptureActivity()
