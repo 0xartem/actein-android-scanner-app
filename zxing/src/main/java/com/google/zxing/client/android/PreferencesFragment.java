@@ -22,13 +22,13 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
+import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.text.InputType;
 import android.util.Log;
 import android.widget.EditText;
 
-import com.actein.zxing.data.Preferences;
 import com.actein.zxing.model.User;
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -44,25 +44,16 @@ public final class PreferencesFragment extends PreferenceFragment
     public void onCreate(Bundle icicle)
     {
         super.onCreate(icicle);
+
         addPreferencesFromResource(R.xml.preferences);
 
-        PreferenceScreen screenPrefs = getPreferenceScreen();
+        mQrCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_QR_SETTINGS);
+        mUserSettingsCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_USER_SETTINGS);
+        mAdminPwdPref = findPreference(PreferencesActivity.KEY_CHANGE_ADMIN_PWD);
+        mActionsCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_ACTIONS);
+        mDeviceBugCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_DEVICE_BUG_WORKAROUNDS);
 
-        /*if (!User.isAdmin(PreferencesFragment.this.getActivity()))
-        {
-            Preference qrCat = screenPrefs.findPreference(PreferencesActivity.KEY_CAT_QR_SETTINGS);
-            screenPrefs.removePreference(qrCat);
-            Preference userSettingsCat = screenPrefs.findPreference(
-                    PreferencesActivity.KEY_CAT_USER_SETTINGS);
-            screenPrefs.removePreference(userSettingsCat);
-            Preference actionsCat = screenPrefs.findPreference(PreferencesActivity.KEY_CAT_ACTIONS);
-            screenPrefs.removePreference(actionsCat);
-            Preference deviceBugCat = screenPrefs.findPreference(
-                    PreferencesActivity.KEY_CAT_DEVICE_BUG_WORKAROUNDS);
-            screenPrefs.removePreference(deviceBugCat);
-        }*/
-
-        Preference changeUserPref = screenPrefs.findPreference(PreferencesActivity.KEY_CHANGE_USER);
+        Preference changeUserPref = findPreference(PreferencesActivity.KEY_CHANGE_USER);
         changeUserPref.setOnPreferenceClickListener(new UserChangeListener());
     }
 
@@ -72,14 +63,24 @@ public final class PreferencesFragment extends PreferenceFragment
         super.onStart();
 
         PreferenceScreen screenPrefs = getPreferenceScreen();
-        Preference changeUserPref = screenPrefs.findPreference(PreferencesActivity.KEY_CHANGE_USER);
+        Preference changeUserPref = findPreference(PreferencesActivity.KEY_CHANGE_USER);
 
         if (User.isAdmin(PreferencesFragment.this.getActivity()))
         {
+            screenPrefs.addPreference(mQrCat);
+            mUserSettingsCat.addPreference(mAdminPwdPref);
+            screenPrefs.addPreference(mActionsCat);
+            screenPrefs.addPreference(mDeviceBugCat);
+
             changeUserPref.setTitle(R.string.preferences_change_user_user);
         }
         else
         {
+            screenPrefs.removePreference(mQrCat);
+            mUserSettingsCat.removePreference(mAdminPwdPref);
+            screenPrefs.removePreference(mActionsCat);
+            screenPrefs.removePreference(mDeviceBugCat);
+
             changeUserPref.setTitle(R.string.preferences_change_user_admin);
         }
     }
@@ -124,6 +125,7 @@ public final class PreferencesFragment extends PreferenceFragment
                                 new AlertDialog.Builder(mActivity)
                                         .setTitle(R.string.msg_error)
                                         .setMessage(R.string.preferences_password_incorrect_msg)
+                                        .setNeutralButton(R.string.button_ok, null)
                                         .show();
                             }
                         }
@@ -158,6 +160,12 @@ public final class PreferencesFragment extends PreferenceFragment
 
         private Activity mActivity;
     }
+
+    PreferenceCategory mQrCat = null;
+    PreferenceCategory mUserSettingsCat = null;
+    Preference mAdminPwdPref = null;
+    PreferenceCategory mActionsCat = null;
+    PreferenceCategory mDeviceBugCat = null;
 
     private final static String TAG = PreferencesFragment.class.getSimpleName();
 }

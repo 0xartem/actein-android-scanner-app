@@ -13,13 +13,14 @@ import com.google.zxing.client.result.CalendarParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 
-public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
+public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus>
+{
 
-    public QrCodeValidationTask(
-            Context context,
-            QrCodeProcessingCallback callback,
-            ResultHandler parsedResultHandler,
-            Bitmap barCode) {
+    public QrCodeValidationTask(Context context,
+                                QrCodeProcessingCallback callback,
+                                ResultHandler parsedResultHandler,
+                                Bitmap barCode)
+    {
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
@@ -33,14 +34,17 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
     }
 
     @Override
-    protected void onPreExecute() {
+    protected void onPreExecute()
+    {
         mProgressDialog.show();
     }
 
     @Override
-    protected void onPostExecute(QrCodeStatus status) {
+    protected void onPostExecute(QrCodeStatus status)
+    {
 
-        if (mProgressDialog.isShowing()) {
+        if (mProgressDialog.isShowing())
+        {
             mProgressDialog.dismiss();
         }
 
@@ -48,21 +52,24 @@ public class QrCodeValidationTask extends AsyncTask<Void, Void, QrCodeStatus> {
     }
 
     @Override
-    protected QrCodeStatus doInBackground(Void... params) {
-        try {
+    protected QrCodeStatus doInBackground(Void... params)
+    {
+        try
+        {
             ParsedResult parsedResult = mParsedResultHandler.getResult();
-            if (parsedResult.getType() != ParsedResultType.CALENDAR) {
+            if (parsedResult.getType() != ParsedResultType.CALENDAR)
+            {
                 return QrCodeStatus.QR_CODE_INVALID;
             }
 
-            QrCodeValidator qrCodeValidator = new QrCodeValidator(
-                    (CalendarParsedResult) parsedResult,
-                    mQrCodeSettings
-            );
+            QrCodeValidator qrCodeValidator = new QrCodeValidator((CalendarParsedResult) parsedResult,
+                                                                  mQrCodeSettings);
 
             return qrCodeValidator.getQrCodeStatus();
-        } catch (Exception ex) {
-            Log.e(TAG, ex.getMessage());
+        }
+        catch (Exception ex)
+        {
+            Log.e(TAG, ex.getMessage(), ex);
         }
         return QrCodeStatus.QR_CODE_INVALID;
     }
