@@ -361,10 +361,10 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.capture, menu);
+        MenuItem shareItem = menu.findItem(R.id.menu_share);
+        shareItem.setVisible(false);
         if (!User.isAdmin(CaptureActivity.this))
         {
-            MenuItem shareItem = menu.findItem(R.id.menu_share);
-            shareItem.setVisible(false);
             MenuItem historyItem = menu.findItem(R.id.menu_history);
             historyItem.setVisible(false);
         }
