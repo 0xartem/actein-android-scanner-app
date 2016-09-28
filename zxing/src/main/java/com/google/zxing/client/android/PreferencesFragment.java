@@ -16,24 +16,19 @@
 
 package com.google.zxing.client.android;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.preference.Preference;
 import android.preference.PreferenceCategory;
 import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
-import android.text.InputType;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.actein.zxing.model.User;
-import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.client.android.custom.ValidatedEditTextPreference;
 
 /**
  * Implements support for barcode scanning preferences.
@@ -52,12 +47,16 @@ public final class PreferencesFragment extends PreferenceFragment
 
         mQrCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_QR_SETTINGS);
         mUserSettingsCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_USER_SETTINGS);
-        mAdminPwdPref = findPreference(PreferencesActivity.KEY_CHANGE_ADMIN_PWD);
+        mAdminPwdPref = (ValidatedEditTextPreference) findPreference(PreferencesActivity.KEY_CHANGE_ADMIN_PWD);
         mActionsCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_ACTIONS);
         mDeviceBugCat = (PreferenceCategory) findPreference(PreferencesActivity.KEY_CAT_DEVICE_BUG_WORKAROUNDS);
 
         Preference changeUserPref = findPreference(PreferencesActivity.KEY_CHANGE_USER);
-        changeUserPref.setOnPreferenceClickListener(new UserChangeListener());
+        changeUserPref.setOnPreferenceClickListener(new UserChangeListener(getActivity()));
+
+        mAdminPwdPref.setOnPreferenceChangeListener(mAdminPwdListener);
+        mAdminPwdPref.getEditText().setOnEditorActionListener(mAdminPwdListener);
+        mAdminPwdPref.setOnDialogClosedListener(mAdminPwdListener);
     }
 
     @Override
@@ -68,7 +67,7 @@ public final class PreferencesFragment extends PreferenceFragment
         PreferenceScreen screenPrefs = getPreferenceScreen();
         Preference changeUserPref = findPreference(PreferencesActivity.KEY_CHANGE_USER);
 
-        if (User.isAdmin(PreferencesFragment.this.getActivity()))
+        if (User.isAdmin(getActivity()))
         {
             screenPrefs.addPreference(mQrCat);
             mUserSettingsCat.addPreference(mAdminPwdPref);
@@ -88,109 +87,60 @@ public final class PreferencesFragment extends PreferenceFragment
         }
     }
 
-    private class UserChangeListener implements Preference.OnPreferenceClickListener
+    private class AdminPwdChangeListener implements
+            Preference.OnPreferenceChangeListener,
+            TextView.OnEditorActionListener,
+            ValidatedEditTextPreference.OnDialogClosedListener
     {
-        UserChangeListener()
+        @Override
+        public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
         {
-            mActivity = PreferencesFragment.this.getActivity();
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) &&
+                 (event.getAction() == KeyEvent.ACTION_DOWN)))
+            {
+                return ((AlertDialog) mAdminPwdPref.getDialog())
+                        .getButton(AlertDialog.BUTTON_POSITIVE)
+                        .callOnClick();
+            }
+            return false;
         }
 
         @Override
-        public boolean onPreferenceClick(Preference preference)
-        {
-            if (User.isAdmin(mActivity))
-            {
-                User.changeUser(mActivity);
-                runCaptureActivity();
-            }
-            else
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(mActivity);
-                builder.setTitle(R.string.preferences_enter_admin_pwd_msg_title);
-
-                final EditText input = new EditText(PreferencesFragment.this.getActivity());
-                input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_VARIATION_PASSWORD);
-                input.setOnEditorActionListener(new TextView.OnEditorActionListener()
-                {
-                    @Override
-                    public boolean onEditorAction(TextView v, int actionId, KeyEvent event)
-                    {
-                        if (actionId == EditorInfo.IME_ACTION_DONE ||
-                            ((event.getKeyCode() == KeyEvent.KEYCODE_ENTER) &&
-                             (event.getAction() == KeyEvent.ACTION_DOWN)))
-                        {
-                            onPasswordEntered(v.getText().toString());
-                            return true;
-                        }
-                        return false;
-                    }
-                });
-
-                builder.setView(input);
-
-                builder.setPositiveButton(R.string.button_ok, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        onPasswordEntered(input.getText().toString());
-                    }
-                });
-                builder.setNegativeButton(R.string.button_cancel, new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which)
-                    {
-                        dialog.cancel();
-                    }
-                });
-                builder.show();
-            }
-
-            return true;
-        }
-
-        private void onPasswordEntered(String password)
+        public boolean onPreferenceChange(Preference preference, Object newValue)
         {
             try
             {
-                if (User.isAdminPasswordCorrect(mActivity, password))
+                if (!User.changeAdminPassword(getActivity(), (String) newValue))
                 {
-                    User.changeUser(mActivity);
-                    runCaptureActivity();
-                }
-                else
-                {
-                    new AlertDialog.Builder(mActivity)
+                    new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.msg_error)
-                            .setMessage(R.string.preferences_password_incorrect_msg)
+                            .setMessage(R.string.preferences_same_password_msg)
                             .setNeutralButton(R.string.button_ok, null)
                             .show();
                 }
+                return true;
             }
             catch (Exception ex)
             {
                 Log.e(TAG, ex.getMessage(), ex);
             }
+            return false;
         }
 
-        private void runCaptureActivity()
+        @Override
+        public void onDialogClosed(boolean positiveResult)
         {
-            IntentIntegrator intentIntegrator = new IntentIntegrator(mActivity);
-            intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-            intentIntegrator.setPrompt(getString(R.string.msg_default_status));
-            Intent scanIntent = intentIntegrator.createScanIntent();
-            startActivity(scanIntent);
+            mAdminPwdPref.setText("");
         }
-
-        private Activity mActivity;
     }
 
-    PreferenceCategory mQrCat = null;
-    PreferenceCategory mUserSettingsCat = null;
-    Preference mAdminPwdPref = null;
-    PreferenceCategory mActionsCat = null;
-    PreferenceCategory mDeviceBugCat = null;
+    private PreferenceCategory mQrCat = null;
+    private PreferenceCategory mUserSettingsCat = null;
+    private ValidatedEditTextPreference mAdminPwdPref = null;
+    private PreferenceCategory mActionsCat = null;
+    private PreferenceCategory mDeviceBugCat = null;
+    private AdminPwdChangeListener mAdminPwdListener = new AdminPwdChangeListener();
 
     private final static String TAG = PreferencesFragment.class.getSimpleName();
 }

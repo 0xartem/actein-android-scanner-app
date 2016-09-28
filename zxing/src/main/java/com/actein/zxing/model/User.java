@@ -19,11 +19,29 @@ public class User
     {
         if (password != null)
         {
-            HashAlgorithm hashAlgorithm = new HashAlgorithm();
             String savedPwdHashBase64 = Preferences.getAdminPwdHash(context);
+            HashAlgorithm hashAlgorithm = new HashAlgorithm();
             // use trim() as workaround for android Issue 159799
             String pwdHashBase64 = hashAlgorithm.hashStrToBase64(password).trim();
             return savedPwdHashBase64.equals(pwdHashBase64);
+        }
+        return false;
+    }
+
+    public static boolean changeAdminPassword(Context context, String password)
+            throws HashAlgorithmException
+    {
+        if (password != null)
+        {
+            String savedPwdHashBase64 = Preferences.getAdminPwdHash(context);
+            HashAlgorithm hashAlgorithm = new HashAlgorithm();
+            // use trim() as workaround for android Issue 159799
+            String pwdHashBase64 = hashAlgorithm.hashStrToBase64(password).trim();
+            if (!savedPwdHashBase64.equals(pwdHashBase64))
+            {
+                Preferences.setAdminPwdHash(context, pwdHashBase64);
+                return true;
+            }
         }
         return false;
     }
