@@ -69,6 +69,7 @@
     <string name="msg_default_type">Type</string>
     <string name="msg_encode_contents_failed">Could not encode a qr code from the data provided.</string>
     <string name="msg_error">Error</string>
+    <string name="msg_info">Info</string>
     <string name="msg_google_books">Google</string>
     <string name="msg_google_product">Google</string>
     <string name="msg_intent_failed">Sorry, the requested application could not be launched. The qr code contents may be invalid.</string>
@@ -95,7 +96,8 @@
     <string name="preferences_change_user_admin">Log in as admin</string>
     <string name="preferences_enter_admin_pwd_msg_title">Please enter admin password</string>
     <string name="preferences_password_incorrect_msg">The password is incorrect."</string>
-    <string name="preferences_change_admin_pwd_title">Change password</string>
+    <string name="preferences_change_admin_pwd_title">Change admin password</string>
+    <string name="preferences_password_changed_msg">Admin password updated.</string>
     <string name="preferences_same_password_msg">The password is the same. Please try another one.</string>
 
     <string name="preferences_actions_title">When a qr code is found\u2026</string>

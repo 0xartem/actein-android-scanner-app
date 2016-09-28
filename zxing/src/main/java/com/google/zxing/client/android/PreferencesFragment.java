@@ -111,11 +111,21 @@ public final class PreferencesFragment extends PreferenceFragment
         {
             try
             {
-                if (!User.changeAdminPassword(getActivity(), (String) newValue))
+                if (User.changeAdminPassword(getActivity(), (String) newValue))
+                {
+                    new AlertDialog.Builder(getActivity())
+                            .setTitle(R.string.msg_info)
+                            .setMessage(R.string.preferences_password_changed_msg)
+                            .setIcon(android.R.drawable.ic_dialog_info)
+                            .setNeutralButton(R.string.button_ok, null)
+                            .show();
+                }
+                else
                 {
                     new AlertDialog.Builder(getActivity())
                             .setTitle(R.string.msg_error)
                             .setMessage(R.string.preferences_same_password_msg)
+                            .setIcon(android.R.drawable.ic_dialog_alert)
                             .setNeutralButton(R.string.button_ok, null)
                             .show();
                 }
