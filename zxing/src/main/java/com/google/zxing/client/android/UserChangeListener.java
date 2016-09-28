@@ -126,7 +126,6 @@ class UserChangeListener implements Preference.OnPreferenceClickListener
                 new AlertDialog.Builder(mActivity)
                         .setTitle(R.string.msg_error)
                         .setMessage(R.string.preferences_password_incorrect_msg)
-                        .setIcon(android.R.drawable.ic_dialog_alert)
                         .setNeutralButton(R.string.button_ok, null)
                         .show();
             }
