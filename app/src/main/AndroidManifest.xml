@@ -4,9 +4,9 @@
 
     <application
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@mipmap/ic_launcher_gradient"
         android:label="@string/app_name"
-        android:logo="@mipmap/ic_launcher"
+        android:logo="@mipmap/ic_launcher_gradient"
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Holo">
         <activity

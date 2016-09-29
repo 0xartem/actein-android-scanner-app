@@ -10,4 +10,5 @@
     <string name="vrBoothText">Virtual Reality Booth</string>
     <string name="qrCodeScanPrompt">Please place a qr code inside the viewfinder rectangle to scan it.</string>
     <string name="progressDialogMessage">Loading&#8230;</string>
+    <string name="acteinLogoDescription">Actein logo</string>
 </resources>
