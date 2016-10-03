@@ -1,7 +1,7 @@
-package com.actein.vr.events;
+package com.actein.vr_events;
 
-import com.actein.vr.events.interfaces.VrEventsManager;
-import com.actein.vr.events.interfaces.VrEventsPublisher;
+import com.actein.vr_events.interfaces.VrEventsManager;
+import com.actein.vr_events.interfaces.VrEventsPublisher;
 
 public class MqttVrEventsManager implements VrEventsManager
 {

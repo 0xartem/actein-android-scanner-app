@@ -1,7 +1,7 @@
-package com.actein.vr.events.interfaces;
+package com.actein.vr_events.interfaces;
 
-import com.actein.vr.events.VrGameOffProtos;
-import com.actein.vr.events.VrGameOnProtos;
+import com.actein.vr_events.VrGameOffProtos;
+import com.actein.vr_events.VrGameOnProtos;
 
 public interface VrEventsHandler
 {

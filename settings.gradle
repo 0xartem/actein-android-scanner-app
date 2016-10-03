@@ -1,1 +1,1 @@
-include ':app', ':zxing', ':com.actein.vr.events', ':transport'
+include ':app', ':zxing', ':transport', ':vr-events'

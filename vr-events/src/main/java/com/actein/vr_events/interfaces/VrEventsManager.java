@@ -1,4 +1,4 @@
-package com.actein.vr.events.interfaces;
+package com.actein.vr_events.interfaces;
 
 public interface VrEventsManager
 {
