@@ -1,0 +1,43 @@
+apply plugin: 'java'
+apply plugin: 'com.google.protobuf'
+
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir 'src/gen/main/java'
+        }
+    }
+}
+
+protobuf {
+    protoc {
+        artifact = 'com.google.protobuf:protoc:3.0.0'
+    }
+
+    plugins {
+        javalite {
+            artifact = 'com.google.protobuf:protoc-gen-javalite:3.0.0'
+        }
+    }
+
+    generateProtoTasks {
+        all().each { task ->
+
+            task.builtins {
+                java {}
+            }
+        }
+    }
+
+    generatedFilesBaseDir = "$projectDir/src/gen"
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // need to depend on the lite runtime library, not protobuf-java
+    compile 'com.google.protobuf:protobuf-lite:3.0.0'
+}
