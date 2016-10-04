@@ -4,6 +4,7 @@ import android.util.Log;
 
 import com.actein.transport.mqtt.MqttPublisher;
 import com.actein.transport.mqtt.Topics;
+import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsPublisher;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -14,7 +15,9 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
     {
         mMqttPublisher = mqttPublisher;
     }
-    public void publishVrGameOnEvent()
+
+    @Override
+    public void publishVrGameOnEvent() throws VrEventsException
     {
         try
         {
@@ -23,11 +26,12 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
         }
         catch (MqttException ex)
         {
-            Log.e("", ex.getMessage(), ex);
+            throw new VrEventsException(ex);
         }
     }
 
-    public void publishVrGameOffEvent()
+    @Override
+    public void publishVrGameOffEvent() throws VrEventsException
     {
         try
         {
@@ -36,7 +40,7 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
         }
         catch (MqttException ex)
         {
-            Log.e("", ex.getMessage(), ex);
+            throw new VrEventsException(ex);
         }
     }
 

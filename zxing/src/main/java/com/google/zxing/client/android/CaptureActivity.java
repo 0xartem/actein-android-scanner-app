@@ -465,6 +465,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         }
 
         QrCodeValidationTask validationTask = new QrCodeValidationTask(
+                getApplicationContext(),
                 this,
                 this,
                 resultHandler,

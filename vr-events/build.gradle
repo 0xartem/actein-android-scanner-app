@@ -27,10 +27,14 @@ android {
     }
 
     sourceSets {
-        main {
+        debug {
             java {
-                srcDir 'src/main/java'
                 srcDir 'src/gen/main/java/debug'
+            }
+        }
+        release {
+            java {
+                srcDir 'src/gen/main/java/release'
             }
         }
     }

@@ -1,16 +1,17 @@
 package com.actein.transport.mqtt;
 
 import android.content.Context;
+import android.widget.Toast;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class Connection
 {
-
     private Connection(
             Context context,
             String brokerHost,
@@ -37,6 +38,8 @@ public class Connection
 
         mClient = new MqttAndroidClient(context, uri, clientId);
         mConnectOptions = new MqttConnectOptions();
+        mMqttPublisher = new MqttPublisher(mClient);
+        mMqttSubscriber = new MqttSubscriber(mClient);
     }
 
     public static Connection createInstance(Context context, String brokerHost, int port)
@@ -55,14 +58,52 @@ public class Connection
         return new Connection(context, brokerHost, port, tlsConnection, clientId);
     }
 
-    public void connect(IMqttActionListener listener) throws MqttException
+    public void connect() throws MqttException
     {
-        mClient.connect(mConnectOptions, listener);
+        IMqttToken token = mClient.connect(mConnectOptions);
+        token.setActionCallback(new IMqttActionListener()
+        {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken)
+            {
+                Toast.makeText(mContext, "Connect success", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception)
+            {
+                Toast.makeText(mContext, "Connect failure", Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     public void disconnect() throws MqttException
     {
-        mClient.disconnect();
+        IMqttToken token = mClient.disconnect();
+        token.setActionCallback(new IMqttActionListener()
+        {
+            @Override
+            public void onSuccess(IMqttToken asyncActionToken)
+            {
+                Toast.makeText(mContext, "Disconnect success", Toast.LENGTH_LONG).show();
+            }
+
+            @Override
+            public void onFailure(IMqttToken asyncActionToken, Throwable exception)
+            {
+                Toast.makeText(mContext, "Disconnect failure", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public MqttPublisher getPublisher()
+    {
+        return mMqttPublisher;
+    }
+
+    public MqttSubscriber getSubscriber()
+    {
+        return mMqttSubscriber;
     }
 
     private Context mContext = null;
@@ -72,5 +113,8 @@ public class Connection
     private String mBrokerHost = null;
     private int mPort = 0;
     private boolean mTlsConnection = false;
+
+    private MqttPublisher mMqttPublisher;
+    private MqttSubscriber mMqttSubscriber;
 
 }
