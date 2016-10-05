@@ -9,7 +9,7 @@ import com.actein.vr_events.interfaces.VrEventsHandler;
 
 public class TestVrEventsHandler implements VrEventsHandler
 {
-    TestVrEventsHandler(Context appContext)
+    public TestVrEventsHandler(Context appContext)
     {
         mAppContext = appContext;
     }

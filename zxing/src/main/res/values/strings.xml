@@ -148,7 +148,9 @@
     <string name="sbc_name">Google Book Search</string>
     <string name="wifi_changing_network">Requesting connection to network\u2026</string>
 
-    <string name="progress_dialog_message">Loading&#8230;</string>
+    <string name="progress_dlg_loading_msg">Loading&#8230;</string>
+    <string name="progress_dlg_qr_validation_msg">QR code validation&#8230;</string>
+    <string name="progress_dlg_turn_vr_on_msg">Turning the game on&#8230;</string>
     <string name="alert_dialog_qr_code_invalid">Scanning failed. QR code is invalid.</string>
     <string name="alert_dialog_qr_code_not_started_yet">QR code time has not started yet.</string>
     <string name="alert_dialog_qr_code_expired">QR code already expired.</string>

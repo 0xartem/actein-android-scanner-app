@@ -25,6 +25,20 @@ public class Preferences
                 .apply();
     }
 
+    public static boolean containsServerUri(Context context)
+    {
+        return getSharedPrefs(context).contains(SERVER_URI);
+    }
+
+    public static String getServerUri(Context context)
+    {
+        if (!containsServerUri(context))
+        {
+            throw new AssertionError(SERVER_URI + " can not be empty");
+        }
+        return getSharedPrefs(context).getString(SERVER_URI, "");
+    }
+
     public static void setPhilipsHueUri(Context context, String philipsHueUri)
     {
         getSharedPrefs(context)

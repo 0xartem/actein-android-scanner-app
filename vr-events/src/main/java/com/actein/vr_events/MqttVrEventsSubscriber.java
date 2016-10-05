@@ -48,22 +48,16 @@ public class MqttVrEventsSubscriber implements MessageHandler
         }
     }
 
-    public void handleMessage(String topic, MqttMessage message)
+    @Override
+    public void handleMessage(String topic, MqttMessage message) throws Exception
     {
-        try
+        if (topic.equals(Topics.VR_GAME_ON))
         {
-            if (topic.equals(Topics.VR_GAME_ON))
-            {
-                processVrOnEvent(message);
-            }
-            else if (topic.equals(Topics.VR_GAME_OFF))
-            {
-                processVrOffEvent(message);
-            }
+            processVrOnEvent(message);
         }
-        catch (InvalidProtocolBufferException ex)
+        else if (topic.equals(Topics.VR_GAME_OFF))
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            processVrOffEvent(message);
         }
     }
 
