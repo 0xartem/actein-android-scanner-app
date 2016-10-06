@@ -14,27 +14,19 @@ public class MqttVrEventsManager implements VrEventsManager
     }
 
     @Override
-    public void start(boolean subscribe, VrEventsHandler vrEventsHandler) throws VrEventsException
+    public void start(VrEventsHandler vrEventsHandler) throws VrEventsException
     {
-        mSubscribe = subscribe;
         mVrEventsPublisher = new MqttVrEventsPublisher(mConnection.getPublisher());
         mVrEventsSubscriber = new MqttVrEventsSubscriber(vrEventsHandler, mConnection.getSubscriber());
-        if (mSubscribe)
-        {
-            mVrEventsSubscriber.subscribe();
-        }
+        mVrEventsSubscriber.subscribe();
     }
 
     @Override
     public void stop() throws VrEventsException
     {
-        if (mSubscribe)
-        {
-            mVrEventsSubscriber.unsubscribe();
-        }
+        mVrEventsSubscriber.unsubscribe();
         mVrEventsSubscriber = null;
         mVrEventsPublisher = null;
-        mSubscribe = false;
     }
 
     @Override
@@ -43,7 +35,6 @@ public class MqttVrEventsManager implements VrEventsManager
         return mVrEventsPublisher;
     }
 
-    private boolean mSubscribe = false;
     private MqttVrEventsPublisher mVrEventsPublisher = null;
     private MqttVrEventsSubscriber mVrEventsSubscriber = null;
     private Connection mConnection;

@@ -1,11 +1,8 @@
 package com.actein.vr_events;
 
-import android.util.Log;
-
 import com.actein.transport.mqtt.MessageHandler;
 import com.actein.transport.mqtt.MqttSubscriber;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
-import com.actein.transport.mqtt.Topics;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -26,12 +23,13 @@ public class MqttVrEventsSubscriber implements MessageHandler
     {
         try
         {
-            mMqttSubscriber.subscribe(Topics.VR_GAME_ON);
-            mMqttSubscriber.subscribe(Topics.VR_GAME_OFF);
+            mMqttSubscriber.subscribe(VrTopics.VR_PC_TURN_GAME_ON);
+            mMqttSubscriber.subscribe(VrTopics.VR_PC_TURN_GAME_OFF);
+            mMqttSubscriber.subscribe(VrTopics.VR_PC_GAME_STATUS);
         }
         catch (MqttException ex)
         {
-            throw new VrEventsException(ex);
+            throw new VrEventsException(ex.getMessage(), ex);
         }
     }
 
@@ -39,25 +37,30 @@ public class MqttVrEventsSubscriber implements MessageHandler
     {
         try
         {
-            mMqttSubscriber.unsubscribe(Topics.VR_GAME_OFF);
-            mMqttSubscriber.unsubscribe(Topics.VR_GAME_ON);
+            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_GAME_STATUS);
+            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_TURN_GAME_OFF);
+            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_TURN_GAME_ON);
         }
         catch (MqttException ex)
         {
-            throw new VrEventsException(ex);
+            throw new VrEventsException(ex.getMessage(), ex);
         }
     }
 
     @Override
     public void handleMessage(String topic, MqttMessage message) throws Exception
     {
-        if (topic.equals(Topics.VR_GAME_ON))
+        if (topic.equals(VrTopics.VR_PC_TURN_GAME_ON))
         {
             processVrOnEvent(message);
         }
-        else if (topic.equals(Topics.VR_GAME_OFF))
+        else if (topic.equals(VrTopics.VR_PC_TURN_GAME_OFF))
         {
             processVrOffEvent(message);
+        }
+        else if (topic.equals(VrTopics.VR_PC_GAME_STATUS))
+        {
+            processVrStatusEvent(message);
         }
     }
 
@@ -76,6 +79,16 @@ public class MqttVrEventsSubscriber implements MessageHandler
         if (mVrEventsHandler != null)
         {
             mVrEventsHandler.handleVrGameOffEvent(event);
+        }
+    }
+
+    private void processVrStatusEvent(MqttMessage message) throws InvalidProtocolBufferException
+    {
+        VrGameStatusProtos.VrGameStatusEvent event = VrGameStatusProtos.VrGameStatusEvent
+                .parseFrom(message.getPayload());
+        if (mVrEventsHandler != null)
+        {
+            mVrEventsHandler.handleVrGameStatusEvent(event);
         }
     }
 
