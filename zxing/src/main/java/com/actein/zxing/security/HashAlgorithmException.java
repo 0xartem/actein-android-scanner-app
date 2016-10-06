@@ -2,8 +2,8 @@ package com.actein.zxing.security;
 
 public class HashAlgorithmException extends Exception
 {
-    public HashAlgorithmException(Throwable cause)
+    public HashAlgorithmException(String message, Throwable cause)
     {
-        super(cause);
+        super(message, cause);
     }
 }

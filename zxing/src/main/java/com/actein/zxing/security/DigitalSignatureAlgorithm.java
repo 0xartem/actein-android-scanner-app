@@ -24,7 +24,7 @@ public class DigitalSignatureAlgorithm {
             mSignature.initVerify(publicKey);
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException ex) {
-            throw new DigitalSignatureException(ex);
+            throw new DigitalSignatureException(ex.getMessage(), ex);
         }
     }
 
@@ -34,7 +34,7 @@ public class DigitalSignatureAlgorithm {
             return mSignature.verify(signature);
         }
         catch (SignatureException ex) {
-            throw new DigitalSignatureException(ex);
+            throw new DigitalSignatureException(ex.getMessage(), ex);
         }
     }
 
