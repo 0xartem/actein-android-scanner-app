@@ -21,7 +21,7 @@ public class VrGameSwitcher
 
         mConnection.connect();
         mManager = new MqttVrEventsManager(mConnection);
-        mManager.start(false, null);
+        mManager.start(null);
     }
 
     public void turnGameOn() throws VrEventsException
@@ -44,7 +44,7 @@ public class VrGameSwitcher
         try
         {
             mManager.stop();
-            mConnection.disconnect();
+            mConnection.disconnect(null);
         }
         catch (Exception ex)
         {

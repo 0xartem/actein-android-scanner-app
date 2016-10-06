@@ -20,13 +20,13 @@ public class MqttSubscriber
     public void subscribe(String topic) throws MqttException
     {
         IMqttToken token = mClient.subscribe(topic, 1);
-        token.setActionCallback(new DefaultActionListener());
+        token.setActionCallback(new LogActionListener());
     }
 
     public void unsubscribe(String topic) throws MqttException
     {
         IMqttToken token = mClient.unsubscribe(topic);
-        token.setActionCallback(new DefaultActionListener());
+        token.setActionCallback(new LogActionListener());
     }
 
     private MqttAndroidClient mClient;

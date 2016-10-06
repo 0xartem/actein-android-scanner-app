@@ -18,7 +18,7 @@ public class MqttPublisher
     {
         MqttMessage mqttMessage = new MqttMessage(protobufMessage.toByteArray());
         IMqttDeliveryToken token = mClient.publish(topic, mqttMessage);
-        token.setActionCallback(new DefaultActionListener());
+        token.setActionCallback(new LogActionListener());
     }
 
     private MqttAndroidClient mClient;

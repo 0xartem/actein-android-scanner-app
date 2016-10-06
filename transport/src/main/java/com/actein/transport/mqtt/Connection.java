@@ -16,15 +16,15 @@ public class Connection
             Context context,
             String brokerHost,
             int port,
-            boolean tlsConnection,
-            String clientId
+            String clientId,
+            boolean tlsConnection
             )
     {
         mContext = context;
         mBrokerHost = brokerHost;
         mPort = port;
-        mTlsConnection = tlsConnection;
         mClientId = clientId;
+        mTlsConnection = tlsConnection;
 
         String uri;
         if (tlsConnection)
@@ -44,56 +44,30 @@ public class Connection
 
     public static Connection createInstance(Context context, String brokerHost, int port)
     {
-        return new Connection(context, brokerHost, port, false, MqttClient.generateClientId());
+        return new Connection(context, brokerHost, port, MqttClient.generateClientId(), false);
     }
 
     public static Connection createInstance(
             Context context,
             String brokerHost,
             int port,
-            boolean tlsConnection,
-            String clientId
+            String clientId,
+            boolean tlsConnection
             )
     {
-        return new Connection(context, brokerHost, port, tlsConnection, clientId);
+        return new Connection(context, brokerHost, port, clientId, tlsConnection);
     }
 
     public void connect() throws MqttException
     {
         IMqttToken token = mClient.connect(mConnectOptions);
-        token.setActionCallback(new IMqttActionListener()
-        {
-            @Override
-            public void onSuccess(IMqttToken asyncActionToken)
-            {
-                Toast.makeText(mContext, "Connect success", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception)
-            {
-                Toast.makeText(mContext, "Connect failure", Toast.LENGTH_LONG).show();
-            }
-        });
+        token.setActionCallback(null);
     }
 
-    public void disconnect() throws MqttException
+    public void disconnect(IMqttActionListener actionListener) throws MqttException
     {
         IMqttToken token = mClient.disconnect();
-        token.setActionCallback(new IMqttActionListener()
-        {
-            @Override
-            public void onSuccess(IMqttToken asyncActionToken)
-            {
-                Toast.makeText(mContext, "Disconnect success", Toast.LENGTH_LONG).show();
-            }
-
-            @Override
-            public void onFailure(IMqttToken asyncActionToken, Throwable exception)
-            {
-                Toast.makeText(mContext, "Disconnect failure", Toast.LENGTH_LONG).show();
-            }
-        });
+        token.setActionCallback(actionListener);
     }
 
     public MqttPublisher getPublisher()
