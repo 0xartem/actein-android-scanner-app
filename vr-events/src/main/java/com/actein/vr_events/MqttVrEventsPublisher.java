@@ -1,6 +1,6 @@
 package com.actein.vr_events;
 
-import com.actein.transport.mqtt.MqttPublisher;
+import com.actein.transport.mqtt.interfaces.Publisher;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsPublisher;
 
@@ -8,9 +8,9 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class MqttVrEventsPublisher implements VrEventsPublisher
 {
-    public MqttVrEventsPublisher(MqttPublisher mqttPublisher)
+    public MqttVrEventsPublisher(Publisher publisher)
     {
-        mMqttPublisher = mqttPublisher;
+        mPublisher = publisher;
     }
 
     @Override
@@ -19,7 +19,7 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
         try
         {
             VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent.newBuilder().build();
-            mMqttPublisher.publish(VrTopics.VR_PC_TURN_GAME_ON, event);
+            mPublisher.publish(VrTopics.VR_PC_TURN_GAME_ON, event);
         }
         catch (MqttException ex)
         {
@@ -33,7 +33,7 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
         try
         {
             VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent.newBuilder().build();
-            mMqttPublisher.publish(VrTopics.VR_PC_TURN_GAME_OFF, event);
+            mPublisher.publish(VrTopics.VR_PC_TURN_GAME_OFF, event);
         }
         catch (MqttException ex)
         {
@@ -51,7 +51,7 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
                     .newBuilder()
                     .setStatus(status)
                     .build();
-            mMqttPublisher.publish(VrTopics.VR_PC_GAME_STATUS, event);
+            mPublisher.publish(VrTopics.VR_PC_GAME_STATUS, event);
         }
         catch (MqttException ex)
         {
@@ -59,5 +59,5 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
         }
     }
 
-    private MqttPublisher mMqttPublisher;
+    private Publisher mPublisher;
 }

@@ -17,7 +17,7 @@ enum QualityOfService
         case EXACTLY_ONCE_DELIVERY_GUARANTEE:
             return 2;
         default:
-            return -1;
+            throw new UnsupportedOperationException("Unknown quality of service type");
         }
     }
 }

@@ -1,33 +1,69 @@
 package com.actein.transport.mqtt;
 
+import com.actein.transport.mqtt.interfaces.Subscriber;
+import com.actein.transport.mqtt.policies.ConnectionPolicy;
+
 import org.eclipse.paho.android.service.MqttAndroidClient;
+import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class MqttSubscriber
+import java.util.Arrays;
+
+public class MqttSubscriber implements Subscriber
 {
-    public MqttSubscriber(MqttAndroidClient client)
+    MqttSubscriber(
+            MqttAndroidClient client,
+            ConnectionPolicy connectionPolicy,
+            IMqttActionListener subscribeActionListener,
+            IMqttActionListener unsubscribeActionListener
+            )
     {
         mClient = client;
+        mConnectionPolicy = connectionPolicy;
+        mSubscribeActionListener = subscribeActionListener;
+        mUnsubscribeActionListener = unsubscribeActionListener;
     }
 
+    @Override
     public void setupCallback(MqttCallback callback)
     {
         mClient.setCallback(callback);
     }
 
-    public void subscribe(String topic) throws MqttException
+    @Override
+    public void subscribe(String[] topics) throws MqttException
     {
-        IMqttToken token = mClient.subscribe(topic, 1);
-        token.setActionCallback(new LogActionListener());
+        int[] qosArray = new int[topics.length];
+        Arrays.fill(qosArray, mConnectionPolicy.getQualityOfService());
+        IMqttToken token = mClient.subscribe(topics, qosArray);
+        token.setActionCallback(mSubscribeActionListener);
     }
 
+    @Override
+    public void subscribe(String topic) throws MqttException
+    {
+        IMqttToken token = mClient.subscribe(topic, mConnectionPolicy.getQualityOfService());
+        token.setActionCallback(mSubscribeActionListener);
+    }
+
+    @Override
+    public void unsubscribe(String[] topics) throws MqttException
+    {
+        IMqttToken token = mClient.unsubscribe(topics);
+        token.setActionCallback(mUnsubscribeActionListener);
+    }
+
+    @Override
     public void unsubscribe(String topic) throws MqttException
     {
         IMqttToken token = mClient.unsubscribe(topic);
-        token.setActionCallback(new LogActionListener());
+        token.setActionCallback(mUnsubscribeActionListener);
     }
 
     private MqttAndroidClient mClient;
+    private ConnectionPolicy mConnectionPolicy;
+    private IMqttActionListener mSubscribeActionListener;
+    private IMqttActionListener mUnsubscribeActionListener;
 }

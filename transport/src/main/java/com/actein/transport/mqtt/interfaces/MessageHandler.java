@@ -1,4 +1,4 @@
-package com.actein.transport.mqtt;
+package com.actein.transport.mqtt.interfaces;
 
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 

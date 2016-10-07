@@ -6,4 +6,5 @@ public interface VrEventsManager
     void stop() throws VrEventsException;
 
     VrEventsPublisher getPublisher();
+    VrEventsSubscriber getSubscriber();
 }

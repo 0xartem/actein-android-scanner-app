@@ -1,72 +1,105 @@
 package com.actein.vr_events;
 
-import com.actein.transport.mqtt.MessageHandler;
-import com.actein.transport.mqtt.MqttSubscriber;
+import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
+import com.actein.transport.mqtt.interfaces.Subscriber;
+import com.actein.transport.mqtt.interfaces.UINotifier;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
+import com.actein.vr_events.interfaces.VrEventsSubscriber;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
-public class MqttVrEventsSubscriber implements MessageHandler
+public class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
 {
-    public MqttVrEventsSubscriber(VrEventsHandler vrEventsHandler, MqttSubscriber mqttSubscriber)
+    public MqttVrEventsSubscriber(
+            Subscriber subscriber,
+            UINotifier uiNotifier,
+            VrEventsHandler vrEventsHandler
+            )
     {
         mVrEventsHandler = vrEventsHandler;
-        mMqttSubscriber = mqttSubscriber;
-        mMqttSubscriber.setupCallback(new MqttSubscriberCallback(this));
+        mSubscriber = subscriber;
+        mSubscriber.setupCallback(new MqttSubscriberCallback(this, uiNotifier));
     }
 
+    @Override
     public void subscribe() throws VrEventsException
     {
         try
         {
-            mMqttSubscriber.subscribe(VrTopics.VR_PC_TURN_GAME_ON);
-            mMqttSubscriber.subscribe(VrTopics.VR_PC_TURN_GAME_OFF);
-            mMqttSubscriber.subscribe(VrTopics.VR_PC_GAME_STATUS);
+            mSubscriber.subscribe(VrTopics.VR_PC_GAME_ALL);
         }
         catch (MqttException ex)
         {
-            throw new VrEventsException(ex.getMessage(), ex);
+            throw new VrEventsException("Can not subscribe to all vr events", ex);
         }
     }
 
+    @Override
     public void unsubscribe() throws VrEventsException
     {
         try
         {
-            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_GAME_STATUS);
-            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_TURN_GAME_OFF);
-            mMqttSubscriber.unsubscribe(VrTopics.VR_PC_TURN_GAME_ON);
+            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL);
         }
         catch (MqttException ex)
         {
-            throw new VrEventsException(ex.getMessage(), ex);
+            throw new VrEventsException("Can not unsubscribe from all vr events", ex);
+        }
+    }
+
+    @Override
+    public void subscribeToStatusEvent() throws VrEventsException
+    {
+        try
+        {
+            mSubscriber.subscribe(VrTopics.VR_PC_GAME_STATUS);
+        }
+        catch (MqttException ex)
+        {
+            throw new VrEventsException("Can not subscribe to vr status event", ex);
+        }
+    }
+
+    @Override
+    public void unsubscribeFromStatusEvent() throws VrEventsException
+    {
+        try
+        {
+            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL);
+        }
+        catch (MqttException ex)
+        {
+            throw new VrEventsException("Can not unsubscribe from vr status event", ex);
         }
     }
 
     @Override
     public void handleMessage(String topic, MqttMessage message) throws Exception
     {
-        if (topic.equals(VrTopics.VR_PC_TURN_GAME_ON))
+        switch (topic)
         {
+        case VrTopics.VR_PC_TURN_GAME_ON:
             processVrOnEvent(message);
-        }
-        else if (topic.equals(VrTopics.VR_PC_TURN_GAME_OFF))
-        {
+            break;
+        case VrTopics.VR_PC_TURN_GAME_OFF:
             processVrOffEvent(message);
-        }
-        else if (topic.equals(VrTopics.VR_PC_GAME_STATUS))
-        {
+            break;
+        case VrTopics.VR_PC_GAME_STATUS:
             processVrStatusEvent(message);
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown vr event message type");
         }
     }
 
     private void processVrOnEvent(MqttMessage message) throws InvalidProtocolBufferException
     {
-        VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent.parseFrom(message.getPayload());
+        VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent
+                .parseFrom(message.getPayload());
         if (mVrEventsHandler != null)
         {
             mVrEventsHandler.handleVrGameOnEvent(event);
@@ -75,7 +108,8 @@ public class MqttVrEventsSubscriber implements MessageHandler
 
     private void processVrOffEvent(MqttMessage message) throws InvalidProtocolBufferException
     {
-        VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent.parseFrom(message.getPayload());
+        VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent
+                .parseFrom(message.getPayload());
         if (mVrEventsHandler != null)
         {
             mVrEventsHandler.handleVrGameOffEvent(event);
@@ -93,7 +127,5 @@ public class MqttVrEventsSubscriber implements MessageHandler
     }
 
     private VrEventsHandler mVrEventsHandler;
-    private MqttSubscriber mMqttSubscriber;
-
-    private static String TAG = MqttVrEventsSubscriber.class.getSimpleName();
+    private Subscriber mSubscriber;
 }

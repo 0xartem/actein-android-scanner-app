@@ -6,7 +6,7 @@ import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
 public class ConnectOptionsBuilder
 {
-    public MqttConnectOptions buildConnectOptions(ConnectionPolicy connectionPolicy)
+    public static MqttConnectOptions buildConnectOptions(ConnectionPolicy connectionPolicy)
     {
         MqttConnectOptions connectOptions = new MqttConnectOptions();
         connectOptions.setCleanSession(!connectionPolicy.isPersistentSession());

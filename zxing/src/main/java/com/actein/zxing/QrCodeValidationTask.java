@@ -2,15 +2,12 @@ package com.actein.zxing;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.actein.transport.mqtt.Connection;
-import com.actein.vr_events.MqttVrEventsManager;
-import com.actein.zxing.data.Preferences;
+import com.actein.transport.mqtt.interfaces.UINotifier;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.CalendarParsedResult;
@@ -18,6 +15,7 @@ import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 
 public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
+        implements UINotifier
 {
 
     public QrCodeValidationTask(
@@ -39,6 +37,14 @@ public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
     }
+
+    //TODO: move to ui class
+    public void showToast(String message)
+    {}
+    public void showToast(String message, int duration)
+    {}
+    public void onConnectionLost()
+    {}
 
     @Override
     protected void onPreExecute()
@@ -80,7 +86,7 @@ public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
                                                                   mQrCodeSettings);
 
             publishProgress(mActivity.getString(R.string.progress_dlg_turn_vr_on_msg));
-            VrGameSwitcher switcher = new VrGameSwitcher(mActivity.getApplicationContext());
+            VrGameSwitcher switcher = new VrGameSwitcher(mActivity.getApplicationContext(), this);
             try
             {
                 switcher.turnGameOn();

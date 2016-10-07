@@ -1,12 +1,15 @@
 package com.actein.transport.mqtt;
 
 import android.content.Context;
-import android.widget.Toast;
+
+import com.actein.transport.mqtt.interfaces.Publisher;
+import com.actein.transport.mqtt.interfaces.Subscriber;
+import com.actein.transport.mqtt.policies.ConnectionPolicy;
+import com.actein.transport.mqtt.policies.PreciseDeliveryConnectionPolicy;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
@@ -14,54 +17,48 @@ public class Connection
 {
     private Connection(
             Context context,
-            String brokerHost,
-            int port,
-            String clientId,
-            boolean tlsConnection
+            MqttBrokerEndPoint brokerEndPoint,
+            MqttClientEndPoint clientEndPoint,
+            ConnectionPolicy connectionPolicy
             )
     {
         mContext = context;
-        mBrokerHost = brokerHost;
-        mPort = port;
-        mClientId = clientId;
-        mTlsConnection = tlsConnection;
+        mBrokerEndPoint = brokerEndPoint;
+        mClientEndPoint = clientEndPoint;
+        mConnectionPolicy = connectionPolicy;
 
-        String uri;
-        if (tlsConnection)
-        {
-            uri = "ssl://" + brokerHost + ":" + port;
-        }
-        else
-        {
-            uri = "tcp://" + brokerHost + ":" + port;
-        }
-
-        mClient = new MqttAndroidClient(context, uri, clientId);
-        mConnectOptions = new MqttConnectOptions();
-        mMqttPublisher = new MqttPublisher(mClient);
-        mMqttSubscriber = new MqttSubscriber(mClient);
-    }
-
-    public static Connection createInstance(Context context, String brokerHost, int port)
-    {
-        return new Connection(context, brokerHost, port, MqttClient.generateClientId(), false);
+        mClient = new MqttAndroidClient(
+                context,
+                mBrokerEndPoint.getEndpointUri(),
+                mClientEndPoint.getClientId()
+        );
     }
 
     public static Connection createInstance(
             Context context,
-            String brokerHost,
-            int port,
-            String clientId,
-            boolean tlsConnection
+            MqttBrokerEndPoint brokerEndPoint,
+            MqttClientEndPoint clientEndPoint,
+            ConnectionPolicy connectionPolicy
             )
     {
-        return new Connection(context, brokerHost, port, clientId, tlsConnection);
+        return new Connection(context, brokerEndPoint, clientEndPoint, connectionPolicy);
     }
 
-    public void connect() throws MqttException
+    public static Connection createInstance(Context context, String brokerHost)
     {
-        IMqttToken token = mClient.connect(mConnectOptions);
-        token.setActionCallback(null);
+        return new Connection(
+                context,
+                new MqttBrokerEndPoint(brokerHost),
+                new MqttClientEndPoint(),
+                new PreciseDeliveryConnectionPolicy()
+        );
+    }
+
+    public void connect(IMqttActionListener listener) throws MqttException
+    {
+        MqttConnectOptions options = ConnectOptionsBuilder.buildConnectOptions(mConnectionPolicy);
+        IMqttToken token = mClient.connect(options);
+        token.setActionCallback(listener);
     }
 
     public void disconnect(IMqttActionListener actionListener) throws MqttException
@@ -70,25 +67,37 @@ public class Connection
         token.setActionCallback(actionListener);
     }
 
-    public MqttPublisher getPublisher()
+    public Publisher createPublisher(IMqttActionListener actionListener)
     {
-        return mMqttPublisher;
+        return new MqttPublisher(mClient, mConnectionPolicy, actionListener);
     }
 
-    public MqttSubscriber getSubscriber()
+    public Subscriber createSubscriber(
+            IMqttActionListener subscribeActionListener,
+            IMqttActionListener unsubscribeActionListener)
     {
-        return mMqttSubscriber;
+        return new MqttSubscriber(
+                mClient,
+                mConnectionPolicy,
+                subscribeActionListener,
+                unsubscribeActionListener
+        );
     }
 
-    private Context mContext = null;
-    private MqttAndroidClient mClient = null;
-    private MqttConnectOptions mConnectOptions = null;
-    private String mClientId = null;
-    private String mBrokerHost = null;
-    private int mPort = 0;
-    private boolean mTlsConnection = false;
+    public MqttBrokerEndPoint getBrokerEndPoint()
+    {
+        return mBrokerEndPoint;
+    }
 
-    private MqttPublisher mMqttPublisher;
-    private MqttSubscriber mMqttSubscriber;
+    public MqttClientEndPoint getClientEndPoint()
+    {
+        return mClientEndPoint;
+    }
 
+    private Context mContext;
+
+    private MqttBrokerEndPoint mBrokerEndPoint;
+    private MqttClientEndPoint mClientEndPoint;
+    private MqttAndroidClient mClient;
+    private ConnectionPolicy mConnectionPolicy;
 }
