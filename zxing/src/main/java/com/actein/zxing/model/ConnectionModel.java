@@ -75,7 +75,6 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         catch (MqttException | VrEventsException ex)
         {
             Log.e(TAG, ex.getMessage(), ex);
-            mModelObserver.onError(ex.getMessage());
         }
     }
 
