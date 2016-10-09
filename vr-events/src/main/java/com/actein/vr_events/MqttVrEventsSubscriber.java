@@ -1,9 +1,12 @@
 package com.actein.vr_events;
 
+import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
+import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.interfaces.Subscriber;
-import com.actein.transport.mqtt.interfaces.UINotifier;
+import com.actein.transport.mqtt.actions.Action;
+import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsSubscriber;
@@ -16,21 +19,22 @@ public class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandle
 {
     public MqttVrEventsSubscriber(
             Subscriber subscriber,
-            UINotifier uiNotifier,
+            ConnectionObserver connectionObserver,
             VrEventsHandler vrEventsHandler
             )
     {
         mVrEventsHandler = vrEventsHandler;
         mSubscriber = subscriber;
-        mSubscriber.setupCallback(new MqttSubscriberCallback(this, uiNotifier));
+        mSubscriber.setupCallback(new MqttSubscriberCallback(this, connectionObserver));
     }
 
     @Override
-    public void subscribe() throws VrEventsException
+    public void subscribe(ActionStatusObserver actionStatusObserver) throws VrEventsException
     {
         try
         {
-            mSubscriber.subscribe(VrTopics.VR_PC_GAME_ALL);
+            mSubscriber.subscribe(VrTopics.VR_PC_GAME_ALL,
+                                  new CommonActionListener(Action.SUBSCRIBE, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -39,11 +43,12 @@ public class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandle
     }
 
     @Override
-    public void unsubscribe() throws VrEventsException
+    public void unsubscribe(ActionStatusObserver actionStatusObserver) throws VrEventsException
     {
         try
         {
-            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL);
+            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL,
+                                    new CommonActionListener(Action.UNSUBSCRIBE, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -52,11 +57,13 @@ public class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandle
     }
 
     @Override
-    public void subscribeToStatusEvent() throws VrEventsException
+    public void subscribeToStatusEvent(ActionStatusObserver actionStatusObserver)
+            throws VrEventsException
     {
         try
         {
-            mSubscriber.subscribe(VrTopics.VR_PC_GAME_STATUS);
+            mSubscriber.subscribe(VrTopics.VR_PC_GAME_STATUS,
+                                  new CommonActionListener(Action.SUBSCRIBE, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -65,11 +72,13 @@ public class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandle
     }
 
     @Override
-    public void unsubscribeFromStatusEvent() throws VrEventsException
+    public void unsubscribeFromStatusEvent(ActionStatusObserver actionStatusObserver)
+            throws VrEventsException
     {
         try
         {
-            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL);
+            mSubscriber.unsubscribe(VrTopics.VR_PC_GAME_ALL,
+                                    new CommonActionListener(Action.UNSUBSCRIBE, actionStatusObserver));
         }
         catch (MqttException ex)
         {

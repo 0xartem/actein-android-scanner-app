@@ -11,7 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.actein.zxing.QrCodeStatus;
+import com.actein.zxing.qr.QrCodeStatus;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
 import com.google.zxing.client.android.clipboard.ClipboardInterface;

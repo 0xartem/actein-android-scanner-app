@@ -16,9 +16,10 @@
 
 package com.google.zxing.client.android;
 
-import com.actein.zxing.QrCodeProcessingCallback;
-import com.actein.zxing.QrCodeStatus;
-import com.actein.zxing.QrCodeValidationTask;
+import com.actein.mvp.ActivityView;
+import com.actein.zxing.presenter.CaptureActivityPresenter;
+import com.actein.zxing.qr.QrCodeProcessingCallback;
+import com.actein.zxing.qr.QrCodeStatus;
 import com.actein.zxing.model.User;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -34,6 +35,7 @@ import com.google.zxing.client.android.share.ShareActivity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -68,7 +70,10 @@ import java.util.Map;
  * @author dswitkin@google.com (Daniel Switkin)
  * @author Sean Owen
  */
-public final class CaptureActivity extends Activity implements SurfaceHolder.Callback, QrCodeProcessingCallback {
+public final class CaptureActivity
+        extends Activity
+        implements SurfaceHolder.Callback, QrCodeProcessingCallback, ActivityView
+{
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
@@ -94,6 +99,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
     private OrientationManager orientationManager;
+
+    private CaptureActivityPresenter presenter;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -130,6 +137,9 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
         orientationManager = new OrientationManager(this);
+
+        presenter = new CaptureActivityPresenter(this);
+        presenter.onCreate();
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
@@ -253,6 +263,8 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
 
     @Override
     protected void onDestroy() {
+        presenter.onDestroy(isChangingConfigurations());
+
         inactivityTimer.shutdown();
         super.onDestroy();
     }
@@ -391,7 +403,7 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
             drawResultPoints(barcode, scaleFactor, rawResult);
         }
 
-        new QrCodeValidationTask(this, this, resultHandler, barcode).execute();
+        presenter.onHandleDecodeResult(this, resultHandler, barcode);
     }
 
     /**
@@ -510,5 +522,39 @@ public final class CaptureActivity extends Activity implements SurfaceHolder.Cal
                 }
                 break;
         }
+    }
+
+    // ActivityView implementation
+    @Override
+    public void showToast(String message)
+    {
+        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void showToast(String message, int duration)
+    {
+        Toast.makeText(getApplicationContext(), message, duration).show();
+    }
+
+    @Override
+    public void showErrorDialog(String message)
+    {
+        new AlertDialog.Builder(this).setTitle(getString(R.string.msg_error))
+                                     .setMessage(message)
+                                     .setPositiveButton(R.string.button_ok, null)
+                                     .show();
+    }
+
+    @Override
+    public Context getActivityContext()
+    {
+        return this;
+    }
+
+    @Override
+    public Context getApplicationContext()
+    {
+        return super.getApplicationContext();
     }
 }

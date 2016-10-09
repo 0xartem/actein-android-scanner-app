@@ -1,4 +1,4 @@
-package com.actein.zxing;
+package com.actein.zxing.qr;
 
 import com.actein.zxing.utils.DateTimeUtils;
 import com.google.zxing.client.result.CalendarParsedResult;

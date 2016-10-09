@@ -13,17 +13,11 @@ import java.util.Arrays;
 
 public class MqttSubscriber implements Subscriber
 {
-    MqttSubscriber(
-            MqttAndroidClient client,
-            ConnectionPolicy connectionPolicy,
-            IMqttActionListener subscribeActionListener,
-            IMqttActionListener unsubscribeActionListener
-            )
+    MqttSubscriber(MqttAndroidClient client,
+            ConnectionPolicy connectionPolicy)
     {
         mClient = client;
         mConnectionPolicy = connectionPolicy;
-        mSubscribeActionListener = subscribeActionListener;
-        mUnsubscribeActionListener = unsubscribeActionListener;
     }
 
     @Override
@@ -33,37 +27,35 @@ public class MqttSubscriber implements Subscriber
     }
 
     @Override
-    public void subscribe(String[] topics) throws MqttException
+    public void subscribe(String[] topics, IMqttActionListener mqttActionListener) throws MqttException
     {
         int[] qosArray = new int[topics.length];
         Arrays.fill(qosArray, mConnectionPolicy.getQualityOfService());
         IMqttToken token = mClient.subscribe(topics, qosArray);
-        token.setActionCallback(mSubscribeActionListener);
+        token.setActionCallback(mqttActionListener);
     }
 
     @Override
-    public void subscribe(String topic) throws MqttException
+    public void subscribe(String topic, IMqttActionListener mqttActionListener) throws MqttException
     {
         IMqttToken token = mClient.subscribe(topic, mConnectionPolicy.getQualityOfService());
-        token.setActionCallback(mSubscribeActionListener);
+        token.setActionCallback(mqttActionListener);
     }
 
     @Override
-    public void unsubscribe(String[] topics) throws MqttException
+    public void unsubscribe(String[] topics, IMqttActionListener mqttActionListener) throws MqttException
     {
         IMqttToken token = mClient.unsubscribe(topics);
-        token.setActionCallback(mUnsubscribeActionListener);
+        token.setActionCallback(mqttActionListener);
     }
 
     @Override
-    public void unsubscribe(String topic) throws MqttException
+    public void unsubscribe(String topic, IMqttActionListener mqttActionListener) throws MqttException
     {
         IMqttToken token = mClient.unsubscribe(topic);
-        token.setActionCallback(mUnsubscribeActionListener);
+        token.setActionCallback(mqttActionListener);
     }
 
     private MqttAndroidClient mClient;
     private ConnectionPolicy mConnectionPolicy;
-    private IMqttActionListener mSubscribeActionListener;
-    private IMqttActionListener mUnsubscribeActionListener;
 }

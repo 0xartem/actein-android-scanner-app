@@ -11,19 +11,17 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 
 public class MqttPublisher implements Publisher
 {
-    MqttPublisher(
-            MqttAndroidClient client,
-            ConnectionPolicy connectionPolicy,
-            IMqttActionListener actionListener
-            )
+    MqttPublisher(MqttAndroidClient client,
+                  ConnectionPolicy connectionPolicy)
     {
         mClient = client;
         mConnectionPolicy = connectionPolicy;
-        mActionListener = actionListener;
     }
 
     @Override
-    public void publish(String topic, MessageLite protobufMessage) throws MqttException
+    public void publish(String topic,
+                        MessageLite protobufMessage,
+                        IMqttActionListener mqttActionListener) throws MqttException
     {
         IMqttDeliveryToken token = mClient.publish(
                 topic,
@@ -31,10 +29,9 @@ public class MqttPublisher implements Publisher
                 mConnectionPolicy.getQualityOfService(),
                 mConnectionPolicy.shouldRetainMessages()
         );
-        token.setActionCallback(mActionListener);
+        token.setActionCallback(mqttActionListener);
     }
 
     private MqttAndroidClient mClient;
     private ConnectionPolicy mConnectionPolicy;
-    private IMqttActionListener mActionListener;
 }

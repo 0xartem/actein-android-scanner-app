@@ -2,8 +2,8 @@ package com.actein.transport.mqtt;
 
 import android.util.Log;
 
+import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
-import com.actein.transport.mqtt.interfaces.UINotifier;
 
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
@@ -11,10 +11,10 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 public class MqttSubscriberCallback implements MqttCallback
 {
-    public MqttSubscriberCallback(MessageHandler messageHandler, UINotifier uiNotifier)
+    public MqttSubscriberCallback(MessageHandler messageHandler, ConnectionObserver connectionObserver)
     {
         mMessageHandler = messageHandler;
-        mUiNotifier = uiNotifier;
+        mConnectionObserver = connectionObserver;
     }
 
     @Override
@@ -25,9 +25,9 @@ public class MqttSubscriberCallback implements MqttCallback
             if (cause != null)
             {
                 Log.e(TAG, "Connection lost :" + cause.getMessage(), cause);
-                if (mUiNotifier != null)
+                if (mConnectionObserver != null)
                 {
-                    mUiNotifier.onConnectionLost();
+                    mConnectionObserver.onConnectionLost();
                 }
             }
             else
@@ -61,6 +61,6 @@ public class MqttSubscriberCallback implements MqttCallback
     }
 
     private MessageHandler mMessageHandler;
-    private UINotifier mUiNotifier;
+    private ConnectionObserver mConnectionObserver;
     private static final String TAG = MqttSubscriberCallback.class.getSimpleName();
 }

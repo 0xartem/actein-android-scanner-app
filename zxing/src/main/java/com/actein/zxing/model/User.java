@@ -1,7 +1,6 @@
 package com.actein.zxing.model;
 
 import android.content.Context;
-import android.preference.Preference;
 
 import com.actein.zxing.data.Preferences;
 import com.actein.zxing.security.HashAlgorithm;

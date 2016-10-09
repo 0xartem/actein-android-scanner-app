@@ -37,6 +37,6 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     @Override
     public byte[] getLastWillPayload()
     {
-        return null;
+        return "offline".getBytes();//TODO
     }
 }

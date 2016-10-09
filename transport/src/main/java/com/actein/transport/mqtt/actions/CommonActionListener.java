@@ -1,9 +1,8 @@
-package com.actein.transport.mqtt.listeners;
+package com.actein.transport.mqtt.actions;
 
 import android.util.Log;
 
-import com.actein.transport.BuildConfig;
-import com.actein.transport.mqtt.interfaces.UINotifier;
+import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
@@ -12,10 +11,10 @@ import java.util.Arrays;
 
 public class CommonActionListener implements IMqttActionListener
 {
-    public CommonActionListener(Action action, UINotifier uiNotifier)
+    public CommonActionListener(Action action, ActionStatusObserver actionStatusObserver)
     {
         mAction = action;
-        mUiNotifier = uiNotifier;
+        mActionStatusObserver = actionStatusObserver;
     }
 
     @Override
@@ -24,11 +23,11 @@ public class CommonActionListener implements IMqttActionListener
         try
         {
             String message = buildOnSuccessMessage(asyncActionToken);
-            if (BuildConfig.DEBUG && mUiNotifier != null)
-            {
-                mUiNotifier.showToast(message);
-            }
             Log.i(TAG, message);
+            if (mActionStatusObserver != null)
+            {
+                mActionStatusObserver.onActionSuccess(mAction, message);
+            }
         }
         catch (Exception ex)
         {
@@ -42,11 +41,11 @@ public class CommonActionListener implements IMqttActionListener
         try
         {
             String message = buildOnFailureMessage(asyncActionToken, exception);
-            if (BuildConfig.DEBUG && mUiNotifier != null)
-            {
-                mUiNotifier.showToast(message);
-            }
             Log.e(TAG, message, exception);
+            if (mActionStatusObserver != null)
+            {
+                mActionStatusObserver.onActionFailure(mAction, message);
+            }
         }
         catch (Exception ex)
         {
@@ -63,11 +62,11 @@ public class CommonActionListener implements IMqttActionListener
         case DISCONNECT:
             return "MQTT disconnection succeed";
         case SUBSCRIBE:
-            return "Subscription succeed. " + Arrays.toString(asyncActionToken.getTopics());
+            return "Subscription succeed. Topics: " + Arrays.toString(asyncActionToken.getTopics());
         case UNSUBSCRIBE:
-            return "Unsubscription succeed. " + Arrays.toString(asyncActionToken.getTopics());
+            return "Unsubscription succeed. Topics: " + Arrays.toString(asyncActionToken.getTopics());
         case PUBLISH:
-            return "Publication succeed. " + Arrays.toString(asyncActionToken.getTopics());
+            return "Publication succeed. Topics: " + Arrays.toString(asyncActionToken.getTopics());
         default:
             throw new UnsupportedOperationException("Unknown action type");
         }
@@ -85,15 +84,15 @@ public class CommonActionListener implements IMqttActionListener
             messageBuilder.append("MQTT disconnection failed");
             break;
         case SUBSCRIBE:
-            messageBuilder.append("Subscription failed. ")
+            messageBuilder.append("Subscription failed. Topics: ")
                           .append(Arrays.toString(asyncActionToken.getTopics()));
             break;
         case UNSUBSCRIBE:
-            messageBuilder.append("Unsubscription failed. ")
+            messageBuilder.append("Unsubscription failed. Topics: ")
                           .append(Arrays.toString(asyncActionToken.getTopics()));
             break;
         case PUBLISH:
-            messageBuilder.append("Publication failed. ")
+            messageBuilder.append("Publication failed. Topics: ")
                           .append(Arrays.toString(asyncActionToken.getTopics()));
             break;
         default:
@@ -109,6 +108,6 @@ public class CommonActionListener implements IMqttActionListener
     }
 
     private Action mAction;
-    private UINotifier mUiNotifier;
+    private ActionStatusObserver mActionStatusObserver;
     private static final String TAG = CommonActionListener.class.getSimpleName();
 }

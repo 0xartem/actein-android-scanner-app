@@ -1,50 +1,43 @@
-package com.actein.zxing;
+package com.actein.zxing.qr;
 
-import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.actein.transport.mqtt.interfaces.UINotifier;
+import com.actein.zxing.model.ConnectionModel;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.CalendarParsedResult;
 import com.google.zxing.client.result.ParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 
-public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
-        implements UINotifier
+public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
 {
 
-    public QrCodeValidationTask(
-            Activity activity,
+    public QrCodeProcessingTask(
+            Context context,
             QrCodeProcessingCallback callback,
             ResultHandler parsedResultHandler,
-            Bitmap barCode
+            Bitmap barCode,
+            ConnectionModel connectionModel
             )
     {
-        mActivity = activity;
+        mContext = context;
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
+        mConnectionModel = connectionModel;
 
-        mQrCodeSettings = new QrCodeSettings(PreferenceManager.getDefaultSharedPreferences(activity));
+        mQrCodeSettings = new QrCodeSettings(PreferenceManager.getDefaultSharedPreferences(context));
 
-        mProgressDialog = new ProgressDialog(activity);
-        mProgressDialog.setMessage(activity.getString(R.string.progress_dlg_loading_msg));
+        mProgressDialog = new ProgressDialog(context);
+        mProgressDialog.setMessage(context.getString(R.string.progress_dlg_loading_msg));
         mProgressDialog.setIndeterminate(true);
         mProgressDialog.setCancelable(false);
     }
-
-    //TODO: move to ui class
-    public void showToast(String message)
-    {}
-    public void showToast(String message, int duration)
-    {}
-    public void onConnectionLost()
-    {}
 
     @Override
     protected void onPreExecute()
@@ -74,7 +67,7 @@ public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
     {
         try
         {
-            publishProgress(mActivity.getString(R.string.progress_dlg_qr_validation_msg));
+            publishProgress(mContext.getString(R.string.progress_dlg_qr_validation_msg));
 
             ParsedResult parsedResult = mParsedResultHandler.getResult();
             if (parsedResult.getType() != ParsedResultType.CALENDAR)
@@ -85,20 +78,16 @@ public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
             QrCodeValidator qrCodeValidator = new QrCodeValidator((CalendarParsedResult) parsedResult,
                                                                   mQrCodeSettings);
 
-            publishProgress(mActivity.getString(R.string.progress_dlg_turn_vr_on_msg));
-            VrGameSwitcher switcher = new VrGameSwitcher(mActivity.getApplicationContext(), this);
+            publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
+
+            mConnectionModel.getVrEventsManager().getPublisher().publishVrGameOnEvent(mConnectionModel);
+
             try
             {
-                switcher.turnGameOn();
+                Thread.sleep(5000);
             }
-            finally
-            {
-                switcher.close();
-            }
-            if (switcher.getCloseException() != null)
-            {
-                throw switcher.getCloseException();
-            }
+            catch (InterruptedException ex)
+            {}
 
             return qrCodeValidator.getQrCodeStatus();
         }
@@ -109,12 +98,14 @@ public class QrCodeValidationTask extends AsyncTask<Void, String, QrCodeStatus>
         return QrCodeStatus.QR_CODE_INVALID;
     }
 
-    private Activity mActivity;
+    private Context mContext;
     private QrCodeProcessingCallback mCallback;
     private QrCodeSettings mQrCodeSettings;
     private ResultHandler mParsedResultHandler;
     private Bitmap mBarCode;
     private ProgressDialog mProgressDialog;
 
-    private static final String TAG = QrCodeValidationTask.class.getSimpleName();
+    private ConnectionModel mConnectionModel;
+
+    private static final String TAG = QrCodeProcessingTask.class.getSimpleName();
 }

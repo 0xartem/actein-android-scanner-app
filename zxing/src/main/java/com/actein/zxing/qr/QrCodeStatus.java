@@ -1,4 +1,4 @@
-package com.actein.zxing;
+package com.actein.zxing.qr;
 
 public enum QrCodeStatus {
     QR_CODE_INVALID,

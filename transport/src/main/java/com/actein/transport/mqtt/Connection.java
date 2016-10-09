@@ -22,7 +22,6 @@ public class Connection
             ConnectionPolicy connectionPolicy
             )
     {
-        mContext = context;
         mBrokerEndPoint = brokerEndPoint;
         mClientEndPoint = clientEndPoint;
         mConnectionPolicy = connectionPolicy;
@@ -32,6 +31,9 @@ public class Connection
                 mBrokerEndPoint.getEndpointUri(),
                 mClientEndPoint.getClientId()
         );
+
+        mSubscriber = new MqttSubscriber(mClient, mConnectionPolicy);
+        mPublisher = new MqttPublisher(mClient, mConnectionPolicy);
     }
 
     public static Connection createInstance(
@@ -67,21 +69,19 @@ public class Connection
         token.setActionCallback(actionListener);
     }
 
-    public Publisher createPublisher(IMqttActionListener actionListener)
+    public void close()
     {
-        return new MqttPublisher(mClient, mConnectionPolicy, actionListener);
+        mClient.close();
     }
 
-    public Subscriber createSubscriber(
-            IMqttActionListener subscribeActionListener,
-            IMqttActionListener unsubscribeActionListener)
+    public Publisher getPublisher()
     {
-        return new MqttSubscriber(
-                mClient,
-                mConnectionPolicy,
-                subscribeActionListener,
-                unsubscribeActionListener
-        );
+        return mPublisher;
+    }
+
+    public Subscriber getSubscriber()
+    {
+        return mSubscriber;
     }
 
     public MqttBrokerEndPoint getBrokerEndPoint()
@@ -94,10 +94,10 @@ public class Connection
         return mClientEndPoint;
     }
 
-    private Context mContext;
-
     private MqttBrokerEndPoint mBrokerEndPoint;
     private MqttClientEndPoint mClientEndPoint;
     private MqttAndroidClient mClient;
+    private MqttSubscriber mSubscriber;
+    private MqttPublisher mPublisher;
     private ConnectionPolicy mConnectionPolicy;
 }
