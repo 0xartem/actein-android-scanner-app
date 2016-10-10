@@ -9,6 +9,7 @@ import com.actein.transport.mqtt.policies.PreciseDeliveryConnectionPolicy;
 
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
+import org.eclipse.paho.client.mqttv3.IMqttAsyncClient;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -71,7 +72,13 @@ public class Connection
 
     public void close()
     {
+        mClient.unregisterResources();
         mClient.close();
+    }
+
+    public IMqttAsyncClient getClient()
+    {
+        return mClient;
     }
 
     public Publisher getPublisher()

@@ -82,13 +82,6 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
 
             mConnectionModel.getVrEventsManager().getPublisher().publishVrGameOnEvent(mConnectionModel);
 
-            try
-            {
-                Thread.sleep(5000);
-            }
-            catch (InterruptedException ex)
-            {}
-
             return qrCodeValidator.getQrCodeStatus();
         }
         catch (Exception ex)
