@@ -12,6 +12,7 @@
             <option value="$PROJECT_DIR$/transport" />
             <option value="$PROJECT_DIR$/vr-events" />
             <option value="$PROJECT_DIR$/zxing" />
+            <option value="$PROJECT_DIR$/zxing-core" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

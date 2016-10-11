@@ -137,6 +137,7 @@
     <string name="preferences_vibrate_title">Vibrate</string>
     <string name="result_address_book">Found contact info</string>
     <string name="result_calendar">Found calendar event</string>
+    <string name="actein_result_calendar">Found actein calendar event</string>
     <string name="result_email_address">Found email address</string>
     <string name="result_geo">Found geographic coordinates</string>
     <string name="result_isbn">Found book</string>
