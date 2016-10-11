@@ -6,7 +6,7 @@ enum QualityOfService
     AT_LEAST_ONCE_DELIVERY_GUARANTEE,
     EXACTLY_ONCE_DELIVERY_GUARANTEE;
 
-    public static int convertToMqttValues(QualityOfService qualityOfService)
+    public static int convertToMqttQosValues(QualityOfService qualityOfService)
     {
         switch (qualityOfService)
         {

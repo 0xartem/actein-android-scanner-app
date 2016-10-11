@@ -7,7 +7,7 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     @Override
     public int getQualityOfService()
     {
-        return QualityOfService.convertToMqttValues(QualityOfService.EXACTLY_ONCE_DELIVERY_GUARANTEE);
+        return QualityOfService.convertToMqttQosValues(QualityOfService.EXACTLY_ONCE_DELIVERY_GUARANTEE);
     }
 
     @Override

@@ -29,7 +29,7 @@ public class Connection
 
         mClient = new MqttAndroidClient(
                 context,
-                mBrokerEndPoint.getEndpointUri(),
+                mBrokerEndPoint.getEndPointUri(),
                 mClientEndPoint.getClientId()
         );
 

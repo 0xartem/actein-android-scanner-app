@@ -29,13 +29,14 @@ public class MqttBrokerEndPoint
         return mTlsEndpoint;
     }
 
-    public String getEndpointUri()
+    public String getEndPointUri()
     {
+        String host = mBrokerHost + ":" + mPort;
         if (mTlsEndpoint)
         {
-            return "ssl://" + mBrokerHost + ":" + mPort;
+            return "ssl://" + host;
         }
-        return "tcp://" + mBrokerHost + ":" + mPort;
+        return "tcp://" + host;
     }
 
     public static final int STANDARD_MQTT_PORT = 1883;
