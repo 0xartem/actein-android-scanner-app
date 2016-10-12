@@ -2,29 +2,36 @@ package com.actein.scanner.tasks;
 
 public class SetupParams
 {
-    public SetupParams(String serverUri, String philipsHueUri, String password)
+    public SetupParams(String serverUri, String philipsHueUri, String password, int boothId)
     {
         mServerUri = serverUri;
         mPhilipsHueUri = philipsHueUri;
         mPassword = password;
+        mBoothId = boothId;
     }
 
-    public String getServerUri()
+    String getServerUri()
     {
         return mServerUri;
     }
 
-    public String getPhilipsHueUri()
+    String getPhilipsHueUri()
     {
         return mPhilipsHueUri;
     }
 
-    public String getPassword()
+    String getPassword()
     {
         return mPassword;
+    }
+
+    int getBoothId()
+    {
+        return mBoothId;
     }
 
     private String mServerUri;
     private String mPhilipsHueUri;
     private String mPassword;
+    private int mBoothId;
 }

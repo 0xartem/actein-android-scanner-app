@@ -157,5 +157,6 @@
     <string name="alert_dialog_qr_code_not_started_yet">QR code time has not started yet.</string>
     <string name="alert_dialog_qr_code_expired">QR code already expired.</string>
     <string name="alert_dialog_qr_code_wrong_location">Wrong location.</string>
+    <string name="alert_dialog_qr_code_wrong_booth">Wrong booth.</string>
     <string name="alert_dialog_qr_code_success">QR code scanning succeed.</string>
 </resources>

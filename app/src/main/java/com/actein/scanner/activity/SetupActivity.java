@@ -28,9 +28,9 @@ public class SetupActivity extends Activity
         mPhilipsHueBridgeAddressEditText = (EditText) findViewById(R.id.philipsHueBridgeAddressEditText);
         mAdminPasswordEditText = (EditText) findViewById(R.id.adminPasswordEditText);
         mBoothsSpinner = (Spinner) findViewById(R.id.boothsSpinner);
-        mOkButton = (Button) findViewById(R.id.okButton);
+        Button okButton = (Button) findViewById(R.id.okButton);
 
-        VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getString(R.string.vrBoothText));
+        final VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getString(R.string.vrBoothText));
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item,
                 vrBoothsInfo.getBoothsNames()
@@ -38,7 +38,7 @@ public class SetupActivity extends Activity
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBoothsSpinner.setAdapter(spinnerAdapter);
 
-        mOkButton.setOnClickListener(new Button.OnClickListener() {
+        okButton.setOnClickListener(new Button.OnClickListener() {
             @Override
             public void onClick(View v)
             {
@@ -71,8 +71,18 @@ public class SetupActivity extends Activity
                         return;
                     }
 
+                    String boothIdStr = mBoothsSpinner.getSelectedItem().toString();
+                    int boothId = vrBoothsInfo.getBoothId(boothIdStr);
+                    if (boothId == 0)
+                    {
+                        Toast.makeText(getApplicationContext(),
+                                       R.string.toastInvalidBoothId,
+                                       Toast.LENGTH_LONG).show();
+                        return;
+                    }
+
                     new SetupAsyncTask(SetupActivity.this)
-                            .execute(new SetupParams(serverUri, philipsHueUri, password));
+                            .execute(new SetupParams(serverUri, philipsHueUri, password, boothId));
                 }
                 catch (Exception ex)
                 {
@@ -87,6 +97,5 @@ public class SetupActivity extends Activity
     private EditText mServerAddressEditText;
     private EditText mPhilipsHueBridgeAddressEditText;
     private EditText mAdminPasswordEditText;
-    private Button mOkButton;
     private Spinner mBoothsSpinner;
 }

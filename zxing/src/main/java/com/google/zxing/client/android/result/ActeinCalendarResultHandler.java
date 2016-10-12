@@ -44,7 +44,7 @@ public class ActeinCalendarResultHandler extends ResultHandler
     public CharSequence getDisplayContents()
     {
         ActeinCalendarParsedResult acteinCalResult = (ActeinCalendarParsedResult) getResult();
-        CalendarParsedResult calResult = acteinCalResult.getCalendarParsedResult();
+        CalendarParsedResult calResult = acteinCalResult.getInnerCalendarResult();
         StringBuilder result = new StringBuilder(100);
 
         ParsedResult.maybeAppend(calResult.getSummary(), result);

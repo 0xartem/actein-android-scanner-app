@@ -1,23 +1,31 @@
 package com.actein.zxing.qr;
 
+import com.actein.zxing.model.BoothSettings;
 import com.actein.zxing.utils.DateTimeUtils;
-import com.google.zxing.client.result.CalendarParsedResult;
+import com.actein.zxing.utils.Geo;
+import com.google.zxing.client.result.ActeinCalendarParsedResult;
 
 import java.util.Date;
 
 public class QrCodeValidator
 {
-    public QrCodeValidator(CalendarParsedResult calendarParsedResult, QrCodeSettings settings)
+    public QrCodeValidator(ActeinCalendarParsedResult acteinCalParsedResult,
+                           QrCodeSettings qrCodeSettings,
+                           BoothSettings boothSettings)
     {
-        mCalendarParsedResult = calendarParsedResult;
-        mSettings = settings;
+        mActeinCalParsedResult = acteinCalParsedResult;
+        mQrCodeSettings = qrCodeSettings;
+        mBoothSettings = boothSettings;
+        mFactoryGeo = new Geo(59.046717, 10.055840);
     }
 
-    public QrCodeStatus getQrCodeStatus()
+    public QrCodeStatus validateQrCode()
     {
-        if (mCalendarParsedResult.getStart() == null
-                || mCalendarParsedResult.getEnd() == null
-                || mCalendarParsedResult.getLocation() == null)
+        if (mActeinCalParsedResult.getInnerCalendarResult().getStart() == null ||
+            mActeinCalParsedResult.getInnerCalendarResult().getEnd() == null ||
+            mActeinCalParsedResult.getEventType() == null ||
+            mActeinCalParsedResult.getGame() == null ||
+            mActeinCalParsedResult.getBoothId() <= 0)
         {
             return QrCodeStatus.QR_CODE_INVALID;
         }
@@ -25,17 +33,27 @@ public class QrCodeValidator
         Date now = DateTimeUtils.getCurrentInternetDateTime();
         Date nowMinus5Min = DateTimeUtils.dateTimeMinus5Minutes(now);
 
-        if (!mSettings.isAllowEarlyQrCodes() && mCalendarParsedResult.getStart().after(nowMinus5Min))
+        if (!mQrCodeSettings.isAllowEarlyQrCodes() &&
+            mActeinCalParsedResult.getInnerCalendarResult().getStart().after(nowMinus5Min))
         {
             return QrCodeStatus.QR_CODE_NOT_STARTED_YET;
         }
 
-        if (!mSettings.isAllowExpiredQrCodes() && mCalendarParsedResult.getEnd().before(now))
+        if (!mQrCodeSettings.isAllowExpiredQrCodes() &&
+            mActeinCalParsedResult.getInnerCalendarResult().getEnd().before(now))
         {
             return QrCodeStatus.QR_CODE_EXPIRED;
         }
 
-        if (!mCalendarParsedResult.getLocation().equals("Larvik VR Activity Center"))
+        if (mActeinCalParsedResult.getBoothId() != mBoothSettings.getBoothId())
+        {
+            return QrCodeStatus.WRONG_BOOTH;
+        }
+
+        if (mActeinCalParsedResult.getInnerCalendarResult().getLatitude() !=
+            mFactoryGeo.getLatitude() ||
+            mActeinCalParsedResult.getInnerCalendarResult().getLongitude() !=
+            mFactoryGeo.getLongitude())
         {
             return QrCodeStatus.WRONG_LOCATION;
         }
@@ -43,6 +61,8 @@ public class QrCodeValidator
         return QrCodeStatus.SUCCESS;
     }
 
-    private QrCodeSettings mSettings;
-    private CalendarParsedResult mCalendarParsedResult;
+    private QrCodeSettings mQrCodeSettings;
+    private BoothSettings mBoothSettings;
+    private Geo mFactoryGeo;
+    private ActeinCalendarParsedResult mActeinCalParsedResult;
 }

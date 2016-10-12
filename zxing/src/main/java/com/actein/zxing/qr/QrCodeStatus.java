@@ -5,5 +5,6 @@ public enum QrCodeStatus {
     QR_CODE_NOT_STARTED_YET,
     QR_CODE_EXPIRED,
     WRONG_LOCATION,
+    WRONG_BOOTH,
     SUCCESS
 }

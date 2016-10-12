@@ -8,13 +8,7 @@ public class Preferences
 {
     public static boolean appPreviouslyStarted(Context context)
     {
-        SharedPreferences prefs = getSharedPrefs(context);
-        boolean previouslyStarted = prefs.getBoolean(PREVIOUSLY_STARTED, false);
-        if (!previouslyStarted)
-        {
-            prefs.edit().putBoolean(PREVIOUSLY_STARTED, true).apply();
-        }
-        return previouslyStarted;
+        return getSharedPrefs(context).contains(SERVER_URI);
     }
 
     public static void setServerUri(Context context, String serverUri)
@@ -73,14 +67,24 @@ public class Preferences
         return getSharedPrefs(context).getString(ADMIN_PASSWORD_HASH, "");
     }
 
+    public static void setBoothId(Context context, int boothId)
+    {
+        getSharedPrefs(context).edit().putInt(BOOTH_ID, boothId).apply();
+    }
+
+    public static int getBoothId(Context context)
+    {
+        return getSharedPrefs(context).getInt(BOOTH_ID, 0);
+    }
+
     private static SharedPreferences getSharedPrefs(Context context)
     {
         return PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    private static final String PREVIOUSLY_STARTED = "previously_started";
     private static final String ADMIN_PASSWORD_HASH = "admin_password_hash";
     private static final String IS_ADMIN_USER = "is_admin_user";
     private static final String SERVER_URI = "server_uri";
     private static final String PHILIPS_HUE_URI = "philips_hue_uri";
+    private static final String BOOTH_ID = "booth_id";
 }

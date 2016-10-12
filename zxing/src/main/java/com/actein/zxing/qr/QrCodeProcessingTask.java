@@ -7,11 +7,11 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.actein.zxing.model.BoothSettings;
 import com.actein.zxing.model.ConnectionModel;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
-import com.google.zxing.client.result.CalendarParsedResult;
-import com.google.zxing.client.result.ParsedResult;
+import com.google.zxing.client.result.ActeinCalendarParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 
 public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
@@ -69,20 +69,26 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
         {
             publishProgress(mContext.getString(R.string.progress_dlg_qr_validation_msg));
 
-            ParsedResult parsedResult = mParsedResultHandler.getResult();
-            if (parsedResult.getType() != ParsedResultType.CALENDAR)
+            ActeinCalendarParsedResult result = (ActeinCalendarParsedResult) mParsedResultHandler.getResult();
+            if (result.getType() != ParsedResultType.ACTEIN_CALENDAR)
             {
                 return QrCodeStatus.QR_CODE_INVALID;
             }
 
-            QrCodeValidator qrCodeValidator = new QrCodeValidator((CalendarParsedResult) parsedResult,
-                                                                  mQrCodeSettings);
+            QrCodeValidator qrCodeValidator = new QrCodeValidator(
+                    result,
+                    mQrCodeSettings,
+                    new BoothSettings(mContext)
+            );
 
-            publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
+            QrCodeStatus status = qrCodeValidator.validateQrCode();
+            if (status == QrCodeStatus.SUCCESS)
+            {
+                publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
+                mConnectionModel.getVrEventsManager().getPublisher().publishVrGameOnEvent(mConnectionModel);
+            }
 
-            mConnectionModel.getVrEventsManager().getPublisher().publishVrGameOnEvent(mConnectionModel);
-
-            return qrCodeValidator.getQrCodeStatus();
+            return status;
         }
         catch (Exception ex)
         {

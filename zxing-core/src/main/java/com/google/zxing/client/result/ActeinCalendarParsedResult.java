@@ -37,7 +37,7 @@ public class ActeinCalendarParsedResult extends ParsedResult
         return boothId;
     }
 
-    public CalendarParsedResult getCalendarParsedResult()
+    public CalendarParsedResult getInnerCalendarResult()
     {
         return calendarParsedResult;
     }
@@ -53,8 +53,8 @@ public class ActeinCalendarParsedResult extends ParsedResult
         return result.toString();
     }
 
-    private CalendarParsedResult calendarParsedResult;
-    private String eventType;
-    private String game;
-    private int boothId;
+    private final CalendarParsedResult calendarParsedResult;
+    private final String eventType;
+    private final String game;
+    private final int boothId;
 }

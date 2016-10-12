@@ -57,6 +57,7 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
                     hashAlgorithm.hashStrToBase64(setupParams.getPassword()).trim()
                     );
             Preferences.setIsAdminUser(mActivity, true);
+            Preferences.setBoothId(mActivity, setupParams.getBoothId());
 
             IntentIntegrator intentIntegrator = new IntentIntegrator(mActivity);
             intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);

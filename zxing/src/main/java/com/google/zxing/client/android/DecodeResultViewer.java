@@ -229,6 +229,10 @@ class DecodeResultViewer
             buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_wrong_location));
             buildContentsView(View.VISIBLE, resultHandler);
             break;
+        case WRONG_BOOTH:
+            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_wrong_booth));
+            buildContentsView(View.VISIBLE, resultHandler);
+            break;
         case SUCCESS:
             buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_success));
             buildContentsView(View.VISIBLE, resultHandler);
