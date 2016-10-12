@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class VRBoothsInfo
+public class VrBoothSelector
 {
-
-    public VRBoothsInfo(CharSequence commonText)
+    public VrBoothSelector(CharSequence commonText)
     {
         for (Integer i = 1; i <= BOOTHS_COUNT; i++)
         {

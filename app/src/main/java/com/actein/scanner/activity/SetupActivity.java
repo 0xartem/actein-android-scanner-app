@@ -11,7 +11,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.actein.scanner.R;
-import com.actein.scanner.booth.VRBoothsInfo;
+import com.actein.scanner.booth.VrBoothSelector;
 import com.actein.scanner.tasks.*;
 import com.actein.scanner.utils.StringUtils;
 
@@ -30,10 +30,10 @@ public class SetupActivity extends Activity
         mBoothsSpinner = (Spinner) findViewById(R.id.boothsSpinner);
         Button okButton = (Button) findViewById(R.id.okButton);
 
-        final VRBoothsInfo vrBoothsInfo = new VRBoothsInfo(getString(R.string.vrBoothText));
+        final VrBoothSelector vrBoothSelector = new VrBoothSelector(getString(R.string.vrBoothText));
         ArrayAdapter<CharSequence> spinnerAdapter = new ArrayAdapter<>(
                 this, android.R.layout.simple_spinner_item,
-                vrBoothsInfo.getBoothsNames()
+                vrBoothSelector.getBoothsNames()
         );
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mBoothsSpinner.setAdapter(spinnerAdapter);
@@ -72,7 +72,7 @@ public class SetupActivity extends Activity
                     }
 
                     String boothIdStr = mBoothsSpinner.getSelectedItem().toString();
-                    int boothId = vrBoothsInfo.getBoothId(boothIdStr);
+                    int boothId = vrBoothSelector.getBoothId(boothIdStr);
                     if (boothId == 0)
                     {
                         Toast.makeText(getApplicationContext(),
