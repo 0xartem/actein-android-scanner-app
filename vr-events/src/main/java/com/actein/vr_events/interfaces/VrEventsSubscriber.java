@@ -4,9 +4,9 @@ import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
 
 public interface VrEventsSubscriber
 {
-    void subscribe(ActionStatusObserver actionStatusObserver) throws VrEventsException;
-    void unsubscribe(ActionStatusObserver actionStatusObserver) throws VrEventsException;
+    void subscribeToAll(ActionStatusObserver actionStatusObserver) throws VrEventsException;
+    void unsubscribeFromAll(ActionStatusObserver actionStatusObserver) throws VrEventsException;
     void subscribeToStatusEvent(ActionStatusObserver actionStatusObserver) throws VrEventsException;
-    void unsubscribeFromStatusEvent(ActionStatusObserver actionStatusObserver) throws VrEventsException;
+    void unsubscribeFromStatusEvent(ActionStatusObserver actionStatusObserver)throws VrEventsException;
 
 }

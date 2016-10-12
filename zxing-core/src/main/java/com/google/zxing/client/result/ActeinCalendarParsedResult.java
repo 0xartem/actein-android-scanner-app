@@ -1,5 +1,7 @@
 package com.google.zxing.client.result;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * Represents a parsed result that encodes an actein calendar event at a certain time, optionally
  * with attendees and a location. Actein options: event type, game, booth.
@@ -35,6 +37,14 @@ public class ActeinCalendarParsedResult extends ParsedResult
     public int getBoothId()
     {
         return boothId;
+    }
+
+    public long getDurationSeconds()
+    {
+        return 0;
+        /*TODO: utils: move to another projectreturn getDateDifference(calendarParsedResult.getEnd(),
+                                 calendarParsedResult.getStart(),
+                                 TimeUnit.SECONDS);*/
     }
 
     public CalendarParsedResult getInnerCalendarResult()

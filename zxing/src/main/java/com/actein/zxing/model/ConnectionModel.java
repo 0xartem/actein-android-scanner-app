@@ -10,6 +10,7 @@ import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.vr_events.MqttVrEventsManager;
+import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsManager;
 import com.actein.zxing.data.Preferences;
@@ -23,6 +24,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
     {
         mContextOwner = contextOwner;
         mModelObserver = modelObserver;
+        mBoothSettings = new BoothSettings(contextOwner.getActivityContext());
     }
 
     public VrEventsManager getVrEventsManager()
@@ -30,18 +32,29 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         return mVrEventsManager;
     }
 
+    public BoothSettings getBoothSettings()
+    {
+        return mBoothSettings;
+    }
+
     @Override
     public void onCreate()
     {
         try
         {
+            //TODO: check changing config
             mConnection = Connection.createInstance(
                     mContextOwner.getApplicationContext(),
                     Preferences.getServerUri(mContextOwner.getApplicationContext())
                     );
             mConnection.connect(new CommonActionListener(Action.CONNECT, this));
 
-            mVrEventsManager = new MqttVrEventsManager(mConnection);
+            VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
+                    .newBuilder()
+                    .setId(mBoothSettings.getBoothId())
+                    .build();
+
+            mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
             mVrEventsManager.start(
                     new TestVrEventsHandler(mContextOwner.getApplicationContext()),
                     this
@@ -63,7 +76,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             {
                 if (mVrEventsManager.isRunning())
                 {
-                    mVrEventsManager.getSubscriber().unsubscribe(this);
+                    mVrEventsManager.getSubscriber().unsubscribeFromStatusEvent(this);
                     mVrEventsManager.stop();
                 }
 
@@ -96,7 +109,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             mModelObserver.onConnected(message);
             try
             {
-                mVrEventsManager.getSubscriber().subscribe(this);
+                mVrEventsManager.getSubscriber().subscribeToStatusEvent(this);
             }
             catch (VrEventsException ex)
             {
@@ -153,6 +166,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
 
     private Connection mConnection = null;
     private VrEventsManager mVrEventsManager = null;
+    private BoothSettings mBoothSettings;
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

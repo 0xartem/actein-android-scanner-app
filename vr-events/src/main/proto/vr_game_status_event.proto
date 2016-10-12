@@ -6,12 +6,14 @@ option optimize_for = LITE_RUNTIME;
 option java_package = "com.actein.vr_events";
 option java_outer_classname = "VrGameStatusProtos";
 
-enum VrGameStatus {
+enum VrGameStatus
+{
   UNKNOWN = 0;
   GAME_OFF = 1;
   GAME_ON = 2;
 }
 
-message VrGameStatusEvent {
+message VrGameStatusEvent
+{
   VrGameStatus status = 1;
 }

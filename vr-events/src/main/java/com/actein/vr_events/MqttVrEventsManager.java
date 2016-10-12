@@ -10,19 +10,21 @@ import com.actein.vr_events.interfaces.VrEventsSubscriber;
 
 public class MqttVrEventsManager implements VrEventsManager
 {
-    public MqttVrEventsManager(Connection connection)
+    public MqttVrEventsManager(Connection connection, VrBoothInfoProtos.VrBoothInfo vrBoothInfo)
     {
         mConnection = connection;
+        mVrBoothInfo = vrBoothInfo;
     }
 
     @Override
     public void start(VrEventsHandler vrEventsHandler, ConnectionObserver connectionObserver)
             throws VrEventsException
     {
-        mVrEventsPublisher = new MqttVrEventsPublisher(mConnection.getPublisher());
+        mVrEventsPublisher = new MqttVrEventsPublisher(mConnection.getPublisher(), mVrBoothInfo);
 
         mVrEventsSubscriber = new MqttVrEventsSubscriber(
                 mConnection.getSubscriber(),
+                mVrBoothInfo,
                 connectionObserver,
                 vrEventsHandler
         );
@@ -60,4 +62,5 @@ public class MqttVrEventsManager implements VrEventsManager
     private MqttVrEventsPublisher mVrEventsPublisher = null;
     private MqttVrEventsSubscriber mVrEventsSubscriber = null;
     private Connection mConnection;
+    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 }

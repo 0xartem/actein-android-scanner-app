@@ -7,7 +7,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.actein.zxing.model.BoothSettings;
+import com.actein.vr_events.VrGameProtos;
 import com.actein.zxing.model.ConnectionModel;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
@@ -78,14 +78,23 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
             QrCodeValidator qrCodeValidator = new QrCodeValidator(
                     result,
                     mQrCodeSettings,
-                    new BoothSettings(mContext)
+                    mConnectionModel.getBoothSettings()
             );
 
             QrCodeStatus status = qrCodeValidator.validateQrCode();
             if (status == QrCodeStatus.SUCCESS)
             {
                 publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
-                mConnectionModel.getVrEventsManager().getPublisher().publishVrGameOnEvent(mConnectionModel);
+
+                VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
+                        .newBuilder()
+                        .setGameName(result.getGame())
+                        .setGameDurationSeconds(result.getDurationSeconds())
+                        .build();
+
+                mConnectionModel.getVrEventsManager()
+                                .getPublisher()
+                                .publishVrGameOnEvent(vrGame, mConnectionModel);
             }
 
             return status;

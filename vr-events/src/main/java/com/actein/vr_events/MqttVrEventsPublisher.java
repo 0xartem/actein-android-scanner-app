@@ -6,28 +6,37 @@ import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsPublisher;
+import com.actein.vr_events.topics.VrTopicBuilder;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class MqttVrEventsPublisher implements VrEventsPublisher
+class MqttVrEventsPublisher implements VrEventsPublisher
 {
-    public MqttVrEventsPublisher(Publisher publisher)
+    MqttVrEventsPublisher(Publisher publisher, VrBoothInfoProtos.VrBoothInfo vrBoothInfo)
     {
         mPublisher = publisher;
+        mVrBoothInfo = vrBoothInfo;
     }
 
     @Override
-    public void publishVrGameOnEvent(ActionStatusObserver actionStatusObserver)
+    public void publishVrGameOnEvent(VrGameProtos.VrGame vrGame,
+                                     ActionStatusObserver actionStatusObserver)
             throws VrEventsException
     {
         try
         {
-            VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent.newBuilder().build();
-            mPublisher.publish(
-                    VrTopics.VR_PC_TURN_GAME_ON,
-                    event,
-                    new CommonActionListener(Action.PUBLISH, actionStatusObserver)
-                    );
+            VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent
+                    .newBuilder()
+                    .setVrBoothInfo(mVrBoothInfo)
+                    .setGame(vrGame)
+                    .build();
+
+            String topic = new VrTopicBuilder().setToGameOn()
+                                               .setBoothId(mVrBoothInfo.getId())
+                                               .build();
+            mPublisher.publish(topic,
+                               event,
+                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -41,12 +50,17 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
     {
         try
         {
-            VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent.newBuilder().build();
-            mPublisher.publish(
-                    VrTopics.VR_PC_TURN_GAME_OFF,
-                    event,
-                    new CommonActionListener(Action.PUBLISH, actionStatusObserver)
-                    );
+            VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent
+                    .newBuilder()
+                    .setVrBoothInfo(mVrBoothInfo)
+                    .build();
+
+            String topic = new VrTopicBuilder().setToGameOff()
+                                               .setBoothId(mVrBoothInfo.getId())
+                                               .build();
+            mPublisher.publish(topic,
+                               event,
+                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -65,11 +79,13 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
                     .newBuilder()
                     .setStatus(status)
                     .build();
-            mPublisher.publish(
-                    VrTopics.VR_PC_GAME_STATUS,
-                    event,
-                    new CommonActionListener(Action.PUBLISH, actionStatusObserver)
-                    );
+
+            String topic = new VrTopicBuilder().setToGameStatus()
+                                               .setBoothId(mVrBoothInfo.getId())
+                                               .build();
+            mPublisher.publish(topic,
+                               event,
+                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
         }
         catch (MqttException ex)
         {
@@ -78,4 +94,5 @@ public class MqttVrEventsPublisher implements VrEventsPublisher
     }
 
     private Publisher mPublisher;
+    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 }
