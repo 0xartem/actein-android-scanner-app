@@ -53,7 +53,7 @@ public class CommonActionListener implements IMqttActionListener
         }
     }
 
-    private String buildOnSuccessMessage(IMqttToken asyncActionToken)
+    protected String buildOnSuccessMessage(IMqttToken asyncActionToken)
     {
         switch (mAction)
         {
@@ -72,7 +72,7 @@ public class CommonActionListener implements IMqttActionListener
         }
     }
 
-    private String buildOnFailureMessage(IMqttToken asyncActionToken, Throwable exception)
+    protected String buildOnFailureMessage(IMqttToken asyncActionToken, Throwable exception)
     {
         StringBuilder messageBuilder = new StringBuilder();
         switch (mAction)
