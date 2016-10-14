@@ -1,5 +1,7 @@
 package com.google.zxing.client.result;
 
+import com.actein.utils.DateTimeUtils;
+
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -41,10 +43,9 @@ public class ActeinCalendarParsedResult extends ParsedResult
 
     public long getDurationSeconds()
     {
-        return 0;
-        /*TODO: utils: move to another projectreturn getDateDifference(calendarParsedResult.getEnd(),
-                                 calendarParsedResult.getStart(),
-                                 TimeUnit.SECONDS);*/
+        return DateTimeUtils.getDateDifference(calendarParsedResult.getEnd(),
+                                               calendarParsedResult.getStart(),
+                                               TimeUnit.SECONDS);
     }
 
     public CalendarParsedResult getInnerCalendarResult()
