@@ -1,8 +1,9 @@
 package com.actein.zxing.qr;
 
 import com.actein.zxing.model.BoothSettings;
-import com.actein.zxing.utils.DateTimeUtils;
-import com.actein.zxing.utils.Geo;
+import com.actein.android.utils.InternetTime;
+import com.actein.utils.Geo;
+import com.actein.utils.DateTimeUtils;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 
 import java.util.Date;
@@ -30,7 +31,7 @@ public class QrCodeValidator
             return QrCodeStatus.QR_CODE_INVALID;
         }
 
-        Date now = DateTimeUtils.getCurrentInternetDateTime();
+        Date now = InternetTime.getCurrentInternetDateTime();
         Date nowMinus5Min = DateTimeUtils.dateTimeMinus5Minutes(now);
 
         if (!mQrCodeSettings.isAllowEarlyQrCodes() &&

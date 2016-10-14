@@ -8,7 +8,7 @@ import android.util.Log;
 
 import com.actein.scanner.R;
 import com.actein.zxing.data.Preferences;
-import com.actein.zxing.security.HashAlgorithm;
+import com.actein.android.utils.security.HashAlgorithm;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>

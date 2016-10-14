@@ -3,8 +3,8 @@ package com.actein.zxing.model;
 import android.content.Context;
 
 import com.actein.zxing.data.Preferences;
-import com.actein.zxing.security.HashAlgorithm;
-import com.actein.zxing.security.HashAlgorithmException;
+import com.actein.android.utils.security.HashAlgorithm;
+import com.actein.android.utils.security.HashAlgorithmException;
 
 public class User
 {

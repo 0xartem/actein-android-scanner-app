@@ -1,4 +1,4 @@
-package com.actein.zxing.utils;
+package com.actein.utils;
 
 public class Geo
 {

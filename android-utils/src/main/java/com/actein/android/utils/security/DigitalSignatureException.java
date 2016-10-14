@@ -1,4 +1,4 @@
-package com.actein.zxing.security;
+package com.actein.android.utils.security;
 
 public class DigitalSignatureException extends Exception
 {

@@ -13,7 +13,7 @@ import android.widget.Toast;
 import com.actein.scanner.R;
 import com.actein.scanner.booth.VrBoothSelector;
 import com.actein.scanner.tasks.*;
-import com.actein.scanner.utils.StringUtils;
+import com.actein.android.utils.StringUtils;
 
 public class SetupActivity extends Activity
 {

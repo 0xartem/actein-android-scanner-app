@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-package com.actein.zxing.utils;
+package com.actein.android.utils;
 
 import android.os.SystemClock;
 import android.util.Log;
 
-import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
