@@ -24,7 +24,7 @@ public class MqttSubscriberCallback implements MqttCallback
         {
             if (cause != null)
             {
-                Log.e(TAG, "Connection lost :" + cause.getMessage(), cause);
+                Log.e(TAG, "MQTT connection lost: " + cause.getMessage(), cause);
                 if (mConnectionObserver != null)
                 {
                     mConnectionObserver.onConnectionLost();
@@ -32,7 +32,7 @@ public class MqttSubscriberCallback implements MqttCallback
             }
             else
             {
-                Log.i(TAG, "Disconnected gracefully");
+                Log.i(TAG, "MQTT client disconnected gracefully");
             }
         }
         catch (Exception ex)
