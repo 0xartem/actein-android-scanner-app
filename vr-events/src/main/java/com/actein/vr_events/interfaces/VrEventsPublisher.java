@@ -7,10 +7,10 @@ import com.actein.vr_events.VrGameStatusProtos;
 public interface VrEventsPublisher
 {
     void publishVrGameOnEvent(VrGameProtos.VrGame vrGame,
-                              ActionStatusObserver actionStatusObserver) throws VrEventsException;
+                              ActionStatusObserver actionObserver) throws VrEventsException;
 
-    void publishVrGameOffEvent(ActionStatusObserver actionStatusObserver) throws VrEventsException;
+    void publishVrGameOffEvent(ActionStatusObserver actionObserver) throws VrEventsException;
 
     void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status,
-                                  ActionStatusObserver actionStatusObserver) throws VrEventsException;
+                                  ActionStatusObserver actionObserver) throws VrEventsException;
 }

@@ -19,8 +19,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
     }
 
     @Override
-    public void publishVrGameOnEvent(VrGameProtos.VrGame vrGame,
-                                     ActionStatusObserver actionStatusObserver)
+    public void publishVrGameOnEvent(VrGameProtos.VrGame vrGame, ActionStatusObserver actionObserver)
             throws VrEventsException
     {
         try
@@ -36,7 +35,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
                                                .build();
             mPublisher.publish(topic,
                                event,
-                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
+                               new CommonActionListener(Action.PUBLISH, actionObserver));
         }
         catch (MqttException ex)
         {
@@ -45,8 +44,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
     }
 
     @Override
-    public void publishVrGameOffEvent(ActionStatusObserver actionStatusObserver)
-            throws VrEventsException
+    public void publishVrGameOffEvent(ActionStatusObserver actionObserver) throws VrEventsException
     {
         try
         {
@@ -60,7 +58,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
                                                .build();
             mPublisher.publish(topic,
                                event,
-                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
+                               new CommonActionListener(Action.PUBLISH, actionObserver));
         }
         catch (MqttException ex)
         {
@@ -70,7 +68,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
 
     @Override
     public void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status,
-                                         ActionStatusObserver actionStatusObserver)
+                                         ActionStatusObserver actionObserver)
             throws VrEventsException
     {
         try
@@ -85,7 +83,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
                                                .build();
             mPublisher.publish(topic,
                                event,
-                               new CommonActionListener(Action.PUBLISH, actionStatusObserver));
+                               new CommonActionListener(Action.PUBLISH, actionObserver));
         }
         catch (MqttException ex)
         {
