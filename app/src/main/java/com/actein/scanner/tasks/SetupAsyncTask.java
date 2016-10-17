@@ -6,9 +6,10 @@ import android.content.Intent;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.actein.android.utils.Base64Utils;
 import com.actein.scanner.R;
 import com.actein.zxing.data.Preferences;
-import com.actein.android.utils.security.HashAlgorithm;
+import com.actein.utils.security.HashAlgorithm;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
@@ -54,7 +55,7 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
             Preferences.setAdminPwdHash(
                     mActivity,
                     // use trim() as workaround for android Issue 159799
-                    hashAlgorithm.hashStrToBase64(setupParams.getPassword()).trim()
+                    Base64Utils.hashStringToBase64(setupParams.getPassword(), hashAlgorithm).trim()
                     );
             Preferences.setIsAdminUser(mActivity, true);
             Preferences.setBoothId(mActivity, setupParams.getBoothId());

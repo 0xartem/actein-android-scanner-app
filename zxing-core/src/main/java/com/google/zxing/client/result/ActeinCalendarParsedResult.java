@@ -6,24 +6,46 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a parsed result that encodes an actein calendar event at a certain time, optionally
- * with attendees and a location. Actein options: event type, game, booth.
+ * with attendees and a location. Actein options: version, event type, game, booth, signature fields.
  *
  * @author Artem Brazhnikov
  */
 
 public class ActeinCalendarParsedResult extends ParsedResult
 {
-    public ActeinCalendarParsedResult(CalendarParsedResult calendarParsedResult,
+    public ActeinCalendarParsedResult(int version,
+                                      String bid,
                                       String eventType,
-                                      String game,
-                                      int boothId)
+                                      String gameName,
+                                      long steamGameId,
+                                      int boothId,
+                                      String publicKey,
+                                      String signature,
+                                      byte[] signedData,
+                                      CalendarParsedResult calendarParsedResult)
     {
         super(ParsedResultType.ACTEIN_CALENDAR);
 
-        this.calendarParsedResult = calendarParsedResult;
+        this.version = version;
+        this.bid = bid;
         this.eventType = eventType;
-        this.game = game;
+        this.gameName = gameName;
+        this.steamGameId = steamGameId;
         this.boothId = boothId;
+        this.publicKey = publicKey;
+        this.signature = signature;
+        this.signedData = signedData;
+        this.calendarParsedResult = calendarParsedResult;
+    }
+
+    public int getVersion()
+    {
+        return version;
+    }
+
+    public String getBid()
+    {
+        return bid;
     }
 
     public String getEventType()
@@ -31,14 +53,34 @@ public class ActeinCalendarParsedResult extends ParsedResult
         return eventType;
     }
 
-    public String getGame()
+    public String getGameName()
     {
-        return game;
+        return gameName;
+    }
+
+    public long getSteamGameId()
+    {
+        return steamGameId;
     }
 
     public int getBoothId()
     {
         return boothId;
+    }
+
+    public String getPublicKey()
+    {
+        return publicKey;
+    }
+
+    public String getSignature()
+    {
+        return signature;
+    }
+
+    public byte[] getSignedData()
+    {
+        return signedData;
     }
 
     public long getDurationSeconds()
@@ -59,13 +101,21 @@ public class ActeinCalendarParsedResult extends ParsedResult
         StringBuilder result = new StringBuilder();
         result.append(calendarParsedResult.getDisplayResult());
         maybeAppend(eventType, result);
-        maybeAppend(game, result);
+        maybeAppend(gameName, result);
         maybeAppend(Integer.toString(boothId), result);
         return result.toString();
     }
 
-    private final CalendarParsedResult calendarParsedResult;
+    private final int version;
+    private final String bid;
     private final String eventType;
-    private final String game;
+    private final String gameName;
+    private final long steamGameId;
     private final int boothId;
+
+    private final String publicKey;
+    private final String signature;
+    private final byte[] signedData;
+
+    private final CalendarParsedResult calendarParsedResult;
 }

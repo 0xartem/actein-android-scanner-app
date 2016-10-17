@@ -2,9 +2,10 @@ package com.actein.zxing.model;
 
 import android.content.Context;
 
+import com.actein.android.utils.Base64Utils;
 import com.actein.zxing.data.Preferences;
-import com.actein.android.utils.security.HashAlgorithm;
-import com.actein.android.utils.security.HashAlgorithmException;
+import com.actein.utils.security.HashAlgorithm;
+import com.actein.utils.security.HashAlgorithmException;
 
 public class User
 {
@@ -21,7 +22,7 @@ public class User
             String savedPwdHashBase64 = Preferences.getAdminPwdHash(context);
             HashAlgorithm hashAlgorithm = new HashAlgorithm();
             // use trim() as workaround for android Issue 159799
-            String pwdHashBase64 = hashAlgorithm.hashStrToBase64(password).trim();
+            String pwdHashBase64 = Base64Utils.hashStringToBase64(password, hashAlgorithm).trim();
             return savedPwdHashBase64.equals(pwdHashBase64);
         }
         return false;
@@ -35,7 +36,7 @@ public class User
             String savedPwdHashBase64 = Preferences.getAdminPwdHash(context);
             HashAlgorithm hashAlgorithm = new HashAlgorithm();
             // use trim() as workaround for android Issue 159799
-            String pwdHashBase64 = hashAlgorithm.hashStrToBase64(password).trim();
+            String pwdHashBase64 = Base64Utils.hashStringToBase64(password, hashAlgorithm).trim();
             if (!savedPwdHashBase64.equals(pwdHashBase64))
             {
                 Preferences.setAdminPwdHash(context, pwdHashBase64);

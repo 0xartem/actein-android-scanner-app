@@ -82,19 +82,24 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
             );
 
             QrCodeStatus status = qrCodeValidator.validateQrCode();
-            if (status == QrCodeStatus.SUCCESS)
+            if (QrCodeStatus.isSuccess(status))
             {
-                publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
+                EventType eventType = EventType.convertToEventType(result.getEventType());
+                if (eventType == EventType.VIRTUAL_REALITY_HTC)
+                {
+                    publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 
-                VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
-                        .newBuilder()
-                        .setGameName(result.getGame())
-                        .setGameDurationSeconds(result.getDurationSeconds())
-                        .build();
+                    VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
+                            .newBuilder()
+                            .setGameName(result.getGameName())
+                            .setSteamGameId(result.getSteamGameId())
+                            .setGameDurationSeconds(result.getDurationSeconds())
+                            .build();
 
-                mConnectionModel.getVrEventsManager()
-                                .getPublisher()
-                                .publishVrGameOnEvent(vrGame, mConnectionModel);
+                    mConnectionModel.getVrEventsManager()
+                                    .getPublisher()
+                                    .publishVrGameOnEvent(vrGame, mConnectionModel);
+                }
             }
 
             return status;

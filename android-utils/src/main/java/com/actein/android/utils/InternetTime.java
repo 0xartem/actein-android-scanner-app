@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class InternetTime
 {
-    public static Date getCurrentInternetDateTime()
+    public static Date getCurrentDateTime()
     {
         SntpClient sntpClient = new SntpClient();
         int timeout = 5000;
