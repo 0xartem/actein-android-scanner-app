@@ -47,7 +47,10 @@ public class MqttSubscriberCallback implements MqttCallback
         try
         {
             Log.i(TAG, "Message arrived: " + topic);
-            mMessageHandler.handleMessage(topic, message);
+            if (mMessageHandler != null)
+            {
+                mMessageHandler.handleMessage(topic, message);
+            }
         }
         catch (Exception ex)
         {
