@@ -1,6 +1,6 @@
 package com.actein.vr_events.interfaces;
 
-import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
+import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.vr_events.VrGameProtos;
 import com.actein.vr_events.VrGameStatusProtos;
 

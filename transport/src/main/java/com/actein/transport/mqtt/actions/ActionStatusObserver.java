@@ -1,6 +1,4 @@
-package com.actein.transport.mqtt.interfaces;
-
-import com.actein.transport.mqtt.actions.Action;
+package com.actein.transport.mqtt.actions;
 
 public interface ActionStatusObserver
 {

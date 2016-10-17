@@ -1,6 +1,6 @@
 package com.actein.vr_events.interfaces;
 
-import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
+import com.actein.transport.mqtt.actions.ActionStatusObserver;
 
 public interface VrEventsSubscriber
 {

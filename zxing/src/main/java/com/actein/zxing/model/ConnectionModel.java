@@ -5,7 +5,7 @@ import android.util.Log;
 import com.actein.mvp.ContextOwner;
 import com.actein.mvp.Model;
 import com.actein.transport.mqtt.Connection;
-import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
+import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;

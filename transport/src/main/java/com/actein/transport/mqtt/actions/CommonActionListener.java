@@ -2,8 +2,6 @@ package com.actein.transport.mqtt.actions;
 
 import android.util.Log;
 
-import com.actein.transport.mqtt.interfaces.ActionStatusObserver;
-
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
 
