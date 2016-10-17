@@ -14,7 +14,7 @@ import java.util.Arrays;
 public class MqttSubscriber implements Subscriber
 {
     MqttSubscriber(MqttAndroidClient client,
-            ConnectionPolicy connectionPolicy)
+                   ConnectionPolicy connectionPolicy)
     {
         mClient = client;
         mConnectionPolicy = connectionPolicy;
