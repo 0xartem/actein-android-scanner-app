@@ -8,5 +8,5 @@ class VrTopics
     static final String VR_PC_TURN_GAME_ON = "factory/booths/" + BOOTH_ID + "/pc/vr/game/on";
     static final String VR_PC_TURN_GAME_OFF = "factory/booths/" + BOOTH_ID + "/pc/vr/game/off";
 
-    static final String VR_PC_GAME_STATUS = "factory/booths/" + BOOTH_ID + "/pc/game/status";
+    static final String VR_PC_GAME_STATUS = "factory/booths/" + BOOTH_ID + "/pc/vr/game/status";
 }
