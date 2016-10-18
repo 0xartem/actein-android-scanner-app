@@ -28,15 +28,22 @@ public class ActeinVEventResultParser extends ResultParser
         String versionStr = matchSingleVCardPrefixedField("VERSION", rawText, true);
         String bid = matchSingleVCardPrefixedField("BID", rawText, true);
         String eventType = matchSingleVCardPrefixedField("EVENT_TYPE", rawText, true);
+        String equipment = matchSingleVCardPrefixedField("EQUIPMENT", rawText, true);
         String gameName = matchSingleVCardPrefixedField("GAME", rawText, true);
         String steamGameIdStr = matchSingleVCardPrefixedField("STEAM_GAME_ID", rawText, true);
         String boothIdStr = matchSingleVCardPrefixedField("BOOTH", rawText, true);
-        String publicKey = matchSingleVCardPrefixedField("PUBLIC_KEY", rawText, true);
-        String signature = matchSingleVCardPrefixedField("SIGNATURE", rawText, true);
-        byte[] signedData = "data".getBytes();
 
-        if (eventType == null || gameName == null || steamGameIdStr == null || boothIdStr == null ||
-            publicKey == null || signature == null || signedData == null)
+        int signatureIdx = rawText.indexOf("SIGNATURE:");
+        if (signatureIdx == -1 || signatureIdx == 0)
+        {
+            return null;
+        }
+        // move one byte back to ignore last \n
+        byte[] signedData = rawText.substring(0, signatureIdx - 1).getBytes();
+        String signature = rawText.substring(signatureIdx + "SIGNATURE:".length(), rawText.length());
+
+        if (eventType == null || equipment == null || gameName == null ||
+            steamGameIdStr == null || boothIdStr == null)
         {
             return null;
         }
@@ -52,10 +59,10 @@ public class ActeinVEventResultParser extends ResultParser
         return new ActeinCalendarParsedResult(version,
                                               bid,
                                               eventType,
+                                              equipment,
                                               gameName,
                                               steamGameId,
                                               boothId,
-                                              publicKey,
                                               signature,
                                               signedData,
                                               calendarParsedResult);

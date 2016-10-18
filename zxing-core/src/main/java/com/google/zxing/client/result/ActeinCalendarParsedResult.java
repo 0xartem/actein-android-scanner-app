@@ -6,7 +6,8 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Represents a parsed result that encodes an actein calendar event at a certain time, optionally
- * with attendees and a location. Actein options: version, event type, game, booth, signature fields.
+ * with attendees and a location. Actein options: version, event type, equipment game, booth,
+ * signature fields.
  *
  * @author Artem Brazhnikov
  */
@@ -16,10 +17,10 @@ public class ActeinCalendarParsedResult extends ParsedResult
     public ActeinCalendarParsedResult(int version,
                                       String bid,
                                       String eventType,
+                                      String equipment,
                                       String gameName,
                                       long steamGameId,
                                       int boothId,
-                                      String publicKey,
                                       String signature,
                                       byte[] signedData,
                                       CalendarParsedResult calendarParsedResult)
@@ -29,10 +30,10 @@ public class ActeinCalendarParsedResult extends ParsedResult
         this.version = version;
         this.bid = bid;
         this.eventType = eventType;
+        this.equipment = equipment;
         this.gameName = gameName;
         this.steamGameId = steamGameId;
         this.boothId = boothId;
-        this.publicKey = publicKey;
         this.signature = signature;
         this.signedData = signedData;
         this.calendarParsedResult = calendarParsedResult;
@@ -53,6 +54,11 @@ public class ActeinCalendarParsedResult extends ParsedResult
         return eventType;
     }
 
+    public String getEquipment()
+    {
+        return equipment;
+    }
+
     public String getGameName()
     {
         return gameName;
@@ -66,11 +72,6 @@ public class ActeinCalendarParsedResult extends ParsedResult
     public int getBoothId()
     {
         return boothId;
-    }
-
-    public String getPublicKey()
-    {
-        return publicKey;
     }
 
     public String getSignature()
@@ -101,6 +102,7 @@ public class ActeinCalendarParsedResult extends ParsedResult
         StringBuilder result = new StringBuilder();
         result.append(calendarParsedResult.getDisplayResult());
         maybeAppend(eventType, result);
+        maybeAppend(equipment, result);
         maybeAppend(gameName, result);
         maybeAppend(Integer.toString(boothId), result);
         return result.toString();
@@ -109,11 +111,11 @@ public class ActeinCalendarParsedResult extends ParsedResult
     private final int version;
     private final String bid;
     private final String eventType;
+    private final String equipment;
     private final String gameName;
     private final long steamGameId;
     private final int boothId;
 
-    private final String publicKey;
     private final String signature;
     private final byte[] signedData;
 

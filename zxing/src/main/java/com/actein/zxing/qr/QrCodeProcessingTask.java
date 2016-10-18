@@ -76,6 +76,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
             }
 
             QrCodeValidator qrCodeValidator = new QrCodeValidator(
+                    mContext,
                     result,
                     mQrCodeSettings,
                     mConnectionModel.getBoothSettings()
@@ -84,8 +85,9 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
             QrCodeStatus status = qrCodeValidator.validateQrCode();
             if (QrCodeStatus.isSuccess(status))
             {
-                EventType eventType = EventType.convertToEventType(result.getEventType());
-                if (eventType == EventType.VIRTUAL_REALITY_HTC)
+                EquipmentType equipmentType = EquipmentType.convertToEquipmentType(result.getEquipment());
+                if (equipmentType == EquipmentType.HTC_VIVE ||
+                    equipmentType == EquipmentType.HTC_VIVE_WITH_SUBPACK)
                 {
                     publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 

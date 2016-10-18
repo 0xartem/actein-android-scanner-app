@@ -31,8 +31,7 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
                 callback,
                 resultHandler,
                 barcode,
-                mConnectionModel)
-                .execute();
+                mConnectionModel).execute();
     }
 
     @Override

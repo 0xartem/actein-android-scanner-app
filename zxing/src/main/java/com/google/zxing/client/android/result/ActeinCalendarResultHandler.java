@@ -70,6 +70,7 @@ public class ActeinCalendarResultHandler extends ResultHandler
         ParsedResult.maybeAppend(calResult.getDescription(), result);
 
         ParsedResult.maybeAppend(acteinCalResult.getEventType(), result);
+        ParsedResult.maybeAppend(acteinCalResult.getEquipment(), result);
         ParsedResult.maybeAppend(acteinCalResult.getGameName(), result);
         ParsedResult.maybeAppend(Integer.toString(acteinCalResult.getBoothId()), result);
 

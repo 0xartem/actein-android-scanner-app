@@ -1,5 +1,7 @@
 package com.actein.zxing.qr;
 
+import android.content.Context;
+
 import com.actein.zxing.model.BoothSettings;
 import com.actein.android.utils.InternetTime;
 import com.actein.utils.Geo;
@@ -10,7 +12,8 @@ import java.util.Date;
 
 public class QrCodeValidator
 {
-    public QrCodeValidator(ActeinCalendarParsedResult acteinCalParsedResult,
+    public QrCodeValidator(Context context,
+                           ActeinCalendarParsedResult acteinCalParsedResult,
                            QrCodeSettings qrCodeSettings,
                            BoothSettings boothSettings)
     {
@@ -18,7 +21,7 @@ public class QrCodeValidator
         mQrCodeSettings = qrCodeSettings;
         mBoothSettings = boothSettings;
         mFactoryGeo = new Geo(59.046717, 10.055840);
-        mSignatureVerifier = new QrCodeSignatureVerifier(acteinCalParsedResult);
+        mSignatureVerifier = new QrCodeSignatureVerifier(context, acteinCalParsedResult);
     }
 
     public QrCodeStatus validateQrCode()
@@ -49,10 +52,10 @@ public class QrCodeValidator
         return (mActeinCalParsedResult.getVersion() > 0 &&
                 mActeinCalParsedResult.getBid() != null &&
                 mActeinCalParsedResult.getEventType() != null &&
+                mActeinCalParsedResult.getEquipment() != null &&
                 mActeinCalParsedResult.getGameName() != null &&
                 mActeinCalParsedResult.getSteamGameId() >= 0 &&
                 mActeinCalParsedResult.getBoothId() > 0 &&
-                mActeinCalParsedResult.getPublicKey() != null &&
                 mActeinCalParsedResult.getSignature() != null &&
                 mActeinCalParsedResult.getSignedData() != null &&
                 mActeinCalParsedResult.getInnerCalendarResult().getStart() != null &&
