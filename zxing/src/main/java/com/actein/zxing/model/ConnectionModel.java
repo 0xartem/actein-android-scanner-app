@@ -57,6 +57,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
             mVrEventsManager.start(
                     new TestVrEventsHandler(mContextOwner.getApplicationContext()),
+                    this,
                     this
                     );
         }
@@ -76,7 +77,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             {
                 if (mVrEventsManager.isRunning())
                 {
-                    mVrEventsManager.getSubscriber().unsubscribeFromStatusEvent(this);
+                    mVrEventsManager.getSubscriber().unsubscribeFromStatusEvent();
                     mVrEventsManager.stop();
                 }
 
@@ -109,7 +110,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             mModelObserver.onConnected(message);
             try
             {
-                mVrEventsManager.getSubscriber().subscribeToStatusEvent(this);
+                mVrEventsManager.getSubscriber().subscribeToStatusEvent();
             }
             catch (VrEventsException ex)
             {

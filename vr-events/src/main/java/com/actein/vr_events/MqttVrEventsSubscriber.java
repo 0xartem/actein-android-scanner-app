@@ -1,5 +1,7 @@
 package com.actein.vr_events;
 
+import android.util.Log;
+
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
@@ -21,14 +23,17 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
     MqttVrEventsSubscriber(
             Subscriber subscriber,
             VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
+            VrEventsHandler vrEventsHandler,
             ConnectionObserver connectionObserver,
-            VrEventsHandler vrEventsHandler
-            )
+            ActionStatusObserver actionObserver)
     {
-        mVrBoothInfo = vrBoothInfo;
         mSubscriber = subscriber;
+        mVrBoothInfo = vrBoothInfo;
         mVrEventsHandler = vrEventsHandler;
         mSubscriber.setupCallback(new MqttSubscriberCallback(this, connectionObserver));
+
+        mSubscribeListener = new CommonActionListener(Action.SUBSCRIBE, actionObserver);
+        mUnsubscribeListener = new CommonActionListener(Action.UNSUBSCRIBE, actionObserver);
 
         mAllVrEventsTopic = new VrTopicBuilder().setToAll()
                                                 .setBoothId(mVrBoothInfo.getId())
@@ -48,60 +53,57 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
     }
 
     @Override
-    public void subscribeToAll(ActionStatusObserver actionStatusObserver) throws VrEventsException
+    public void subscribeToAll() throws VrEventsException
     {
         try
         {
-            mSubscriber.subscribe(mAllVrEventsTopic,
-                                  new CommonActionListener(Action.SUBSCRIBE, actionStatusObserver));
+            mSubscriber.subscribe(mAllVrEventsTopic, mSubscribeListener);
         }
         catch (MqttException ex)
         {
+            Log.e(TAG, ex.getMessage(), ex);
             throw new VrEventsException("Can not subscribe to all vr events", ex);
         }
     }
 
     @Override
-    public void unsubscribeFromAll(ActionStatusObserver actionStatusObserver)
-            throws VrEventsException
+    public void unsubscribeFromAll() throws VrEventsException
     {
         try
         {
-            mSubscriber.unsubscribe(mAllVrEventsTopic,
-                                    new CommonActionListener(Action.UNSUBSCRIBE,actionStatusObserver));
+            mSubscriber.unsubscribe(mAllVrEventsTopic, mUnsubscribeListener);
         }
         catch (MqttException ex)
         {
+            Log.e(TAG, ex.getMessage(), ex);
             throw new VrEventsException("Can not unsubscribe from all vr events", ex);
         }
     }
 
     @Override
-    public void subscribeToStatusEvent(ActionStatusObserver actionStatusObserver)
-            throws VrEventsException
+    public void subscribeToStatusEvent() throws VrEventsException
     {
         try
         {
-            mSubscriber.subscribe(mGameStatusVrTopic,
-                                  new CommonActionListener(Action.SUBSCRIBE, actionStatusObserver));
+            mSubscriber.subscribe(mGameStatusVrTopic, mSubscribeListener);
         }
         catch (MqttException ex)
         {
+            Log.e(TAG, ex.getMessage(), ex);
             throw new VrEventsException("Can not subscribe to vr status event", ex);
         }
     }
 
     @Override
-    public void unsubscribeFromStatusEvent(ActionStatusObserver actionStatusObserver)
-            throws VrEventsException
+    public void unsubscribeFromStatusEvent() throws VrEventsException
     {
         try
         {
-            mSubscriber.unsubscribe(mGameStatusVrTopic,
-                                    new CommonActionListener(Action.UNSUBSCRIBE, actionStatusObserver));
+            mSubscriber.unsubscribe(mGameStatusVrTopic, mUnsubscribeListener);
         }
         catch (MqttException ex)
         {
+            Log.e(TAG, ex.getMessage(), ex);
             throw new VrEventsException("Can not unsubscribe from vr status event", ex);
         }
     }
@@ -111,11 +113,11 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
     {
         if (topic.equals(mGameOnVrTopic))
         {
-            processVrOnEvent(message);
+            processGameOnEvent(message);
         }
         else if (topic.equals(mGameOffVrTopic))
         {
-            processVrOffEvent(message);
+            processGameOffEvent(message);
         }
         else if (topic.equals(mGameStatusVrTopic))
         {
@@ -127,7 +129,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
     }
 
-    private void processVrOnEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processGameOnEvent(MqttMessage message) throws InvalidProtocolBufferException
     {
         VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent
                 .parseFrom(message.getPayload());
@@ -137,7 +139,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
     }
 
-    private void processVrOffEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processGameOffEvent(MqttMessage message) throws InvalidProtocolBufferException
     {
         VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent
                 .parseFrom(message.getPayload());
@@ -157,11 +159,17 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
     }
 
-    private String mAllVrEventsTopic;
-    private String mGameStatusVrTopic;
-    private String mGameOnVrTopic;
-    private String mGameOffVrTopic;
-    private VrEventsHandler mVrEventsHandler;
+    private final String mAllVrEventsTopic;
+    private final String mGameStatusVrTopic;
+    private final String mGameOnVrTopic;
+    private final String mGameOffVrTopic;
+
     private Subscriber mSubscriber;
+    private VrEventsHandler mVrEventsHandler;
     private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
+
+    private CommonActionListener mSubscribeListener;
+    private CommonActionListener mUnsubscribeListener;
+
+    private static String TAG = MqttVrEventsSubscriber.class.getSimpleName();
 }

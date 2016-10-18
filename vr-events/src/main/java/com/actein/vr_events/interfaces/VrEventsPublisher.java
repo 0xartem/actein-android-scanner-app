@@ -1,16 +1,11 @@
 package com.actein.vr_events.interfaces;
 
-import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.vr_events.VrGameProtos;
 import com.actein.vr_events.VrGameStatusProtos;
 
 public interface VrEventsPublisher
 {
-    void publishVrGameOnEvent(VrGameProtos.VrGame vrGame,
-                              ActionStatusObserver actionObserver) throws VrEventsException;
-
-    void publishVrGameOffEvent(ActionStatusObserver actionObserver) throws VrEventsException;
-
-    void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status,
-                                  ActionStatusObserver actionObserver) throws VrEventsException;
+    void publishVrGameOnEvent(VrGameProtos.VrGame vrGame) throws VrEventsException;
+    void publishVrGameOffEvent() throws VrEventsException;
+    void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status) throws VrEventsException;
 }

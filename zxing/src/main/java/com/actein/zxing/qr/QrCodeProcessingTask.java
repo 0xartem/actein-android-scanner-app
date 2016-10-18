@@ -98,7 +98,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
 
                     mConnectionModel.getVrEventsManager()
                                     .getPublisher()
-                                    .publishVrGameOnEvent(vrGame, mConnectionModel);
+                                    .publishVrGameOnEvent(vrGame);
                 }
             }
 

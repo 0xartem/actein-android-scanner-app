@@ -1,6 +1,7 @@
 package com.actein.vr_events;
 
 import com.actein.transport.mqtt.Connection;
+import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
@@ -17,16 +18,22 @@ public class MqttVrEventsManager implements VrEventsManager
     }
 
     @Override
-    public void start(VrEventsHandler vrEventsHandler, ConnectionObserver connectionObserver)
-            throws VrEventsException
+    public void start(VrEventsHandler vrEventsHandler,
+                      ConnectionObserver connectionObserver,
+                      ActionStatusObserver actionObserver) throws VrEventsException
     {
-        mVrEventsPublisher = new MqttVrEventsPublisher(mConnection.getPublisher(), mVrBoothInfo);
+        mVrEventsPublisher = new MqttVrEventsPublisher(
+                mConnection.getPublisher(),
+                mVrBoothInfo,
+                actionObserver
+        );
 
         mVrEventsSubscriber = new MqttVrEventsSubscriber(
                 mConnection.getSubscriber(),
                 mVrBoothInfo,
+                vrEventsHandler,
                 connectionObserver,
-                vrEventsHandler
+                actionObserver
         );
 
         mIsRunning = true;
