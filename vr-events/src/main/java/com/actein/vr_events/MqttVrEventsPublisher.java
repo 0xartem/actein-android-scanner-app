@@ -38,7 +38,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
                                                .setBoothId(mVrBoothInfo.getId())
                                                .build();
 
-            mPublisher.publish(topic, event, mPublishListener);
+            mPublisher.publish(topic, event, mPublishListener, false);
         }
         catch (MqttException ex)
         {
@@ -61,7 +61,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
                                                .setBoothId(mVrBoothInfo.getId())
                                                .build();
 
-            mPublisher.publish(topic, event, mPublishListener);
+            mPublisher.publish(topic, event, mPublishListener, false);
         }
         catch (MqttException ex)
         {
