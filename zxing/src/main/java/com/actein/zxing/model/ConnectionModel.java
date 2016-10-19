@@ -25,6 +25,18 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         mContextOwner = contextOwner;
         mModelObserver = modelObserver;
         mBoothSettings = new BoothSettings(contextOwner.getActivityContext());
+
+        mConnection = Connection.createInstance(
+                mContextOwner.getApplicationContext(),
+                Preferences.getServerUri(mContextOwner.getApplicationContext())
+                );
+
+        VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
+                .newBuilder()
+                .setId(mBoothSettings.getBoothId())
+                .build();
+
+        mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
     }
 
     public VrEventsManager getVrEventsManager()
@@ -38,30 +50,16 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
     }
 
     @Override
-    public void onCreate()
+    public void onCreate(boolean isChangingConfiguration)
     {
         try
         {
-            //TODO: check changing config
-            mConnection = Connection.createInstance(
-                    mContextOwner.getApplicationContext(),
-                    Preferences.getServerUri(mContextOwner.getApplicationContext())
-                    );
-            mConnection.connect(new CommonActionListener(Action.CONNECT, this));
-
-            VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
-                    .newBuilder()
-                    .setId(mBoothSettings.getBoothId())
-                    .build();
-
-            mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
-            mVrEventsManager.start(
-                    new TestVrEventsHandler(mContextOwner.getApplicationContext()),
-                    this,
-                    this
-                    );
+            if (!isChangingConfiguration)
+            {
+                mConnection.connect(new CommonActionListener(Action.CONNECT, this));
+            }
         }
-        catch (MqttException | VrEventsException ex)
+        catch (MqttException ex)
         {
             Log.e(TAG, ex.getMessage(), ex);
             mModelObserver.onError(ex.getMessage());
@@ -110,6 +108,9 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             mModelObserver.onConnected(message);
             try
             {
+                mVrEventsManager.start(new TestVrEventsHandler(mContextOwner.getApplicationContext()),
+                                       this,
+                                       this);
                 mVrEventsManager.getSubscriber().subscribeToStatusEvent();
             }
             catch (VrEventsException ex)

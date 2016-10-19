@@ -16,17 +16,19 @@ public class TestVrEventsHandler implements VrEventsHandler
     }
     public void handleVrGameOnEvent(VrGameOnProtos.VrGameOnEvent event)
     {
-        Toast.makeText(mAppContext, "The On event received", Toast.LENGTH_LONG).show();
+        Toast.makeText(mAppContext, "The On event received", Toast.LENGTH_SHORT).show();
     }
 
     public void handleVrGameOffEvent(VrGameOffProtos.VrGameOffEvent event)
     {
-        Toast.makeText(mAppContext, "The Off event received", Toast.LENGTH_LONG).show();
+        Toast.makeText(mAppContext, "The Off event received", Toast.LENGTH_SHORT).show();
     }
 
     public void handleVrGameStatusEvent(VrGameStatusProtos.VrGameStatusEvent event)
     {
-        Toast.makeText(mAppContext, "Status event received", Toast.LENGTH_LONG).show();
+        Toast.makeText(mAppContext,
+                       "Status event received: " + event.getStatus().toString(),
+                       Toast.LENGTH_SHORT).show();
     }
 
     private Context mAppContext;

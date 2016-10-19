@@ -35,9 +35,9 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     }
 
     @Override
-    public void onCreate()
+    public void onCreate(boolean isChangingConfiguration)
     {
-        mConnectionModel.onCreate();
+        mConnectionModel.onCreate(isChangingConfiguration);
     }
 
     @Override

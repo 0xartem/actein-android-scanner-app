@@ -139,7 +139,7 @@ public final class CaptureActivity
         orientationManager = new OrientationManager(this);
 
         presenter = new CaptureActivityPresenter(this);
-        presenter.onCreate();
+        presenter.onCreate(false);//TODO
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
