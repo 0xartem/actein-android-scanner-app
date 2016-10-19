@@ -32,6 +32,21 @@ public class MqttPublisher implements Publisher
         token.setActionCallback(mqttActionListener);
     }
 
+    @Override
+    public void publish(String topic,
+                        MessageLite protobufMessage,
+                        IMqttActionListener mqttActionListener,
+                        boolean retained) throws MqttException
+    {
+        IMqttDeliveryToken token = mClient.publish(
+                topic,
+                protobufMessage.toByteArray(),
+                mConnectionPolicy.getQualityOfService(),
+                retained
+        );
+        token.setActionCallback(mqttActionListener);
+    }
+
     private MqttAndroidClient mClient;
     private ConnectionPolicy mConnectionPolicy;
 }

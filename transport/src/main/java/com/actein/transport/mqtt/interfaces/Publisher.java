@@ -10,4 +10,9 @@ public interface Publisher
     void publish(String topic,
                  MessageLite protobufMessage,
                  IMqttActionListener mqttActionListener) throws MqttException;
+
+    void publish(String topic,
+                 MessageLite protobufMessage,
+                 IMqttActionListener mqttActionListener,
+                 boolean retained) throws MqttException;
 }
