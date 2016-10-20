@@ -1,9 +1,7 @@
 package com.actein.scanner.booth;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class VrBoothSelector
 {
@@ -11,24 +9,22 @@ public class VrBoothSelector
     {
         for (Integer i = 1; i <= BOOTHS_COUNT; i++)
         {
-            mBoothsMap.put(commonText + " " + i.toString(), i);
+            mBoothsList.add(commonText + " " + i.toString());
         }
     }
 
     public List<CharSequence> getBoothsNames()
     {
-        return new ArrayList<>(mBoothsMap.keySet());
+        return mBoothsList;
     }
 
     public int getBoothId(final String boothStr)
     {
-        Integer boothId = mBoothsMap.get(boothStr);
-        if (boothId == null)
-            return 0;
-        return boothId;
+        String idStr = boothStr.substring(boothStr.lastIndexOf(" ") + 1);
+        return Integer.parseInt(idStr);
     }
 
     private static final int BOOTHS_COUNT = 16;
-    private Map<CharSequence, Integer> mBoothsMap = new HashMap<>();
+    private List<CharSequence> mBoothsList = new ArrayList<>();
 
 }
