@@ -121,8 +121,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             break;
         case DISCONNECT:
             mModelObserver.onDisconnected(message);
-            //mConnection.close();
-            //mConnection = null;
+            mConnection.close();
             break;
         case SUBSCRIBE:
             mModelObserver.onSubscribed(message);
