@@ -19,6 +19,10 @@ class OrientationManager
             //noinspection ResourceType
             mActivity.setRequestedOrientation(getCurrentOrientation());
         }
+        else
+        {
+            mActivity.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_SENSOR);
+        }
     }
 
     private int getCurrentOrientation()
