@@ -42,7 +42,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not publish vr game turn off event", ex);
         }
     }
@@ -65,7 +65,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not publish vr game turn on event", ex);
         }
     }
@@ -88,7 +88,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not publish vr game status event", ex);
         }
     }

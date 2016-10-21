@@ -86,8 +86,8 @@ public class SetupActivity extends Activity
                 }
                 catch (Exception ex)
                 {
-                    Log.e(TAG, ex.getMessage(), ex);
-                    Toast.makeText(getApplicationContext(), ex.getMessage(), Toast.LENGTH_SHORT)
+                    Log.e(TAG, ex.toString(), ex);
+                    Toast.makeText(getApplicationContext(), ex.toString(), Toast.LENGTH_SHORT)
                          .show();
                 }
             }

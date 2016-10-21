@@ -29,7 +29,7 @@ public class CommonActionListener implements IMqttActionListener
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
     }
 
@@ -47,7 +47,7 @@ public class CommonActionListener implements IMqttActionListener
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
     }
 
@@ -99,7 +99,7 @@ public class CommonActionListener implements IMqttActionListener
 
         if (exception != null)
         {
-            messageBuilder.append(". Error: ").append(exception.getMessage());
+            messageBuilder.append(". Error: ").append(exception.toString());
         }
 
         return messageBuilder.toString();

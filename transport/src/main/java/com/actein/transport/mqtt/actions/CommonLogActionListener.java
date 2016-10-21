@@ -24,7 +24,7 @@ public class CommonLogActionListener implements IMqttActionListener
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
     }
 
@@ -48,7 +48,7 @@ public class CommonLogActionListener implements IMqttActionListener
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
     }
 

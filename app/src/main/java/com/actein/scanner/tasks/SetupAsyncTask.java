@@ -67,7 +67,7 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
         return null;
     }

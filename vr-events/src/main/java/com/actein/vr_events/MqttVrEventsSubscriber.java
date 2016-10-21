@@ -61,7 +61,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not subscribe to all vr events", ex);
         }
     }
@@ -75,7 +75,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not unsubscribe from all vr events", ex);
         }
     }
@@ -89,7 +89,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not subscribe to vr status event", ex);
         }
     }
@@ -103,7 +103,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
             throw new VrEventsException("Can not unsubscribe from vr status event", ex);
         }
     }

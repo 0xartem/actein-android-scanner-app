@@ -61,8 +61,8 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         }
         catch (MqttException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
-            mModelObserver.onError(ex.getMessage());
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.toString());
         }
     }
 
@@ -87,7 +87,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         }
         catch (MqttException | VrEventsException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
     }
 
@@ -115,8 +115,8 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             }
             catch (VrEventsException ex)
             {
-                Log.e(TAG, ex.getMessage(), ex);
-                mModelObserver.onError(ex.getMessage());
+                Log.e(TAG, ex.toString(), ex);
+                mModelObserver.onError(ex.toString());
             }
             break;
         case DISCONNECT:
@@ -143,19 +143,11 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         switch (action)
         {
         case CONNECT:
-            mModelObserver.onConnected(message);
-            break;
         case DISCONNECT:
-            mModelObserver.onDisconnected(message);
-            break;
         case SUBSCRIBE:
-            mModelObserver.onSubscribed(message);
-            break;
         case UNSUBSCRIBE:
-            mModelObserver.onUnsubscribed(message);
-            break;
         case PUBLISH:
-            mModelObserver.onPublished(message);
+            mModelObserver.onError(message);
             break;
         default:
             throw new UnsupportedOperationException("Unknown action type");

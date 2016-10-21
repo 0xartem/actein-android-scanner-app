@@ -23,7 +23,7 @@ public class DigitalSignatureAlgorithm
         }
         catch (NoSuchAlgorithmException | InvalidKeySpecException | InvalidKeyException ex)
         {
-            throw new DigitalSignatureException(ex.getMessage(), ex);
+            throw new DigitalSignatureException(ex.toString(), ex);
         }
     }
 
@@ -36,7 +36,7 @@ public class DigitalSignatureAlgorithm
         }
         catch (SignatureException ex)
         {
-            throw new DigitalSignatureException(ex.getMessage(), ex);
+            throw new DigitalSignatureException(ex.toString(), ex);
         }
     }
 

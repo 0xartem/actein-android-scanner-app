@@ -13,7 +13,7 @@ public class HashAlgorithm
         }
         catch (NoSuchAlgorithmException ex)
         {
-            throw new HashAlgorithmException(ex.getMessage(), ex);
+            throw new HashAlgorithmException(ex.toString(), ex);
         }
     }
 

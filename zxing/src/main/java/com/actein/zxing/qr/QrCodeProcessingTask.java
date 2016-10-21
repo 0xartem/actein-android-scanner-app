@@ -108,7 +108,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
         }
         catch (Exception ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
         return QrCodeStatus.QR_CODE_INVALID;
     }

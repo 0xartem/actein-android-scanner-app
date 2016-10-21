@@ -36,7 +36,7 @@ class QrCodeSignatureVerifier
         }
         catch (DigitalSignatureException ex)
         {
-            Log.e(TAG, ex.getMessage(), ex);
+            Log.e(TAG, ex.toString(), ex);
         }
         return QrCodeStatus.DIGITAL_SIGNATURE_INVALID;
     }
