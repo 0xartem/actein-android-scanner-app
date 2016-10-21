@@ -1,5 +1,6 @@
 package com.google.zxing.client.android;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Handler;
@@ -11,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.actein.zxing.qr.QrCodeProcessingResult;
 import com.actein.zxing.qr.QrCodeStatus;
 import com.google.zxing.Result;
 import com.google.zxing.ResultMetadataType;
@@ -213,37 +215,47 @@ class DecodeResultViewer
         }
     }
 
-    private void buildQrCodeStatusView(QrCodeStatus status, ResultHandler resultHandler, boolean internal)
+    @SuppressLint("StringFormatMatches")
+    private void buildQrCodeStatusView(QrCodeProcessingResult result,
+                                       ResultHandler resultHandler,
+                                       boolean internal)
     {
-        switch (status)
+        String message;
+        switch (result.getStatus())
         {
         case QR_CODE_NOT_STARTED_YET:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_not_started_yet));
-            buildContentsView(View.VISIBLE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_not_started_yet);
             break;
         case QR_CODE_EXPIRED:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_expired));
-            buildContentsView(View.VISIBLE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_expired);
             break;
         case WRONG_LOCATION:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_wrong_location));
-            buildContentsView(View.VISIBLE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_wrong_location,
+                                          result.getParsedResult().getInnerCalendarResult().getLocation());
             break;
         case WRONG_BOOTH:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_wrong_booth));
-            buildContentsView(View.VISIBLE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_wrong_booth,
+                                          result.getParsedResult().getBoothId());
+            break;
+        case DIGITAL_SIGNATURE_INVALID:
+            message = mActivity.getString(R.string.alert_dialog_qr_code_digital_sign);
             break;
         case SUCCESS:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_success));
-            buildContentsView(View.VISIBLE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_success);
             break;
         case QR_CODE_INVALID:
         default:
-            buildResultTextView(View.VISIBLE, mActivity.getString(R.string.alert_dialog_qr_code_invalid));
-            if (internal)
-                buildContentsView(View.VISIBLE, resultHandler);
-            else
-                buildContentsView(View.GONE, resultHandler);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_invalid);
+        }
+
+        buildResultTextView(View.VISIBLE, message);
+        if (!internal && result.getStatus() == QrCodeStatus.QR_CODE_INVALID)
+        {
+            buildContentsView(View.GONE, resultHandler);
+        }
+        else
+        {
+            buildContentsView(View.VISIBLE, resultHandler);
         }
     }
 
@@ -270,7 +282,7 @@ class DecodeResultViewer
 
     // handle decode result with additional information
     void handleDecodeResultInternally(
-            QrCodeStatus status,
+            QrCodeProcessingResult result,
             Result rawResult,
             ResultHandler resultHandler,
             Bitmap barcode
@@ -290,7 +302,7 @@ class DecodeResultViewer
         buildResultTextView(View.GONE, "");
         buildContentsView(View.VISIBLE, resultHandler);
 
-        buildQrCodeStatusView(status, resultHandler, true);
+        buildQrCodeStatusView(result, resultHandler, true);
 
         buildSupplementTextView(View.VISIBLE, resultHandler);
         buildResultButtonView(View.VISIBLE, resultHandler);
@@ -300,7 +312,7 @@ class DecodeResultViewer
 
     // handle decode result normally
     void handleDecodeResultExternally(
-            QrCodeStatus status,
+            QrCodeProcessingResult result,
             Result rawResult,
             ResultHandler resultHandler,
             Bitmap barcode
@@ -317,7 +329,7 @@ class DecodeResultViewer
         buildTimeView(View.VISIBLE, rawResult);
         buildMetaView(View.GONE, rawResult);
 
-        buildQrCodeStatusView(status, resultHandler, false);
+        buildQrCodeStatusView(result, resultHandler, false);
 
         buildSupplementTextView(View.GONE, resultHandler);
         buildResultButtonView(View.GONE, resultHandler);

@@ -1,4 +1,4 @@
-package com.actein.zxing.qr;
+package com.actein.zxing.model;
 
 public enum EquipmentType
 {
@@ -7,7 +7,7 @@ public enum EquipmentType
     HTC_VIVE_WITH_SUBPACK,
     PLAYSTATION_VR;
 
-    static EquipmentType convertToEquipmentType(String eventType)
+    public static EquipmentType convertToEquipmentType(String eventType)
     {
         if (eventType.equals("HTC Vive"))
         {

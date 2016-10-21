@@ -6,5 +6,5 @@ import com.google.zxing.client.android.result.ResultHandler;
 
 public interface QrCodeProcessingCallback
 {
-    void onQrCodeValidated(QrCodeStatus status, ResultHandler resultHandler, Bitmap barCode);
+    void onQrCodeValidated(QrCodeProcessingResult result, ResultHandler resultHandler, Bitmap barCode);
 }

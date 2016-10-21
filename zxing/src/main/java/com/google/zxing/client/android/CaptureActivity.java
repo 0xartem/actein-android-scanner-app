@@ -19,7 +19,7 @@ package com.google.zxing.client.android;
 import com.actein.mvp.ActivityView;
 import com.actein.zxing.presenter.CaptureActivityPresenter;
 import com.actein.zxing.qr.QrCodeProcessingCallback;
-import com.actein.zxing.qr.QrCodeStatus;
+import com.actein.zxing.qr.QrCodeProcessingResult;
 import com.actein.zxing.model.User;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
@@ -505,10 +505,10 @@ public final class CaptureActivity
     }
 
     // QrCodeProcessingCallback implementation
-    public void onQrCodeValidated(QrCodeStatus status, ResultHandler resultHandler, Bitmap barCode) {
+    public void onQrCodeValidated(QrCodeProcessingResult result, ResultHandler resultHandler, Bitmap barCode) {
         switch (source) {
             case NATIVE_APP_INTENT:
-                decodeResultViewer.handleDecodeResultExternally(status, lastResult, resultHandler, barCode);
+                decodeResultViewer.handleDecodeResultExternally(result, lastResult, resultHandler, barCode);
                 break;
             case NONE:
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
@@ -519,7 +519,7 @@ public final class CaptureActivity
                     // Wait a moment or else it will scan the same barcode continuously about 3 times
                     restartPreviewAfterDelay(BULK_MODE_SCAN_DELAY_MS);
                 } else {
-                    decodeResultViewer.handleDecodeResultInternally(status, lastResult, resultHandler, barCode);
+                    decodeResultViewer.handleDecodeResultInternally(result, lastResult, resultHandler, barCode);
                 }
                 break;
         }

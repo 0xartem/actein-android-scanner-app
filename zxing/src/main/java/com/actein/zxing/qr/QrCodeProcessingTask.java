@@ -9,12 +9,13 @@ import android.util.Log;
 
 import com.actein.vr_events.VrGameProtos;
 import com.actein.zxing.model.ConnectionModel;
+import com.actein.zxing.model.EquipmentType;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
 
-public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
+public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessingResult>
 {
 
     public QrCodeProcessingTask(
@@ -52,18 +53,18 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
     }
 
     @Override
-    protected void onPostExecute(QrCodeStatus status)
+    protected void onPostExecute(QrCodeProcessingResult result)
     {
         if (mProgressDialog.isShowing())
         {
             mProgressDialog.dismiss();
         }
 
-        mCallback.onQrCodeValidated(status, mParsedResultHandler, mBarCode);
+        mCallback.onQrCodeValidated(result, mParsedResultHandler, mBarCode);
     }
 
     @Override
-    protected QrCodeStatus doInBackground(Void... params)
+    protected QrCodeProcessingResult doInBackground(Void... params)
     {
         try
         {
@@ -72,7 +73,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
             ActeinCalendarParsedResult result = (ActeinCalendarParsedResult) mParsedResultHandler.getResult();
             if (result.getType() != ParsedResultType.ACTEIN_CALENDAR)
             {
-                return QrCodeStatus.QR_CODE_INVALID;
+                return new QrCodeProcessingResult(QrCodeStatus.QR_CODE_INVALID);
             }
 
             QrCodeValidator qrCodeValidator = new QrCodeValidator(
@@ -104,13 +105,13 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeStatus>
                 }
             }
 
-            return status;
+            return new QrCodeProcessingResult(status, result);
         }
         catch (Exception ex)
         {
             Log.e(TAG, ex.toString(), ex);
         }
-        return QrCodeStatus.QR_CODE_INVALID;
+        return new QrCodeProcessingResult(QrCodeStatus.QR_CODE_INVALID);
     }
 
     private Context mContext;
