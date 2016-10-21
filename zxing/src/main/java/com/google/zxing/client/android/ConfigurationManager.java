@@ -5,9 +5,9 @@ import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
 import android.view.Surface;
 
-class OrientationManager
+class ConfigurationManager
 {
-    OrientationManager(Activity activity)
+    ConfigurationManager(Activity activity)
     {
         mActivity = activity;
     }

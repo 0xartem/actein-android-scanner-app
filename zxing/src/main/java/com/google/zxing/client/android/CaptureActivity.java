@@ -98,7 +98,7 @@ public final class CaptureActivity
     private InactivityTimer inactivityTimer;
     private BeepManager beepManager;
     private AmbientLightManager ambientLightManager;
-    private OrientationManager orientationManager;
+    private ConfigurationManager configurationManager;
 
     private CaptureActivityPresenter presenter;
 
@@ -136,10 +136,10 @@ public final class CaptureActivity
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
         ambientLightManager = new AmbientLightManager(this);
-        orientationManager = new OrientationManager(this);
+        configurationManager = new ConfigurationManager(this);
 
         presenter = new CaptureActivityPresenter(this);
-        presenter.onCreate(false);//TODO
+        presenter.onCreate();
 
         PreferenceManager.setDefaultValues(this, R.xml.preferences, false);
     }
@@ -171,7 +171,7 @@ public final class CaptureActivity
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
-        orientationManager.setOrientation(
+        configurationManager.setOrientation(
                 prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)
                 );
 
@@ -263,7 +263,8 @@ public final class CaptureActivity
 
     @Override
     protected void onDestroy() {
-        presenter.onDestroy(isChangingConfigurations());
+        //TODO: use isChangingConfigurations after fragment impl.
+        presenter.onDestroy(false);
 
         inactivityTimer.shutdown();
         super.onDestroy();

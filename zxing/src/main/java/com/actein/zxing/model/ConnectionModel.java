@@ -50,14 +50,11 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
     }
 
     @Override
-    public void onCreate(boolean isChangingConfiguration)
+    public void onCreate()
     {
         try
         {
-            if (!isChangingConfiguration)
-            {
-                mConnection.connect(new CommonActionListener(Action.CONNECT, this));
-            }
+            mConnection.connect(new CommonActionListener(Action.CONNECT, this));
         }
         catch (MqttException ex)
         {

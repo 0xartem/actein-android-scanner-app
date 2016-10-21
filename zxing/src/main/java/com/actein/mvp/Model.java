@@ -2,6 +2,6 @@ package com.actein.mvp;
 
 public interface Model
 {
-    void onCreate(boolean isChangingConfiguration);
+    void onCreate();
     void onDestroy(boolean isChangingConfiguration);
 }

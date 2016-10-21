@@ -13,8 +13,11 @@ public class BoothSettings
 
     public int getBoothId()
     {
-        return Preferences.getBoothId(mContext);
+        if (mBoothId == -1)
+            mBoothId = Preferences.getBoothId(mContext);
+        return mBoothId;
     }
 
     private Context mContext;
+    private int mBoothId = -1;
 }
