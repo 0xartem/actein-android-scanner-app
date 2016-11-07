@@ -73,18 +73,29 @@ class MqttVrEventsPublisher implements VrEventsPublisher
     @Override
     public void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status) throws VrEventsException
     {
+        publishVrGameStatusEvent(status, null);
+    }
+
+    @Override
+    public void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status,
+                                         VrGameErrorProtos.VrGameError error) throws VrEventsException
+    {
         try
         {
-            VrGameStatusProtos.VrGameStatusEvent event = VrGameStatusProtos.VrGameStatusEvent
-                    .newBuilder()
-                    .setStatus(status)
-                    .build();
+            VrGameStatusProtos.VrGameStatusEvent.Builder builder =
+                    VrGameStatusProtos.VrGameStatusEvent.newBuilder();
+
+            builder.setStatus(status);
+            if (error != null)
+            {
+                builder.setError(error);
+            }
 
             String topic = new VrTopicBuilder().setToGameStatus()
                                                .setBoothId(mVrBoothInfo.getId())
                                                .build();
 
-            mPublisher.publish(topic, event, mPublishListener);
+            mPublisher.publish(topic, builder.build(), mPublishListener);
         }
         catch (MqttException ex)
         {

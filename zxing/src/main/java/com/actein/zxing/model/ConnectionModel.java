@@ -11,24 +11,31 @@ import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
+import com.actein.vr_events.VrGameOffProtos;
+import com.actein.vr_events.VrGameOnProtos;
+import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
+import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsManager;
 import com.actein.zxing.data.Preferences;
-import com.actein.zxing.qr.TestVrEventsHandler;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 
-public class ConnectionModel implements Model, ConnectionObserver, ActionStatusObserver
+public class ConnectionModel
+        implements
+        Model,
+        ConnectionObserver,
+        ActionStatusObserver,
+        VrEventsHandler
 {
     public ConnectionModel(ContextOwner contextOwner, ConnectionModelObserver modelObserver)
     {
-        mContextOwner = contextOwner;
         mModelObserver = modelObserver;
         mBoothSettings = new BoothSettings(contextOwner.getActivityContext());
 
         mConnection = Connection.createInstance(
-                mContextOwner.getApplicationContext(),
-                Preferences.getServerUri(mContextOwner.getApplicationContext())
+                contextOwner.getApplicationContext(),
+                Preferences.getServerUri(contextOwner.getApplicationContext())
                 );
 
         VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
@@ -105,9 +112,7 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
             mModelObserver.onConnected(message);
             try
             {
-                mVrEventsManager.start(new TestVrEventsHandler(mContextOwner.getApplicationContext()),
-                                       this,
-                                       this);
+                mVrEventsManager.start(this, this, this);
                 mVrEventsManager.getSubscriber().subscribeToStatusEvent();
             }
             catch (VrEventsException ex)
@@ -134,6 +139,44 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         }
     }
 
+    // VrEventsHandler implementation
+    @Override
+    public void handleVrGameOnEvent(VrGameOnProtos.VrGameOnEvent event)
+    {
+        mModelObserver.onVrEventReceived("The On event received");
+    }
+
+    @Override
+    public void handleVrGameOffEvent(VrGameOffProtos.VrGameOffEvent event)
+    {
+        mModelObserver.onVrEventReceived("The On event received");
+    }
+
+    @Override
+    public void handleVrGameStatusEvent(VrGameStatusProtos.VrGameStatusEvent event)
+    {
+        StringBuilder messageBuilder = new StringBuilder();
+        messageBuilder.append("The status event received: ").append(event.getStatus().toString());
+        if (!event.hasError())
+        {
+            mCurrentStatus = event.getStatus();
+            String message = messageBuilder.toString();
+            mModelObserver.onVrEventReceived(message);
+            Log.i(TAG, message);
+        }
+        else
+        {
+            messageBuilder.append("; Error code: ")
+                          .append(event.getError().getErrorCode().toString())
+                          .append("; Error message: ")
+                          .append(event.getError().getErrorMessage());
+
+            String message = messageBuilder.toString();
+            mModelObserver.onError(message);
+            Log.e(TAG, message);
+        }
+    }
+
     @Override
     public void onActionFailure(Action action, String message)
     {
@@ -151,12 +194,13 @@ public class ConnectionModel implements Model, ConnectionObserver, ActionStatusO
         }
     }
 
-    private ContextOwner mContextOwner;
     private ConnectionModelObserver mModelObserver;
 
-    private Connection mConnection = null;
-    private VrEventsManager mVrEventsManager = null;
+    private Connection mConnection;
     private BoothSettings mBoothSettings;
+
+    private VrEventsManager mVrEventsManager;
+    private VrGameStatusProtos.VrGameStatus mCurrentStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

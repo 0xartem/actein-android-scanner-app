@@ -102,6 +102,15 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     }
 
     @Override
+    public void onVrEventReceived(String message)
+    {
+        if (isDebug())
+        {
+            mActivityView.showToast(message);
+        }
+    }
+
+    @Override
     public void onError(String message)
     {
         mActivityView.showErrorDialog(message);

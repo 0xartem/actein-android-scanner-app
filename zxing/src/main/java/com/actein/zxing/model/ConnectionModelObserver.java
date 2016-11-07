@@ -10,4 +10,6 @@ public interface ConnectionModelObserver
 
     void onConnectionLost();
     void onError(String message);
+
+    void onVrEventReceived(String message);
 }
