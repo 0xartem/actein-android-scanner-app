@@ -56,6 +56,26 @@ public class ConnectionModel
         return mBoothSettings;
     }
 
+    public void publishGameTurnEvent(boolean state)
+    {
+        /*try
+        {
+            if (state)
+            {
+                mVrEventsManager.getPublisher().publishVrGameOnEvent();
+            }
+            else
+            {
+                mVrEventsManager.getPublisher().publishVrGameOffEvent();
+            }
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.toString());
+        }*/
+    }
+
     @Override
     public void onCreate()
     {
@@ -143,13 +163,11 @@ public class ConnectionModel
     @Override
     public void handleVrGameOnEvent(VrGameOnProtos.VrGameOnEvent event)
     {
-        mModelObserver.onVrEventReceived("The On event received");
     }
 
     @Override
     public void handleVrGameOffEvent(VrGameOffProtos.VrGameOffEvent event)
     {
-        mModelObserver.onVrEventReceived("The On event received");
     }
 
     @Override
@@ -159,9 +177,8 @@ public class ConnectionModel
         messageBuilder.append("The status event received: ").append(event.getStatus().toString());
         if (!event.hasError())
         {
-            mCurrentStatus = event.getStatus();
             String message = messageBuilder.toString();
-            mModelObserver.onVrEventReceived(message);
+            mModelObserver.onVrEventStatusReceived(event.getStatus(), message);
             Log.i(TAG, message);
         }
         else
@@ -200,7 +217,6 @@ public class ConnectionModel
     private BoothSettings mBoothSettings;
 
     private VrEventsManager mVrEventsManager;
-    private VrGameStatusProtos.VrGameStatus mCurrentStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

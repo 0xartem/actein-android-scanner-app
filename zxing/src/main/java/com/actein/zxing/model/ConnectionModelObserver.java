@@ -1,5 +1,7 @@
 package com.actein.zxing.model;
 
+import com.actein.vr_events.VrGameStatusProtos;
+
 public interface ConnectionModelObserver
 {
     void onConnected(String message);
@@ -11,5 +13,5 @@ public interface ConnectionModelObserver
     void onConnectionLost();
     void onError(String message);
 
-    void onVrEventReceived(String message);
+    void onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus status, String message);
 }

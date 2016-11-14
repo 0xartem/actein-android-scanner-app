@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="utf-8"?>
 <!--
  Copyright (C) 2008 ZXing authors
 
@@ -140,6 +140,8 @@
               android:label="@string/menu_help"
               android:screenOrientation="user"
               android:stateNotNeeded="true"/>
+      <activity android:name=".StartGameActivity">
+      </activity>
   </application>
 
 </manifest>

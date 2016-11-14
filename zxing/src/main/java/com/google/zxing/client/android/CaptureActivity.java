@@ -16,8 +16,9 @@
 
 package com.google.zxing.client.android;
 
-import com.actein.mvp.ActivityView;
+import com.actein.zxing.view.CaptureView;
 import com.actein.zxing.presenter.CaptureActivityPresenter;
+import com.actein.zxing.presenter.CapturePresenter;
 import com.actein.zxing.qr.QrCodeProcessingCallback;
 import com.actein.zxing.qr.QrCodeProcessingResult;
 import com.actein.zxing.model.User;
@@ -55,6 +56,7 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,7 +74,7 @@ import java.util.Map;
  */
 public final class CaptureActivity
         extends Activity
-        implements SurfaceHolder.Callback, QrCodeProcessingCallback, ActivityView
+        implements SurfaceHolder.Callback, QrCodeProcessingCallback, CaptureView
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -100,7 +102,8 @@ public final class CaptureActivity
     private AmbientLightManager ambientLightManager;
     private ConfigurationManager configurationManager;
 
-    private CaptureActivityPresenter presenter;
+    private CapturePresenter presenter;
+    private Switch gameSwitcher = null;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -300,10 +303,16 @@ public final class CaptureActivity
         menuInflater.inflate(R.menu.capture, menu);
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
+
+        MenuItem switchGameItem = menu.findItem(R.id.menu_game_switch);
+        gameSwitcher = (Switch) switchGameItem.getActionView().findViewById(R.id.game_switch_control);
+        gameSwitcher.setEnabled(false);
+
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
             historyItem.setVisible(false);
+            switchGameItem.setVisible(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -330,6 +339,9 @@ public final class CaptureActivity
             intent.setClassName(this, HelpActivity.class.getName());
             startActivity(intent);
 
+        } else if (i == R.id.menu_start_game) {
+            intent.setClassName(this, StartGameActivity.class.getName());
+            startActivity(intent);
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -557,5 +569,14 @@ public final class CaptureActivity
     public Context getApplicationContext()
     {
         return super.getApplicationContext();
+    }
+
+    @Override
+    public void onGameStateChanged(boolean value)
+    {
+        if (gameSwitcher != null)
+        {
+            gameSwitcher.setChecked(value);
+        }
     }
 }

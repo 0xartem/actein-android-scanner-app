@@ -55,6 +55,7 @@
     <string name="history_title">History</string>
     <string name="menu_encode_mecard">Use MECARD</string>
     <string name="menu_encode_vcard">Use vCard</string>
+    <string name="menu_start_game">Start Game</string>
     <string name="menu_help">Help</string>
     <string name="menu_history">History</string>
     <string name="menu_settings">Settings</string>
@@ -160,4 +161,6 @@
     <string name="alert_dialog_qr_code_wrong_booth">Wrong booth. Your actual booth number is: %1$d</string>
     <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
     <string name="alert_dialog_qr_code_success">QR code scanning succeed.</string>
+
+    <string name="activity_start_start_button">Start</string>
 </resources>
