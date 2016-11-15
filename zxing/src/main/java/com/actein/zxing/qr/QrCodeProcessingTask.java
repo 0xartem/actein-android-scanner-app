@@ -92,16 +92,9 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                 {
                     publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 
-                    VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
-                            .newBuilder()
-                            .setGameName(result.getGameName())
-                            .setSteamGameId(result.getSteamGameId())
-                            .setGameDurationSeconds(result.getDurationSeconds())
-                            .build();
-
-                    mConnectionModel.getVrEventsManager()
-                                    .getPublisher()
-                                    .publishVrGameOnEvent(vrGame);
+                    mConnectionModel.publishGameOnEvent(result.getGameName(),
+                                                        result.getSteamGameId(),
+                                                        result.getDurationSeconds());
                 }
             }
 

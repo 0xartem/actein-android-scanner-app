@@ -36,9 +36,21 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void turnGameOnOff(boolean state)
+    public void turnGameOff()
     {
-        mConnectionModel.publishGameTurnEvent(state);
+        mConnectionModel.publishGameOffEvent();
+    }
+
+    @Override
+    public void turnGameOn(String gameName, long steamGameId, long durationSeconds)
+    {
+        mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds);
+    }
+
+    @Override
+    public synchronized boolean isGameTurnedOn()
+    {
+        return mCurStatus == VrGameStatusProtos.VrGameStatus.GAME_ON;
     }
 
     @Override
@@ -109,13 +121,15 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus status, String message)
+    public synchronized void onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus status,
+                                                     String message)
     {
+        mCurStatus = status;
         if (isDebug())
         {
             mCaptureView.showToast(message);
         }
-        this.mCaptureView.onGameStateChanged(status == VrGameStatusProtos.VrGameStatus.GAME_ON);
+        mCaptureView.onGameStateChanged(status == VrGameStatusProtos.VrGameStatus.GAME_ON);
     }
 
     @Override
@@ -132,4 +146,5 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
 
     private CaptureView mCaptureView;
     private ConnectionModel mConnectionModel;
+    private VrGameStatusProtos.VrGameStatus mCurStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
 }

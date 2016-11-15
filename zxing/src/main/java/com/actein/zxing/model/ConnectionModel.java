@@ -13,6 +13,7 @@ import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.VrGameOffProtos;
 import com.actein.vr_events.VrGameOnProtos;
+import com.actein.vr_events.VrGameProtos;
 import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
@@ -46,34 +47,42 @@ public class ConnectionModel
         mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
     }
 
-    public VrEventsManager getVrEventsManager()
-    {
-        return mVrEventsManager;
-    }
-
     public BoothSettings getBoothSettings()
     {
         return mBoothSettings;
     }
 
-    public void publishGameTurnEvent(boolean state)
+    public void publishGameOffEvent()
     {
-        /*try
+        try
         {
-            if (state)
-            {
-                mVrEventsManager.getPublisher().publishVrGameOnEvent();
-            }
-            else
-            {
-                mVrEventsManager.getPublisher().publishVrGameOffEvent();
-            }
+            mVrEventsManager.getPublisher().publishVrGameOffEvent();
         }
         catch (VrEventsException ex)
         {
             Log.e(TAG, ex.toString(), ex);
             mModelObserver.onError(ex.toString());
-        }*/
+        }
+    }
+
+    public void publishGameOnEvent(String gameName, long steamGameId, long durationSeconds)
+    {
+        try
+        {
+            VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
+                    .newBuilder()
+                    .setGameName(gameName)
+                    .setSteamGameId(steamGameId)
+                    .setGameDurationSeconds(durationSeconds)
+                    .build();
+
+            mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.toString());
+        }
     }
 
     @Override

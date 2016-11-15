@@ -12,51 +12,81 @@
     tools:context="com.google.zxing.client.android.StartGameActivity"
     android:layout_gravity="center_vertical">
 
-    <Spinner
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="182dp"
-        android:id="@+id/games_spinner"
-        android:layout_centerVertical="true"/>
-
     <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/minutes_number_picker"
-        android:layout_alignBaseline="@+id/hours_number_picker"
-        android:layout_alignBottom="@+id/hours_number_picker"
-        android:layout_centerHorizontal="true"/>
-
-    <NumberPicker
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/hours_number_picker"
-        android:layout_marginRight="71dp"
-        android:layout_marginEnd="71dp"
-        android:layout_centerVertical="true"
-        android:layout_toLeftOf="@+id/minutes_number_picker"
-        android:layout_toStartOf="@+id/minutes_number_picker"/>
+        android:layout_centerInParent="true"
+        android:splitMotionEvents="false"
+        android:soundEffectsEnabled="true"/>
 
     <NumberPicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/seconds_number_picker"
-        android:layout_marginLeft="69dp"
-        android:layout_marginStart="69dp"
         android:layout_centerVertical="true"
         android:layout_toRightOf="@+id/minutes_number_picker"
-        android:layout_toEndOf="@+id/minutes_number_picker"/>
+        android:layout_toEndOf="@+id/minutes_number_picker"
+        android:layout_marginLeft="16dp"
+        android:layout_marginStart="16dp"/>
+
+    <NumberPicker
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hours_number_picker"
+        android:layout_centerVertical="true"
+        android:layout_toLeftOf="@+id/minutes_number_picker"
+        android:layout_toStartOf="@+id/minutes_number_picker"
+        android:layout_marginRight="16dp"
+        android:layout_marginEnd="16dp"/>
+
+    <TextView
+        android:text="@string/start_game_hours_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/hours_picker_text_view"
+        android:layout_below="@+id/hours_number_picker"
+        android:layout_alignLeft="@+id/hours_number_picker"
+        android:layout_alignStart="@+id/hours_number_picker"
+        android:layout_marginLeft="13dp"
+        android:layout_marginStart="13dp"/>
+
+    <TextView
+        android:text="@string/start_game_minutes_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/minutes_picker_text_view"
+        android:layout_alignBaseline="@+id/hours_picker_text_view"
+        android:layout_alignBottom="@+id/hours_picker_text_view"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:text="@string/start_game_seconds_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/seconds_picker_text_view"
+        android:layout_alignBaseline="@+id/minutes_picker_text_view"
+        android:layout_alignBottom="@+id/minutes_picker_text_view"
+        android:layout_alignLeft="@+id/seconds_number_picker"
+        android:layout_alignStart="@+id/seconds_number_picker"
+        android:layout_marginStart="6dp"
+        android:layout_marginLeft="6dp"/>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/start_button"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="156dp"
-        android:background="@android:drawable/ic_media_play"
-        android:backgroundTint="@color/start_button_color"/>
+        android:id="@+id/game_start_button"
+        android:text="@string/start_game_start_button"
+        android:layout_below="@+id/minutes_picker_text_view"
+        android:layout_toLeftOf="@+id/seconds_picker_text_view"
+        android:layout_toStartOf="@+id/seconds_picker_text_view"/>
+
+    <Spinner
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/games_spinner"
+        android:spinnerMode="dialog"
+        android:layout_above="@+id/minutes_number_picker"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"/>
 </RelativeLayout>

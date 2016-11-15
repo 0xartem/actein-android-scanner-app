@@ -11,5 +11,7 @@ public interface CapturePresenter extends Presenter
     void onHandleDecodeResult(QrCodeProcessingCallback callback,
                               ResultHandler resultHandler,
                               Bitmap barcode);
-    void turnGameOnOff(boolean state);
+    void turnGameOff();
+    void turnGameOn(String gameName, long steamGameId, long durationSeconds);
+    boolean isGameTurnedOn();
 }

@@ -55,7 +55,8 @@
     <string name="history_title">History</string>
     <string name="menu_encode_mecard">Use MECARD</string>
     <string name="menu_encode_vcard">Use vCard</string>
-    <string name="menu_start_game">Start Game</string>
+    <string name="menu_start_game"> Start a Game</string>
+    <string name="menu_stop_game"> Stop the Game</string>
     <string name="menu_help">Help</string>
     <string name="menu_history">History</string>
     <string name="menu_settings">Settings</string>
@@ -162,5 +163,8 @@
     <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
     <string name="alert_dialog_qr_code_success">QR code scanning succeed.</string>
 
-    <string name="activity_start_start_button">Start</string>
+    <string name="start_game_start_button">Start</string>
+    <string name="start_game_hours_text">Hours</string>
+    <string name="start_game_minutes_text">Minutes</string>
+    <string name="start_game_seconds_text">Seconds</string>
 </resources>

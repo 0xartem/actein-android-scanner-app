@@ -56,7 +56,6 @@ import android.view.SurfaceView;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -81,6 +80,8 @@ public final class CaptureActivity
 
     private static final long BULK_MODE_SCAN_DELAY_MS = 1000L;
     private static final int HISTORY_REQUEST_CODE = 0x0000bacc;
+    // TODO: to enum
+    private static final int GAME_START_REQUEST_CODE = 1;
 
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
@@ -103,7 +104,8 @@ public final class CaptureActivity
     private ConfigurationManager configurationManager;
 
     private CapturePresenter presenter;
-    private Switch gameSwitcher = null;
+    private MenuItem startGameMenuItem;
+    private final Object gameStateLock = new Object();
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -242,6 +244,7 @@ public final class CaptureActivity
             // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
+        onGameStateChanged(presenter.isGameTurnedOn());
     }
 
 
@@ -303,16 +306,12 @@ public final class CaptureActivity
         menuInflater.inflate(R.menu.capture, menu);
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
-
-        MenuItem switchGameItem = menu.findItem(R.id.menu_game_switch);
-        gameSwitcher = (Switch) switchGameItem.getActionView().findViewById(R.id.game_switch_control);
-        gameSwitcher.setEnabled(false);
-
+        startGameMenuItem = menu.findItem(R.id.menu_start_game);
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
             historyItem.setVisible(false);
-            switchGameItem.setVisible(false);
+            startGameMenuItem.setEnabled(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -340,8 +339,15 @@ public final class CaptureActivity
             startActivity(intent);
 
         } else if (i == R.id.menu_start_game) {
-            intent.setClassName(this, StartGameActivity.class.getName());
-            startActivity(intent);
+            synchronized (gameStateLock) {
+                if (presenter.isGameTurnedOn()) {
+                    presenter.turnGameOff();
+                }
+                else {
+                    intent.setClassName(this, StartGameActivity.class.getName());
+                    startActivityForResult(intent, GAME_START_REQUEST_CODE);
+                }
+            }
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -350,11 +356,17 @@ public final class CaptureActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == RESULT_OK && requestCode == HISTORY_REQUEST_CODE && historyManager != null) {
-            int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
-            if (itemNumber >= 0) {
-                HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
-                decodeOrStoreSavedBitmap(null, historyItem.getResult());
+        if (resultCode == RESULT_OK) {
+            if (requestCode == HISTORY_REQUEST_CODE && historyManager != null) {
+                int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
+                if (itemNumber >= 0) {
+                    HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
+                    decodeOrStoreSavedBitmap(null, historyItem.getResult());
+                }
+            } else if (requestCode == GAME_START_REQUEST_CODE) {
+                presenter.turnGameOn(intent.getStringExtra(Intents.StartGame.GAME_NAME),
+                                     intent.getLongExtra(Intents.StartGame.GAME_STEAM_ID, 0),
+                                     intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0));
             }
         }
     }
@@ -572,11 +584,19 @@ public final class CaptureActivity
     }
 
     @Override
-    public void onGameStateChanged(boolean value)
+    public void onGameStateChanged(boolean state)
     {
-        if (gameSwitcher != null)
-        {
-            gameSwitcher.setChecked(value);
+        synchronized (gameStateLock) {
+            if (startGameMenuItem != null) {
+                if (state) {
+                    startGameMenuItem.setIcon(R.drawable.stop);
+                    startGameMenuItem.setTitle(R.string.menu_stop_game);
+                }
+                else {
+                    startGameMenuItem.setIcon(R.drawable.start);
+                    startGameMenuItem.setTitle(R.string.menu_start_game);
+                }
+            }
         }
     }
 }

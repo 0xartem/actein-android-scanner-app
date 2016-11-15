@@ -15,14 +15,9 @@
  limitations under the License.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:id="@+id/menu_game_switch"
-        android:title=""
-        android:showAsAction="always"
-        android:orderInCategory="1"
-        android:actionLayout="@layout/game_switch_layout" />
   <item android:id="@+id/menu_start_game"
         android:title="@string/menu_start_game"
-        android:icon="@android:drawable/ic_media_play"
+        android:icon="@drawable/start"
         android:orderInCategory="2"
         android:showAsAction="withText|ifRoom"/>
   <item android:id="@+id/menu_history"
