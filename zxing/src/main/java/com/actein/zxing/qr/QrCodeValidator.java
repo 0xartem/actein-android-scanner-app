@@ -4,27 +4,26 @@ import android.content.Context;
 
 import com.actein.zxing.model.BoothSettings;
 import com.actein.android.utils.InternetTime;
-import com.actein.utils.Geo;
 import com.actein.utils.DateTimeUtils;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 
 import java.util.Date;
 
-public class QrCodeValidator
+class QrCodeValidator
 {
-    public QrCodeValidator(Context context,
-                           ActeinCalendarParsedResult acteinCalParsedResult,
-                           QrCodeSettings qrCodeSettings,
-                           BoothSettings boothSettings)
+    QrCodeValidator(Context context,
+                    ActeinCalendarParsedResult acteinCalParsedResult,
+                    QrCodeSettings qrCodeSettings,
+                    BoothSettings boothSettings)
     {
         mActeinCalParsedResult = acteinCalParsedResult;
         mQrCodeSettings = qrCodeSettings;
         mBoothSettings = boothSettings;
-        mFactoryGeo = new Geo(59.046717, 10.055840);
+        //TODO: disable temp: mFactoryGeo = new Geo(59.046717, 10.055840);
         mSignatureVerifier = new QrCodeSignatureVerifier(context, acteinCalParsedResult);
     }
 
-    public QrCodeStatus validateQrCode()
+    QrCodeStatus validateQrCode()
     {
         if (!isParsedResultDataValid())
             return QrCodeStatus.QR_CODE_INVALID;
@@ -40,9 +39,10 @@ public class QrCodeValidator
         if (!isBoothValid())
             return QrCodeStatus.WRONG_BOOTH;
 
-        status = validateLocation();
+        //TODO: disable temp:
+        /*status = validateLocation();
         if (!QrCodeStatus.isSuccess(status))
-            return status;
+            return status;*/
 
         return status;
     }
@@ -87,7 +87,8 @@ public class QrCodeValidator
         return mActeinCalParsedResult.getBoothId() == mBoothSettings.getBoothId();
     }
 
-    private QrCodeStatus validateLocation()
+    //TODO: disable temp:
+    /*private QrCodeStatus validateLocation()
     {
         if (mActeinCalParsedResult.getInnerCalendarResult().getLatitude() !=
             mFactoryGeo.getLatitude() ||
@@ -97,12 +98,12 @@ public class QrCodeValidator
             return QrCodeStatus.WRONG_LOCATION;
         }
         return QrCodeStatus.SUCCESS;
-    }
+    }*/
 
     private QrCodeSignatureVerifier mSignatureVerifier;
     private QrCodeSettings mQrCodeSettings;
     private BoothSettings mBoothSettings;
-    private Geo mFactoryGeo;
+    //TODO: disable temp: private Geo mFactoryGeo;
 
     private ActeinCalendarParsedResult mActeinCalParsedResult;
 }
