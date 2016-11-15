@@ -12,6 +12,7 @@ public interface ConnectionModelObserver
 
     void onConnectionLost();
     void onError(String message);
+    void onInfo(String message);
 
     void onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus status, String message);
 }

@@ -21,18 +21,26 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void onHandleDecodeResult(
+    public synchronized void onHandleDecodeResult(
             QrCodeProcessingCallback callback,
             ResultHandler resultHandler,
             Bitmap barcode
             )
     {
-        new QrCodeProcessingTask(
-                mCaptureView.getActivityContext(),
-                callback,
-                resultHandler,
-                barcode,
-                mConnectionModel).execute();
+        if (mCurStatus != VrGameStatusProtos.VrGameStatus.GAME_ON)
+        {
+            new QrCodeProcessingTask(mCaptureView.getActivityContext(),
+                                     callback,
+                                     resultHandler,
+                                     barcode,
+                                     mConnectionModel).execute();
+        }
+        else
+        {
+            onInfo(mCaptureView.getActivityContext()
+                               .getResources()
+                               .getString(R.string.msg_game_already_running));
+        }
     }
 
     @Override
@@ -136,6 +144,12 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     public void onError(String message)
     {
         mCaptureView.showErrorDialog(message);
+    }
+
+    @Override
+    public void onInfo(String message)
+    {
+        mCaptureView.showInfoDialog(message);
     }
 
     private boolean isDebug()

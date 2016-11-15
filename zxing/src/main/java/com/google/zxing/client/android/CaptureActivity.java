@@ -572,6 +572,15 @@ public final class CaptureActivity
     }
 
     @Override
+    public void showInfoDialog(String message)
+    {
+        new AlertDialog.Builder(this).setTitle(getString(R.string.msg_info))
+                                     .setMessage(message)
+                                     .setPositiveButton(R.string.button_ok, null)
+                                     .show();
+    }
+
+    @Override
     public Context getActivityContext()
     {
         return this;

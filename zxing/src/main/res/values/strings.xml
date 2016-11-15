@@ -88,7 +88,8 @@
     <string name="msg_share_text">Or type some text and press Enter</string>
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
-    <string name="msg_connection_lost">Connection to the server is lost</string>
+    <string name="msg_connection_lost">Connection to the server is lost.</string>
+    <string name="msg_game_already_running">A game is already running, please wait.</string>
 
     <string name="preferences_qr_settings_title">QR code settings</string>
     <string name="preferences_allow_early_qr_codes_title">Allow early QR codes</string>
