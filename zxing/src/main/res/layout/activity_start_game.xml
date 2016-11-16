@@ -72,14 +72,15 @@
         android:layout_marginStart="6dp"
         android:layout_marginLeft="6dp"/>
 
-    <Button
+    <ImageButton
+        android:src="@drawable/start_big"
+        android:contentDescription="@string/start_game_start_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/game_start_button"
-        android:text="@string/start_game_start_button"
         android:layout_below="@+id/minutes_picker_text_view"
-        android:layout_toLeftOf="@+id/seconds_picker_text_view"
-        android:layout_toStartOf="@+id/seconds_picker_text_view"/>
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="28dp"/>
 
     <Spinner
         android:layout_width="match_parent"
@@ -87,6 +88,9 @@
         android:id="@+id/games_spinner"
         android:spinnerMode="dialog"
         android:layout_above="@+id/minutes_number_picker"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"/>
+        android:layout_alignLeft="@+id/hours_number_picker"
+        android:layout_alignStart="@+id/hours_number_picker"
+        android:layout_alignRight="@id/seconds_number_picker"
+        android:layout_alignEnd="@+id/seconds_number_picker"
+        android:layout_marginBottom="26dp"/>
 </RelativeLayout>

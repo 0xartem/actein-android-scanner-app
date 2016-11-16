@@ -8,7 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
-import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
 
@@ -46,7 +46,7 @@ public class StartGameActivity extends Activity implements ContextOwner
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         gamesListSpinner.setAdapter(spinnerAdapter);
 
-        Button startButton = (Button) findViewById(R.id.game_start_button);
+        ImageButton startButton = (ImageButton) findViewById(R.id.game_start_button);
         startButton.setOnClickListener(new View.OnClickListener()
         {
             @Override
