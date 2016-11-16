@@ -52,11 +52,19 @@ public class ConnectionModel
         return mBoothSettings;
     }
 
+    public boolean isConnected()
+    {
+        return mConnection.getClient().isConnected();
+    }
+
     public void publishGameOffEvent()
     {
         try
         {
-            mVrEventsManager.getPublisher().publishVrGameOffEvent();
+            if (mVrEventsManager.getPublisher() != null)
+            {
+                mVrEventsManager.getPublisher().publishVrGameOffEvent();
+            }
         }
         catch (VrEventsException ex)
         {
@@ -69,14 +77,16 @@ public class ConnectionModel
     {
         try
         {
-            VrGameProtos.VrGame vrGame = VrGameProtos.VrGame
-                    .newBuilder()
-                    .setGameName(gameName)
-                    .setSteamGameId(steamGameId)
-                    .setGameDurationSeconds(durationSeconds)
-                    .build();
+            if (mVrEventsManager.getPublisher() != null)
+            {
+                VrGameProtos.VrGame vrGame = VrGameProtos.VrGame.newBuilder()
+                                                                .setGameName(gameName)
+                                                                .setSteamGameId(steamGameId)
+                                                                .setGameDurationSeconds(durationSeconds)
+                                                                .build();
 
-            mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
+                mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
+            }
         }
         catch (VrEventsException ex)
         {

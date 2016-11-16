@@ -46,13 +46,27 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     @Override
     public void turnGameOff()
     {
-        mConnectionModel.publishGameOffEvent();
+        if (mConnectionModel.isConnected())
+        {
+            mConnectionModel.publishGameOffEvent();
+        }
+        else
+        {
+            onConnectionLost();
+        }
     }
 
     @Override
     public void turnGameOn(String gameName, long steamGameId, long durationSeconds)
     {
-        mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds);
+        if (mConnectionModel.isConnected())
+        {
+            mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds);
+        }
+        else
+        {
+            onConnectionLost();
+        }
     }
 
     @Override
