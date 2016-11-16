@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.actein.mvp.ContextOwner;
 import com.actein.zxing.data.GamesInfo;
@@ -26,11 +27,11 @@ public class StartGameActivity extends Activity implements ContextOwner
 
         final NumberPicker secondsPicker = (NumberPicker) findViewById(R.id.seconds_number_picker);
         secondsPicker.setMinValue(MIN_PICK_VALUE);
-        secondsPicker.setMaxValue(SECS_IN_MIN);
+        secondsPicker.setMaxValue(SECS_IN_MIN - 1);
 
         final NumberPicker minutesPicker = (NumberPicker) findViewById(R.id.minutes_number_picker);
         minutesPicker.setMinValue(MIN_PICK_VALUE);
-        minutesPicker.setMaxValue(MINS_IN_HOUR);
+        minutesPicker.setMaxValue(MINS_IN_HOUR - 1);
 
         final NumberPicker hoursPicker = (NumberPicker) findViewById(R.id.hours_number_picker);
         hoursPicker.setMinValue(MIN_PICK_VALUE);
@@ -60,6 +61,14 @@ public class StartGameActivity extends Activity implements ContextOwner
                     int secondsInMins = minutesPicker.getValue() * SECS_IN_MIN;
                     int seconds = secondsPicker.getValue();
                     long durationSeconds = secondsInHours + secondsInMins + seconds;
+
+                    if (durationSeconds < MIN_TIMER_SECS)
+                    {
+                        Toast.makeText(getApplicationContext(),
+                                       R.string.msg_too_little_time,
+                                       Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(Intents.StartGame.GAME_NAME, gameStr);
@@ -96,6 +105,7 @@ public class StartGameActivity extends Activity implements ContextOwner
     private static final int MIN_PICK_VALUE = 0;
     private static final int SECS_IN_MIN = 60;
     private static final int MINS_IN_HOUR = 60;
+    private static final int MIN_TIMER_SECS = 30;
     private static final int HOURS_IN_DAY = 24;
 
     private static final String TAG = StartGameActivity.class.getSimpleName();

@@ -90,6 +90,7 @@
     <string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
     <string name="msg_connection_lost">Connection to the server is lost.</string>
     <string name="msg_game_already_running">A game is already running, please wait.</string>
+    <string name="msg_too_little_time">Too little time. Please expand time interval.</string>
 
     <string name="preferences_qr_settings_title">QR code settings</string>
     <string name="preferences_allow_early_qr_codes_title">Allow early QR codes</string>
