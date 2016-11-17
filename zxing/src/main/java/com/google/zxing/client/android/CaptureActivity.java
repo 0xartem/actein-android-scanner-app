@@ -16,8 +16,9 @@
 
 package com.google.zxing.client.android;
 
-import com.actein.mvp.ActivityView;
+import com.actein.zxing.view.CaptureView;
 import com.actein.zxing.presenter.CaptureActivityPresenter;
+import com.actein.zxing.presenter.CapturePresenter;
 import com.actein.zxing.qr.QrCodeProcessingCallback;
 import com.actein.zxing.qr.QrCodeProcessingResult;
 import com.actein.zxing.model.User;
@@ -72,13 +73,15 @@ import java.util.Map;
  */
 public final class CaptureActivity
         extends Activity
-        implements SurfaceHolder.Callback, QrCodeProcessingCallback, ActivityView
+        implements SurfaceHolder.Callback, QrCodeProcessingCallback, CaptureView
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
 
     private static final long BULK_MODE_SCAN_DELAY_MS = 1000L;
     private static final int HISTORY_REQUEST_CODE = 0x0000bacc;
+    // TODO: to enum
+    private static final int GAME_START_REQUEST_CODE = 1;
 
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
@@ -100,7 +103,9 @@ public final class CaptureActivity
     private AmbientLightManager ambientLightManager;
     private ConfigurationManager configurationManager;
 
-    private CaptureActivityPresenter presenter;
+    private CapturePresenter presenter;
+    private MenuItem startGameMenuItem;
+    private final Object gameStateLock = new Object();
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -239,6 +244,7 @@ public final class CaptureActivity
             // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
+        onGameStateChanged(presenter.isGameTurnedOn());
     }
 
 
@@ -300,10 +306,12 @@ public final class CaptureActivity
         menuInflater.inflate(R.menu.capture, menu);
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
+        startGameMenuItem = menu.findItem(R.id.menu_start_game);
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
             historyItem.setVisible(false);
+            startGameMenuItem.setEnabled(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -330,6 +338,16 @@ public final class CaptureActivity
             intent.setClassName(this, HelpActivity.class.getName());
             startActivity(intent);
 
+        } else if (i == R.id.menu_start_game) {
+            synchronized (gameStateLock) {
+                if (presenter.isGameTurnedOn()) {
+                    presenter.turnGameOff();
+                }
+                else {
+                    intent.setClassName(this, StartGameActivity.class.getName());
+                    startActivityForResult(intent, GAME_START_REQUEST_CODE);
+                }
+            }
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -338,11 +356,17 @@ public final class CaptureActivity
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        if (resultCode == RESULT_OK && requestCode == HISTORY_REQUEST_CODE && historyManager != null) {
-            int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
-            if (itemNumber >= 0) {
-                HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
-                decodeOrStoreSavedBitmap(null, historyItem.getResult());
+        if (resultCode == RESULT_OK) {
+            if (requestCode == HISTORY_REQUEST_CODE && historyManager != null) {
+                int itemNumber = intent.getIntExtra(Intents.History.ITEM_NUMBER, -1);
+                if (itemNumber >= 0) {
+                    HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
+                    decodeOrStoreSavedBitmap(null, historyItem.getResult());
+                }
+            } else if (requestCode == GAME_START_REQUEST_CODE) {
+                presenter.turnGameOn(intent.getStringExtra(Intents.StartGame.GAME_NAME),
+                                     intent.getLongExtra(Intents.StartGame.GAME_STEAM_ID, 0),
+                                     intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0));
             }
         }
     }
@@ -548,6 +572,15 @@ public final class CaptureActivity
     }
 
     @Override
+    public void showInfoDialog(String message)
+    {
+        new AlertDialog.Builder(this).setTitle(getString(R.string.msg_info))
+                                     .setMessage(message)
+                                     .setPositiveButton(R.string.button_ok, null)
+                                     .show();
+    }
+
+    @Override
     public Context getActivityContext()
     {
         return this;
@@ -557,5 +590,22 @@ public final class CaptureActivity
     public Context getApplicationContext()
     {
         return super.getApplicationContext();
+    }
+
+    @Override
+    public void onGameStateChanged(boolean state)
+    {
+        synchronized (gameStateLock) {
+            if (startGameMenuItem != null) {
+                if (state) {
+                    startGameMenuItem.setIcon(R.drawable.stop);
+                    startGameMenuItem.setTitle(R.string.menu_stop_game);
+                }
+                else {
+                    startGameMenuItem.setIcon(R.drawable.start);
+                    startGameMenuItem.setTitle(R.string.menu_start_game);
+                }
+            }
+        }
     }
 }

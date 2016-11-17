@@ -13,6 +13,7 @@ import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.VrGameOffProtos;
 import com.actein.vr_events.VrGameOnProtos;
+import com.actein.vr_events.VrGameProtos;
 import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
@@ -46,14 +47,52 @@ public class ConnectionModel
         mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
     }
 
-    public VrEventsManager getVrEventsManager()
-    {
-        return mVrEventsManager;
-    }
-
     public BoothSettings getBoothSettings()
     {
         return mBoothSettings;
+    }
+
+    public boolean isConnected()
+    {
+        return mConnection.getClient().isConnected();
+    }
+
+    public void publishGameOffEvent()
+    {
+        try
+        {
+            if (mVrEventsManager.getPublisher() != null)
+            {
+                mVrEventsManager.getPublisher().publishVrGameOffEvent();
+            }
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.toString());
+        }
+    }
+
+    public void publishGameOnEvent(String gameName, long steamGameId, long durationSeconds)
+    {
+        try
+        {
+            if (mVrEventsManager.getPublisher() != null)
+            {
+                VrGameProtos.VrGame vrGame = VrGameProtos.VrGame.newBuilder()
+                                                                .setGameName(gameName)
+                                                                .setSteamGameId(steamGameId)
+                                                                .setGameDurationSeconds(durationSeconds)
+                                                                .build();
+
+                mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
+            }
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.toString());
+        }
     }
 
     @Override
@@ -143,13 +182,11 @@ public class ConnectionModel
     @Override
     public void handleVrGameOnEvent(VrGameOnProtos.VrGameOnEvent event)
     {
-        mModelObserver.onVrEventReceived("The On event received");
     }
 
     @Override
     public void handleVrGameOffEvent(VrGameOffProtos.VrGameOffEvent event)
     {
-        mModelObserver.onVrEventReceived("The On event received");
     }
 
     @Override
@@ -159,9 +196,8 @@ public class ConnectionModel
         messageBuilder.append("The status event received: ").append(event.getStatus().toString());
         if (!event.hasError())
         {
-            mCurrentStatus = event.getStatus();
             String message = messageBuilder.toString();
-            mModelObserver.onVrEventReceived(message);
+            mModelObserver.onVrEventStatusReceived(event.getStatus(), message);
             Log.i(TAG, message);
         }
         else
@@ -200,7 +236,6 @@ public class ConnectionModel
     private BoothSettings mBoothSettings;
 
     private VrEventsManager mVrEventsManager;
-    private VrGameStatusProtos.VrGameStatus mCurrentStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

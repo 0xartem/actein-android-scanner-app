@@ -55,6 +55,8 @@
     <string name="history_title">History</string>
     <string name="menu_encode_mecard">Use MECARD</string>
     <string name="menu_encode_vcard">Use vCard</string>
+    <string name="menu_start_game"> Start a Game</string>
+    <string name="menu_stop_game"> Stop the Game</string>
     <string name="menu_help">Help</string>
     <string name="menu_history">History</string>
     <string name="menu_settings">Settings</string>
@@ -86,7 +88,9 @@
     <string name="msg_share_text">Or type some text and press Enter</string>
     <string name="msg_sure">Are you sure?</string>
     <string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
-    <string name="msg_connection_lost">Connection to the server is lost</string>
+    <string name="msg_connection_lost">Connection to the server is lost.</string>
+    <string name="msg_game_already_running">A game is already running, please wait.</string>
+    <string name="msg_too_little_time">Too little time. Please expand time interval.</string>
 
     <string name="preferences_qr_settings_title">QR code settings</string>
     <string name="preferences_allow_early_qr_codes_title">Allow early QR codes</string>
@@ -160,4 +164,9 @@
     <string name="alert_dialog_qr_code_wrong_booth">Wrong booth. Your actual booth number is: %1$d</string>
     <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
     <string name="alert_dialog_qr_code_success">QR code scanning succeed.</string>
+
+    <string name="start_game_start_button">Start</string>
+    <string name="start_game_hours_text">Hours</string>
+    <string name="start_game_minutes_text">Minutes</string>
+    <string name="start_game_seconds_text">Seconds</string>
 </resources>

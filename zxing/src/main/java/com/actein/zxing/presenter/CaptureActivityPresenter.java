@@ -3,8 +3,8 @@ package com.actein.zxing.presenter;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 
-import com.actein.mvp.ActivityView;
-import com.actein.mvp.Presenter;
+import com.actein.vr_events.VrGameStatusProtos;
+import com.actein.zxing.view.CaptureView;
 import com.actein.zxing.model.ConnectionModelObserver;
 import com.actein.zxing.model.ConnectionModel;
 import com.actein.zxing.qr.QrCodeProcessingCallback;
@@ -12,26 +12,67 @@ import com.actein.zxing.qr.QrCodeProcessingTask;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 
-public class CaptureActivityPresenter implements Presenter, ConnectionModelObserver
+public class CaptureActivityPresenter implements CapturePresenter, ConnectionModelObserver
 {
-    public CaptureActivityPresenter(ActivityView activityView)
+    public CaptureActivityPresenter(CaptureView captureView)
     {
-        mActivityView = activityView;
-        mConnectionModel = new ConnectionModel(activityView, this);
+        mCaptureView = captureView;
+        mConnectionModel = new ConnectionModel(captureView, this);
     }
 
-    public void onHandleDecodeResult(
+    @Override
+    public synchronized void onHandleDecodeResult(
             QrCodeProcessingCallback callback,
             ResultHandler resultHandler,
             Bitmap barcode
             )
     {
-        new QrCodeProcessingTask(
-                mActivityView.getActivityContext(),
-                callback,
-                resultHandler,
-                barcode,
-                mConnectionModel).execute();
+        if (mCurStatus != VrGameStatusProtos.VrGameStatus.GAME_ON)
+        {
+            new QrCodeProcessingTask(mCaptureView.getActivityContext(),
+                                     callback,
+                                     resultHandler,
+                                     barcode,
+                                     mConnectionModel).execute();
+        }
+        else
+        {
+            onInfo(mCaptureView.getActivityContext()
+                               .getResources()
+                               .getString(R.string.msg_game_already_running));
+        }
+    }
+
+    @Override
+    public void turnGameOff()
+    {
+        if (mConnectionModel.isConnected())
+        {
+            mConnectionModel.publishGameOffEvent();
+        }
+        else
+        {
+            onConnectionLost();
+        }
+    }
+
+    @Override
+    public void turnGameOn(String gameName, long steamGameId, long durationSeconds)
+    {
+        if (mConnectionModel.isConnected())
+        {
+            mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds);
+        }
+        else
+        {
+            onConnectionLost();
+        }
+    }
+
+    @Override
+    public synchronized boolean isGameTurnedOn()
+    {
+        return mCurStatus == VrGameStatusProtos.VrGameStatus.GAME_ON;
     }
 
     @Override
@@ -53,7 +94,7 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     {
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
     }
 
@@ -62,7 +103,7 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     {
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
     }
 
@@ -71,7 +112,7 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     {
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
     }
 
@@ -80,7 +121,7 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     {
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
     }
 
@@ -89,39 +130,49 @@ public class CaptureActivityPresenter implements Presenter, ConnectionModelObser
     {
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
     }
 
     @Override
     public void onConnectionLost()
     {
-        mActivityView.showErrorDialog(
-                mActivityView.getActivityContext().getString(R.string.msg_connection_lost)
+        mCaptureView.showErrorDialog(
+                mCaptureView.getActivityContext().getString(R.string.msg_connection_lost)
                 );
     }
 
     @Override
-    public void onVrEventReceived(String message)
+    public synchronized void onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus status,
+                                                     String message)
     {
+        mCurStatus = status;
         if (isDebug())
         {
-            mActivityView.showToast(message);
+            mCaptureView.showToast(message);
         }
+        mCaptureView.onGameStateChanged(status == VrGameStatusProtos.VrGameStatus.GAME_ON);
     }
 
     @Override
     public void onError(String message)
     {
-        mActivityView.showErrorDialog(message);
+        mCaptureView.showErrorDialog(message);
+    }
+
+    @Override
+    public void onInfo(String message)
+    {
+        mCaptureView.showInfoDialog(message);
     }
 
     private boolean isDebug()
     {
-        return (mActivityView.getApplicationContext().getApplicationInfo().flags &
+        return (mCaptureView.getApplicationContext().getApplicationInfo().flags &
                 ApplicationInfo.FLAG_DEBUGGABLE) != 0;
     }
 
-    private ActivityView mActivityView;
+    private CaptureView mCaptureView;
     private ConnectionModel mConnectionModel;
+    private VrGameStatusProtos.VrGameStatus mCurStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
 }

@@ -64,7 +64,7 @@ public class CommonActionListener implements IMqttActionListener
         case UNSUBSCRIBE:
             return "Unsubscription succeed. Topics: " + Arrays.toString(asyncActionToken.getTopics());
         case PUBLISH:
-            return "Publication succeed. Topics: " + Arrays.toString(asyncActionToken.getTopics());
+            return "Publication succeed.";
         default:
             throw new UnsupportedOperationException("Unknown action type");
         }
