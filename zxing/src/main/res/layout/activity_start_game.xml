@@ -101,8 +101,8 @@
         android:id="@+id/check_box_run_tutorial"
         android:checked="true"
         android:layout_below="@+id/minutes_picker_text_view"
-        android:layout_alignLeft="@+id/hours_number_picker"
-        android:layout_alignStart="@+id/hours_number_picker"
+        android:layout_alignRight="@id/seconds_number_picker"
+        android:layout_alignEnd="@+id/seconds_number_picker"
         android:layout_marginTop="10dp"/>
 
 </RelativeLayout>
