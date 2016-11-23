@@ -42,6 +42,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.hardware.Camera;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -153,6 +154,8 @@ public final class CaptureActivity
     protected void onResume() {
         super.onResume();
 
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+
         // historyManager must be initialized here to update the history preference
         historyManager = new HistoryManager(this);
         historyManager.trimHistory();
@@ -162,6 +165,9 @@ public final class CaptureActivity
         // first launch. That led to bugs where the scanning rectangle was the wrong size and partially
         // off screen.
         cameraManager = new CameraManager(getApplication());
+        if (prefs.getBoolean(PreferencesActivity.KEY_FRONT_CAMERA, true)) {
+            cameraManager.setManualCameraId(Camera.CameraInfo.CAMERA_FACING_FRONT);
+        }
 
         viewfinderView = (ViewfinderView) findViewById(R.id.viewfinder_view);
         viewfinderView.setCameraManager(cameraManager);
@@ -173,8 +179,6 @@ public final class CaptureActivity
 
         handler = null;
         lastResult = null;
-
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
         configurationManager.setOrientation(
                 prefs.getBoolean(PreferencesActivity.KEY_DISABLE_AUTO_ORIENTATION, true)
@@ -244,7 +248,6 @@ public final class CaptureActivity
             // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
-        onGameLoading();
     }
 
 
