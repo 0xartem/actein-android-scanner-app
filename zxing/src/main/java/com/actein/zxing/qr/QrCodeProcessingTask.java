@@ -94,7 +94,8 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
 
                     mConnectionModel.publishGameOnEvent(result.getGameName(),
                                                         result.getSteamGameId(),
-                                                        result.getDurationSeconds());
+                                                        result.getDurationSeconds(),
+                                                        true);
                 }
             }
 

@@ -244,7 +244,7 @@ public final class CaptureActivity
             // Install the callback and wait for surfaceCreated() to init the camera.
             surfaceHolder.addCallback(this);
         }
-        onGameStateChanged(presenter.isGameTurnedOn());
+        onGameLoading();
     }
 
 
@@ -340,10 +340,11 @@ public final class CaptureActivity
 
         } else if (i == R.id.menu_start_game) {
             synchronized (gameStateLock) {
-                if (presenter.isGameTurnedOn()) {
+                if (presenter.isGameRunning()) {
                     presenter.turnGameOff();
+                    onGameLoading();
                 }
-                else {
+                else if (presenter.isGameStopped()) {
                     intent.setClassName(this, StartGameActivity.class.getName());
                     startActivityForResult(intent, GAME_START_REQUEST_CODE);
                 }
@@ -366,7 +367,9 @@ public final class CaptureActivity
             } else if (requestCode == GAME_START_REQUEST_CODE) {
                 presenter.turnGameOn(intent.getStringExtra(Intents.StartGame.GAME_NAME),
                                      intent.getLongExtra(Intents.StartGame.GAME_STEAM_ID, 0),
-                                     intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0));
+                                     intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0),
+                                     intent.getBooleanExtra(Intents.StartGame.RUN_TUTORIAL, true));
+                onGameLoading();
             }
         }
     }
@@ -593,18 +596,43 @@ public final class CaptureActivity
     }
 
     @Override
-    public void onGameStateChanged(boolean state)
+    public void onGameRunning()
     {
-        synchronized (gameStateLock) {
-            if (startGameMenuItem != null) {
-                if (state) {
-                    startGameMenuItem.setIcon(R.drawable.stop);
-                    startGameMenuItem.setTitle(R.string.menu_stop_game);
-                }
-                else {
-                    startGameMenuItem.setIcon(R.drawable.start);
-                    startGameMenuItem.setTitle(R.string.menu_start_game);
-                }
+        synchronized (gameStateLock)
+        {
+            if (startGameMenuItem != null)
+            {
+                startGameMenuItem.setActionView(null);
+                startGameMenuItem.setIcon(R.drawable.stop);
+                startGameMenuItem.setTitle(R.string.menu_stop_game);
+            }
+        }
+    }
+
+    @Override
+    public void onGameStopped()
+    {
+        synchronized (gameStateLock)
+        {
+            if (startGameMenuItem != null)
+            {
+                startGameMenuItem.setActionView(null);
+                startGameMenuItem.setIcon(R.drawable.start);
+                startGameMenuItem.setTitle(R.string.menu_start_game);
+            }
+        }
+    }
+
+    @Override
+    public void onGameLoading()
+    {
+        synchronized (gameStateLock)
+        {
+            if (startGameMenuItem != null)
+            {
+                startGameMenuItem.setIcon(null);
+                startGameMenuItem.setActionView(R.layout.start_game_progress_bar);
+                startGameMenuItem.setTitle(R.string.menu_start_game_loading);
             }
         }
     }

@@ -12,6 +12,7 @@ public interface CapturePresenter extends Presenter
                               ResultHandler resultHandler,
                               Bitmap barcode);
     void turnGameOff();
-    void turnGameOn(String gameName, long steamGameId, long durationSeconds);
-    boolean isGameTurnedOn();
+    void turnGameOn(String gameName, long steamGameId, long durationSeconds, boolean runTutorial);
+    boolean isGameRunning();
+    boolean isGameStopped();
 }

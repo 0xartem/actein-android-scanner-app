@@ -73,7 +73,10 @@ public class ConnectionModel
         }
     }
 
-    public void publishGameOnEvent(String gameName, long steamGameId, long durationSeconds)
+    public void publishGameOnEvent(String gameName,
+                                   long steamGameId,
+                                   long durationSeconds,
+                                   boolean runTutorial)
     {
         try
         {
@@ -83,6 +86,7 @@ public class ConnectionModel
                                                                 .setGameName(gameName)
                                                                 .setSteamGameId(steamGameId)
                                                                 .setGameDurationSeconds(durationSeconds)
+                                                                .setRunTutorial(runTutorial)
                                                                 .build();
 
                 mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);

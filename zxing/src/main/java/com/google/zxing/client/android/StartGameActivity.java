@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.ImageButton;
 import android.widget.NumberPicker;
 import android.widget.Spinner;
@@ -70,10 +71,13 @@ public class StartGameActivity extends Activity implements ContextOwner
                         return;
                     }
 
+                    CheckBox runTutorial = (CheckBox) findViewById(R.id.check_box_run_tutorial);
+
                     Intent resultIntent = new Intent();
                     resultIntent.putExtra(Intents.StartGame.GAME_NAME, gameStr);
                     resultIntent.putExtra(Intents.StartGame.GAME_STEAM_ID, steamGameId);
                     resultIntent.putExtra(Intents.StartGame.DURATION_SECONDS, durationSeconds);
+                    resultIntent.putExtra(Intents.StartGame.RUN_TUTORIAL, runTutorial.isChecked());
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 }
