@@ -70,12 +70,6 @@ public class Connection
         token.setActionCallback(actionListener);
     }
 
-    public void close()
-    {
-        mClient.unregisterResources();
-        mClient.close();
-    }
-
     public IMqttAsyncClient getClient()
     {
         return mClient;

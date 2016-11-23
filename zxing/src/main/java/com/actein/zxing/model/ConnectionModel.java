@@ -166,7 +166,6 @@ public class ConnectionModel
             break;
         case DISCONNECT:
             mModelObserver.onDisconnected(message);
-            mConnection.close();
             break;
         case SUBSCRIBE:
             mModelObserver.onSubscribed(message);
