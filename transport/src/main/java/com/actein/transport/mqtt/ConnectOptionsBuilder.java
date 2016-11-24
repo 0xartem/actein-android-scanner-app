@@ -23,6 +23,7 @@ public class ConnectOptionsBuilder
 
         connectOptions.setKeepAliveInterval(connectionPolicy.getKeepAliveInterval());
         connectOptions.setConnectionTimeout(connectionPolicy.getConnectionTimeout());
+        connectOptions.setAutomaticReconnect(connectionPolicy.isAutomaticReconnect());
 
         return connectOptions;
     }

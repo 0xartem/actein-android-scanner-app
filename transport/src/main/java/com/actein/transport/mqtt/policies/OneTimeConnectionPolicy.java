@@ -21,6 +21,12 @@ public class OneTimeConnectionPolicy extends DefaultConnectionPolicy
     }
 
     @Override
+    public boolean isAutomaticReconnect()
+    {
+        return false;
+    }
+
+    @Override
     public boolean shouldUseLastWill()
     {
         return false;

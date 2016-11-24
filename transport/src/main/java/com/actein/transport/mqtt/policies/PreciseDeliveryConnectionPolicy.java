@@ -23,6 +23,12 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     }
 
     @Override
+    public boolean isAutomaticReconnect()
+    {
+        return true;
+    }
+
+    @Override
     public boolean shouldUseLastWill()
     {
         return true;

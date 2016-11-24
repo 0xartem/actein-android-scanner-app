@@ -6,6 +6,7 @@ public interface ConnectionPolicy
 
     boolean shouldRetainMessages();
     boolean isPersistentSession();
+    boolean isAutomaticReconnect();
 
     boolean shouldUseLastWill();
     String getLastWillTopic();
