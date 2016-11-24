@@ -69,7 +69,7 @@ public class ConnectionModel
         catch (VrEventsException ex)
         {
             Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.toString());
+            mModelObserver.onError(ex.getMessage());
         }
     }
 
@@ -95,7 +95,7 @@ public class ConnectionModel
         catch (VrEventsException ex)
         {
             Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.toString());
+            mModelObserver.onError(ex.getMessage());
         }
     }
 
@@ -109,7 +109,7 @@ public class ConnectionModel
         catch (MqttException ex)
         {
             Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.toString());
+            mModelObserver.onError(ex.getMessage());
         }
     }
 
@@ -161,7 +161,7 @@ public class ConnectionModel
             catch (VrEventsException ex)
             {
                 Log.e(TAG, ex.toString(), ex);
-                mModelObserver.onError(ex.toString());
+                mModelObserver.onError(ex.getMessage());
             }
             break;
         case DISCONNECT:
@@ -210,9 +210,8 @@ public class ConnectionModel
                           .append("; Error message: ")
                           .append(event.getError().getErrorMessage());
 
-            String message = messageBuilder.toString();
-            mModelObserver.onError(message);
-            Log.e(TAG, message);
+            Log.e(TAG, messageBuilder.toString());
+            mModelObserver.onError(event.getError().getErrorMessage());
         }
     }
 
