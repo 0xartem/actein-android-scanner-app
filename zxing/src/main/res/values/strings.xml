@@ -160,8 +160,8 @@
     <string name="progress_dlg_qr_validation_msg">QR code validation&#8230;</string>
     <string name="progress_dlg_turn_vr_on_msg">Turning the game on&#8230;</string>
     <string name="alert_dialog_qr_code_invalid">Scanning failed. QR code is invalid.</string>
-    <string name="alert_dialog_qr_code_not_started_yet">QR code time has not started yet.</string>
-    <string name="alert_dialog_qr_code_expired">QR code already expired.</string>
+    <string name="alert_dialog_qr_code_not_started_yet">The QR code time has not started yet.</string>
+    <string name="alert_dialog_qr_code_expired">The QR code has already expired.</string>
     <string name="alert_dialog_qr_code_wrong_location">Wrong location. Your actual location is: %1$s</string>
     <string name="alert_dialog_qr_code_wrong_booth">Wrong booth. Your actual booth number is: %1$d</string>
     <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
