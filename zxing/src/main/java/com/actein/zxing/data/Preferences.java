@@ -8,29 +8,29 @@ public class Preferences
 {
     public static boolean appPreviouslyStarted(Context context)
     {
-        return getSharedPrefs(context).contains(SERVER_URI);
+        return getSharedPrefs(context).contains(BROKER_URI);
     }
 
-    public static void setServerUri(Context context, String serverUri)
+    public static void setBrokerUri(Context context, String brokerUri)
     {
         getSharedPrefs(context)
                 .edit()
-                .putString(SERVER_URI, serverUri)
+                .putString(BROKER_URI, brokerUri)
                 .apply();
     }
 
-    public static boolean containsServerUri(Context context)
+    public static boolean containsBrokerUri(Context context)
     {
-        return getSharedPrefs(context).contains(SERVER_URI);
+        return getSharedPrefs(context).contains(BROKER_URI);
     }
 
-    public static String getServerUri(Context context)
+    public static String getBrokerUri(Context context)
     {
-        if (!containsServerUri(context))
+        if (!containsBrokerUri(context))
         {
-            throw new AssertionError(SERVER_URI + " can not be empty");
+            throw new AssertionError(BROKER_URI + " can not be empty");
         }
-        return getSharedPrefs(context).getString(SERVER_URI, "");
+        return getSharedPrefs(context).getString(BROKER_URI, "");
     }
 
     public static void setPhilipsHueUri(Context context, String philipsHueUri)
@@ -84,7 +84,7 @@ public class Preferences
 
     private static final String ADMIN_PASSWORD_HASH = "admin_password_hash";
     private static final String IS_ADMIN_USER = "is_admin_user";
-    private static final String SERVER_URI = "server_uri";
+    private static final String BROKER_URI = "broker_uri";
     private static final String PHILIPS_HUE_URI = "philips_hue_uri";
     private static final String BOOTH_ID = "booth_id";
 }

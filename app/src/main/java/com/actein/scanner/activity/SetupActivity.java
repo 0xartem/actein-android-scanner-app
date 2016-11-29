@@ -24,7 +24,7 @@ public class SetupActivity extends Activity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_setup);
 
-        mServerAddressEditText = (EditText) findViewById(R.id.serverAddressEditText);
+        mBrokerAddressEditText = (EditText) findViewById(R.id.brokerAddressEditText);
         mPhilipsHueBridgeAddressEditText = (EditText) findViewById(R.id.philipsHueBridgeAddressEditText);
         mAdminPasswordEditText = (EditText) findViewById(R.id.adminPasswordEditText);
         mBoothsSpinner = (Spinner) findViewById(R.id.boothsSpinner);
@@ -44,11 +44,11 @@ public class SetupActivity extends Activity
             {
                 try
                 {
-                    String serverUri = mServerAddressEditText.getText().toString().trim();
-                    if (!StringUtils.isNetworkAddressValid(serverUri))
+                    String brokerUri = mBrokerAddressEditText.getText().toString().trim();
+                    if (!StringUtils.isNetworkAddressValid(brokerUri))
                     {
                         Toast.makeText(getApplicationContext(),
-                                       R.string.toastIncorrectServerAddress,
+                                       R.string.toastIncorrectBrokerAddress,
                                        Toast.LENGTH_SHORT).show();
                         return;
                     }
@@ -82,7 +82,7 @@ public class SetupActivity extends Activity
                     }
 
                     new SetupAsyncTask(SetupActivity.this)
-                            .execute(new SetupParams(serverUri, philipsHueUri, password, boothId));
+                            .execute(new SetupParams(brokerUri, philipsHueUri, password, boothId));
                 }
                 catch (Exception ex)
                 {
@@ -96,7 +96,7 @@ public class SetupActivity extends Activity
 
     private static final String TAG = SetupActivity.class.getSimpleName();
 
-    private EditText mServerAddressEditText;
+    private EditText mBrokerAddressEditText;
     private EditText mPhilipsHueBridgeAddressEditText;
     private EditText mAdminPasswordEditText;
     private Spinner mBoothsSpinner;

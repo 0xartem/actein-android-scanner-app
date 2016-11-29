@@ -36,7 +36,7 @@ public class ConnectionModel
 
         mConnection = Connection.createInstance(
                 contextOwner.getApplicationContext(),
-                Preferences.getServerUri(contextOwner.getApplicationContext())
+                Preferences.getBrokerUri(contextOwner.getApplicationContext())
                 );
 
         VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo

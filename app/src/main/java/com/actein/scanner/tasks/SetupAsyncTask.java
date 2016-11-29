@@ -48,7 +48,7 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
         {
             SetupParams setupParams = params[0];
 
-            Preferences.setServerUri(mActivity, setupParams.getServerUri());
+            Preferences.setBrokerUri(mActivity, setupParams.getBrokerUri());
             Preferences.setPhilipsHueUri(mActivity, setupParams.getPhilipsHueUri());
 
             HashAlgorithm hashAlgorithm = new HashAlgorithm();

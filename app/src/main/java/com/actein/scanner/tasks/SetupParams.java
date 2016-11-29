@@ -4,15 +4,15 @@ public class SetupParams
 {
     public SetupParams(String serverUri, String philipsHueUri, String password, int boothId)
     {
-        mServerUri = serverUri;
+        mBrokerUri = serverUri;
         mPhilipsHueUri = philipsHueUri;
         mPassword = password;
         mBoothId = boothId;
     }
 
-    String getServerUri()
+    String getBrokerUri()
     {
-        return mServerUri;
+        return mBrokerUri;
     }
 
     String getPhilipsHueUri()
@@ -30,7 +30,7 @@ public class SetupParams
         return mBoothId;
     }
 
-    private String mServerUri;
+    private String mBrokerUri;
     private String mPhilipsHueUri;
     private String mPassword;
     private int mBoothId;

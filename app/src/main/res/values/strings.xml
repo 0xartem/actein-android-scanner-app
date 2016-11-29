@@ -1,11 +1,11 @@
 <resources>
     <string name="app_name">Actein Scanner</string>
     <string name="okButtonCaption">OK</string>
-    <string name="serverAddressHint">Server Address</string>
+    <string name="brokerAddressHint">MQTT Broker Address</string>
     <string name="philipsHueBridgeAddressHint">Philips Hue Bridge Address</string>
     <string name="adminPasswordHint">Admin Password</string>
-    <string name="toastIncorrectServerAddress">Please enter correct server address</string>
-    <string name="toastIncorrectPhilipsHueBridge">Please enter correct philips hue bridge address</string>
+    <string name="toastIncorrectBrokerAddress">Please enter correct broker address</string>
+    <string name="toastIncorrectPhilipsHueBridge">Please enter correct Philips Hue bridge address</string>
     <string name="toastEmptyAdminPassword">Please enter admin password</string>
     <string name="toastInvalidBoothId">The booth id is invalid</string>
     <string name="vrBoothText">Virtual Reality Booth</string>
