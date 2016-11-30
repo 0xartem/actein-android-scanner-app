@@ -21,13 +21,11 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public synchronized void onHandleDecodeResult(
-            QrCodeProcessingCallback callback,
-            ResultHandler resultHandler,
-            Bitmap barcode
-            )
+    public synchronized void onHandleDecodeResult(QrCodeProcessingCallback callback,
+                                                  ResultHandler resultHandler,
+                                                  Bitmap barcode)
     {
-        if (mCurStatus != VrGameStatusProtos.VrGameStatus.GAME_ON)
+        if (isGameStopped())
         {
             new QrCodeProcessingTask(mCaptureView.getActivityContext(),
                                      callback,
@@ -77,6 +75,19 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     {
         return mCurStatus == VrGameStatusProtos.VrGameStatus.GAME_ON ||
                mCurStatus == VrGameStatusProtos.VrGameStatus.TUTORIAL_ON;
+    }
+
+    @Override
+    public synchronized boolean isGameAboutToStart()
+    {
+        return mCurStatus == VrGameStatusProtos.VrGameStatus.STARTING_GAME ||
+               mCurStatus == VrGameStatusProtos.VrGameStatus.STARTING_TUTORIAL;
+    }
+
+    @Override
+    public synchronized boolean isGameAboutToStop()
+    {
+        return mCurStatus == VrGameStatusProtos.VrGameStatus.STOPPING_GAME;
     }
 
     @Override
