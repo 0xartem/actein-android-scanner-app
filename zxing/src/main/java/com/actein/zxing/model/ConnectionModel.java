@@ -199,9 +199,8 @@ public class ConnectionModel
         messageBuilder.append("The status event received: ").append(event.getStatus().toString());
         if (!event.hasError())
         {
-            String message = messageBuilder.toString();
-            mModelObserver.onVrEventStatusReceived(event.getStatus(), message);
-            Log.i(TAG, message);
+            mModelObserver.onVrEventStatusReceived(event.getStatus(), messageBuilder.toString());
+            Log.i(TAG, messageBuilder.toString());
         }
         else
         {
@@ -211,6 +210,8 @@ public class ConnectionModel
                           .append(event.getError().getErrorMessage());
 
             Log.e(TAG, messageBuilder.toString());
+            mModelObserver.onVrEventStatusReceived(VrGameStatusProtos.VrGameStatus.GAME_OFF,
+                                                   messageBuilder.toString());
             mModelObserver.onError(event.getError().getErrorMessage());
         }
     }
