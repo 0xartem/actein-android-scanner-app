@@ -9,15 +9,15 @@ public enum EquipmentType
 
     public static EquipmentType convertToEquipmentType(String eventType)
     {
-        if (eventType.equals("HTC Vive"))
+        if (eventType.trim().equals("HTC Vive"))
         {
             return HTC_VIVE;
         }
-        else if (eventType.equals("HTC Vive with Subpack"))
+        else if (eventType.trim().equals("HTC Vive + Subpack"))
         {
             return HTC_VIVE_WITH_SUBPACK;
         }
-        else if (eventType.equals("Playstation VR"))
+        else if (eventType.trim().equals("Playstation VR"))
         {
             return PLAYSTATION_VR;
         }
