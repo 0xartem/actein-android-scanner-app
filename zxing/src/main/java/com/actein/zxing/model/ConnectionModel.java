@@ -5,10 +5,12 @@ import android.util.Log;
 import com.actein.mvp.ContextOwner;
 import com.actein.mvp.Model;
 import com.actein.transport.mqtt.Connection;
+import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
+import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.VrGameOffProtos;
@@ -21,10 +23,15 @@ import com.actein.vr_events.interfaces.VrEventsManager;
 import com.actein.zxing.data.Preferences;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
+import org.eclipse.paho.client.mqttv3.MqttMessage;
+
+import java.util.Map;
+import java.util.TreeMap;
 
 public class ConnectionModel
         implements
         Model,
+        MessageHandler,
         ConnectionObserver,
         ActionStatusObserver,
         VrEventsHandler
@@ -44,7 +51,8 @@ public class ConnectionModel
                 .setId(mBoothSettings.getBoothId())
                 .build();
 
-        mVrEventsManager = new MqttVrEventsManager(mConnection, vrBoothInfo);
+        mVrEventsManager = new MqttVrEventsManager(mConnection, this, this, vrBoothInfo);
+        mMessageHandlers.put("vr-events", mVrEventsManager.getMessageHandler());
     }
 
     public BoothSettings getBoothSettings()
@@ -61,10 +69,7 @@ public class ConnectionModel
     {
         try
         {
-            if (mVrEventsManager.getPublisher() != null)
-            {
-                mVrEventsManager.getPublisher().publishVrGameOffEvent();
-            }
+            mVrEventsManager.getPublisher().publishVrGameOffEvent();
         }
         catch (VrEventsException ex)
         {
@@ -80,17 +85,14 @@ public class ConnectionModel
     {
         try
         {
-            if (mVrEventsManager.getPublisher() != null)
-            {
-                VrGameProtos.VrGame vrGame = VrGameProtos.VrGame.newBuilder()
-                                                                .setGameName(gameName)
-                                                                .setSteamGameId(steamGameId)
-                                                                .setGameDurationSeconds(durationSeconds)
-                                                                .setRunTutorial(runTutorial)
-                                                                .build();
+            VrGameProtos.VrGame vrGame = VrGameProtos.VrGame.newBuilder()
+                                                            .setGameName(gameName)
+                                                            .setSteamGameId(steamGameId)
+                                                            .setGameDurationSeconds(durationSeconds)
+                                                            .setRunTutorial(runTutorial)
+                                                            .build();
 
-                mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
-            }
+            mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
         }
         catch (VrEventsException ex)
         {
@@ -104,6 +106,7 @@ public class ConnectionModel
     {
         try
         {
+            mConnection.getSubscriber().setupCallback(new MqttSubscriberCallback(this, this));
             mConnection.connect(new CommonActionListener(Action.CONNECT, this));
         }
         catch (MqttException ex)
@@ -122,7 +125,6 @@ public class ConnectionModel
             {
                 if (mVrEventsManager.isRunning())
                 {
-                    mVrEventsManager.getSubscriber().unsubscribeFromStatusEvent();
                     mVrEventsManager.stop();
                 }
 
@@ -138,11 +140,54 @@ public class ConnectionModel
         }
     }
 
+    // MessageHandler implementation
+    @Override
+    public void handleMessage(String topic, MqttMessage message) throws Exception
+    {
+        for (MessageHandler handler : mMessageHandlers.values())
+        {
+            handler.handleMessage(topic, message);
+        }
+    }
+
     // ConnectionObserver implementation
     @Override
     public void onConnectionLost()
     {
-        mModelObserver.onConnectionLost();
+        mModelObserver.onConnectionLost(false);
+    }
+
+    @Override
+    public void onConnected()
+    {
+        try
+        {
+            mVrEventsManager.start();
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.getMessage());
+        }
+    }
+
+    @Override
+    public void onReconnected()
+    {
+        try
+        {
+            if (mVrEventsManager.isRunning())
+            {
+                mVrEventsManager.stop();
+            }
+            mVrEventsManager.start();
+            mModelObserver.onConnected("MQTT reconnection succeed");
+        }
+        catch (VrEventsException ex)
+        {
+            Log.e(TAG, ex.toString(), ex);
+            mModelObserver.onError(ex.getMessage());
+        }
     }
 
     // ActionStatusObserver implementation
@@ -153,16 +198,6 @@ public class ConnectionModel
         {
         case CONNECT:
             mModelObserver.onConnected(message);
-            try
-            {
-                mVrEventsManager.start(this, this, this);
-                mVrEventsManager.getSubscriber().subscribeToStatusEvent();
-            }
-            catch (VrEventsException ex)
-            {
-                Log.e(TAG, ex.toString(), ex);
-                mModelObserver.onError(ex.getMessage());
-            }
             break;
         case DISCONNECT:
             mModelObserver.onDisconnected(message);
@@ -175,6 +210,25 @@ public class ConnectionModel
             break;
         case PUBLISH:
             mModelObserver.onPublished(message);
+            break;
+        default:
+            throw new UnsupportedOperationException("Unknown action type");
+        }
+    }
+
+    @Override
+    public void onActionFailure(Action action, String message)
+    {
+        switch (action)
+        {
+        case CONNECT:
+            mModelObserver.onConnectionLost(true);
+            break;
+        case DISCONNECT:
+        case SUBSCRIBE:
+        case UNSUBSCRIBE:
+        case PUBLISH:
+            mModelObserver.onError(message);
             break;
         default:
             throw new UnsupportedOperationException("Unknown action type");
@@ -215,26 +269,10 @@ public class ConnectionModel
         }
     }
 
-    @Override
-    public void onActionFailure(Action action, String message)
-    {
-        switch (action)
-        {
-        case CONNECT:
-        case DISCONNECT:
-        case SUBSCRIBE:
-        case UNSUBSCRIBE:
-        case PUBLISH:
-            mModelObserver.onError(message);
-            break;
-        default:
-            throw new UnsupportedOperationException("Unknown action type");
-        }
-    }
-
     private ConnectionModelObserver mModelObserver;
 
     private Connection mConnection;
+    private Map<String, MessageHandler> mMessageHandlers = new TreeMap<>();
     private BoothSettings mBoothSettings;
 
     private VrEventsManager mVrEventsManager;

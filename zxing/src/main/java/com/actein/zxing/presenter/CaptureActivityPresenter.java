@@ -50,7 +50,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else
         {
-            onConnectionLost();
+            onConnectionLost(true);
         }
     }
 
@@ -66,7 +66,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else
         {
-            onConnectionLost();
+            onConnectionLost(true);
         }
     }
 
@@ -156,11 +156,14 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void onConnectionLost()
+    public void onConnectionLost(boolean showErrorMsg)
     {
-        mCaptureView.showErrorDialog(
-                mCaptureView.getActivityContext().getString(R.string.msg_connection_lost)
-                );
+        if (showErrorMsg)
+        {
+            mCaptureView.showErrorDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_connection_lost)
+                    );
+        }
     }
 
     @Override

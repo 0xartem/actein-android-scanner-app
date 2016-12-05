@@ -3,9 +3,7 @@ package com.actein.vr_events;
 import android.util.Log;
 
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
-import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
-import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.interfaces.Subscriber;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
@@ -24,13 +22,11 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
             Subscriber subscriber,
             VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
             VrEventsHandler vrEventsHandler,
-            ConnectionObserver connectionObserver,
             ActionStatusObserver actionObserver)
     {
         mSubscriber = subscriber;
         mVrBoothInfo = vrBoothInfo;
         mVrEventsHandler = vrEventsHandler;
-        mSubscriber.setupCallback(new MqttSubscriberCallback(this, connectionObserver));
 
         mSubscribeListener = new CommonActionListener(Action.SUBSCRIBE, actionObserver);
         mUnsubscribeListener = new CommonActionListener(Action.UNSUBSCRIBE, actionObserver);
