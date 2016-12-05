@@ -2,6 +2,7 @@
     <string name="app_name">Actein Scanner</string>
     <string name="okButtonCaption">OK</string>
     <string name="brokerAddressHint">MQTT Broker Address</string>
+    <string name="brokerDefaultAddress">95.85.61.247</string>
     <string name="philipsHueBridgeAddressHint">Philips Hue Bridge Address</string>
     <string name="adminPasswordHint">Admin Password</string>
     <string name="toastIncorrectBrokerAddress">Please enter correct broker address</string>
