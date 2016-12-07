@@ -2,15 +2,19 @@ package com.actein.zxing.model;
 
 import android.util.Log;
 
+import com.actein.transport.mqtt.OnlineStatusProtos;
 import com.actein.mvp.ContextOwner;
 import com.actein.mvp.Model;
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
+import com.actein.transport.mqtt.LastWillManager;
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
+import com.actein.transport.mqtt.interfaces.PcOnlineStatusHandler;
+import com.actein.transport.mqtt.policies.PreciseDeliveryConnectionPolicy;
 import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.VrGameOffProtos;
@@ -31,10 +35,8 @@ import java.util.TreeMap;
 public class ConnectionModel
         implements
         Model,
-        MessageHandler,
-        ConnectionObserver,
-        ActionStatusObserver,
-        VrEventsHandler
+        MessageHandler, ConnectionObserver, ActionStatusObserver,
+        VrEventsHandler, PcOnlineStatusHandler
 {
     public ConnectionModel(ContextOwner contextOwner, ConnectionModelObserver modelObserver)
     {
@@ -43,15 +45,19 @@ public class ConnectionModel
 
         mConnection = Connection.createInstance(
                 contextOwner.getApplicationContext(),
-                Preferences.getBrokerUri(contextOwner.getApplicationContext())
+                Preferences.getBrokerUri(contextOwner.getApplicationContext()),
+                new PreciseDeliveryConnectionPolicy(mBoothSettings.getBoothId())
                 );
+
+        mLastWillManager = new LastWillManager(mConnection, this, this, mBoothSettings.getBoothId());
 
         VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
                 .newBuilder()
                 .setId(mBoothSettings.getBoothId())
                 .build();
-
         mVrEventsManager = new MqttVrEventsManager(mConnection, this, this, vrBoothInfo);
+
+        mMessageHandlers.put("last-will", mLastWillManager);
         mMessageHandlers.put("vr-events", mVrEventsManager.getMessageHandler());
     }
 
@@ -60,9 +66,14 @@ public class ConnectionModel
         return mBoothSettings;
     }
 
-    public boolean isConnected()
+    public synchronized boolean isConnected()
     {
         return mConnection.getClient().isConnected();
+    }
+
+    public synchronized boolean isPcOnline()
+    {
+        return mPcOnlineStatus == OnlineStatusProtos.OnlineStatus.ONLINE;
     }
 
     public void publishGameOffEvent()
@@ -101,8 +112,9 @@ public class ConnectionModel
         }
     }
 
+    // Model implementation
     @Override
-    public void onCreate()
+    public synchronized void onCreate()
     {
         try
         {
@@ -117,12 +129,13 @@ public class ConnectionModel
     }
 
     @Override
-    public void onDestroy(boolean isChangingConfiguration)
+    public synchronized void onDestroy(boolean isChangingConfiguration)
     {
         try
         {
             if (!isChangingConfiguration)
             {
+                mLastWillManager.stop();
                 if (mVrEventsManager.isRunning())
                 {
                     mVrEventsManager.stop();
@@ -158,13 +171,14 @@ public class ConnectionModel
     }
 
     @Override
-    public void onConnected()
+    public synchronized void onConnected()
     {
         try
         {
+            mLastWillManager.start();
             mVrEventsManager.start();
         }
-        catch (VrEventsException ex)
+        catch (MqttException | VrEventsException ex)
         {
             Log.e(TAG, ex.toString(), ex);
             mModelObserver.onError(ex.getMessage());
@@ -174,20 +188,8 @@ public class ConnectionModel
     @Override
     public void onReconnected()
     {
-        try
-        {
-            if (mVrEventsManager.isRunning())
-            {
-                mVrEventsManager.stop();
-            }
-            mVrEventsManager.start();
-            mModelObserver.onConnected("MQTT reconnection succeed");
-        }
-        catch (VrEventsException ex)
-        {
-            Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.getMessage());
-        }
+        onConnected();
+        mModelObserver.onConnected("MQTT reconnection succeed");
     }
 
     // ActionStatusObserver implementation
@@ -269,13 +271,27 @@ public class ConnectionModel
         }
     }
 
-    private ConnectionModelObserver mModelObserver;
+    // PcOnlineStatusHandler implementation
+    @Override
+    public synchronized void onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus status)
+    {
+        mPcOnlineStatus = status;
+        Log.i(TAG, "PC online status changed: " + status.toString());
+        if (status == OnlineStatusProtos.OnlineStatus.OFFLINE)
+        {
+            mModelObserver.onPcOffline();
+        }
+    }
 
     private Connection mConnection;
+    private ConnectionModelObserver mModelObserver;
+    private OnlineStatusProtos.OnlineStatus mPcOnlineStatus = OnlineStatusProtos.OnlineStatus.UNKNOWN;
+
     private Map<String, MessageHandler> mMessageHandlers = new TreeMap<>();
     private BoothSettings mBoothSettings;
 
     private VrEventsManager mVrEventsManager;
+    private LastWillManager mLastWillManager;
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

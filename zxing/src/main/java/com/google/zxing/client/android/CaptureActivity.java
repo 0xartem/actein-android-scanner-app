@@ -344,8 +344,8 @@ public final class CaptureActivity
         } else if (i == R.id.menu_start_game) {
             synchronized (gameStateLock) {
                 if (presenter.isGameRunning()) {
-                    presenter.turnGameOff();
                     onGameLoading();
+                    presenter.turnGameOff();
                 }
                 else if (presenter.isGameStopped()) {
                     intent.setClassName(this, StartGameActivity.class.getName());
@@ -368,11 +368,11 @@ public final class CaptureActivity
                     decodeOrStoreSavedBitmap(null, historyItem.getResult());
                 }
             } else if (requestCode == GAME_START_REQUEST_CODE) {
+                onGameLoading();
                 presenter.turnGameOn(intent.getStringExtra(Intents.StartGame.GAME_NAME),
                                      intent.getLongExtra(Intents.StartGame.GAME_STEAM_ID, 0),
                                      intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0),
                                      intent.getBooleanExtra(Intents.StartGame.RUN_TUTORIAL, true));
-                onGameLoading();
             }
         }
     }

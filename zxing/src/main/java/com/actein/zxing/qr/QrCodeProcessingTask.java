@@ -7,9 +7,9 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import com.actein.vr_events.VrGameProtos;
-import com.actein.zxing.model.ConnectionModel;
+import com.actein.zxing.model.BoothSettings;
 import com.actein.zxing.model.EquipmentType;
+import com.actein.zxing.presenter.CaptureActivityPresenter;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
@@ -23,14 +23,16 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
             QrCodeProcessingCallback callback,
             ResultHandler parsedResultHandler,
             Bitmap barCode,
-            ConnectionModel connectionModel
+            CaptureActivityPresenter captureActivityPresenter,
+            BoothSettings boothSettings
             )
     {
         mContext = context;
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
-        mConnectionModel = connectionModel;
+        mCaptureActivityPresenter = captureActivityPresenter;
+        mBoothSettings = boothSettings;
 
         mQrCodeSettings = new QrCodeSettings(PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -80,7 +82,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                     mContext,
                     result,
                     mQrCodeSettings,
-                    mConnectionModel.getBoothSettings()
+                    mBoothSettings
             );
 
             QrCodeStatus status = qrCodeValidator.validateQrCode();
@@ -92,10 +94,10 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                 {
                     publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 
-                    mConnectionModel.publishGameOnEvent(result.getGameName(),
-                                                        result.getSteamGameId(),
-                                                        result.getDurationSeconds(),
-                                                        true);
+                    mCaptureActivityPresenter.turnGameOn(result.getGameName(),
+                                                         result.getSteamGameId(),
+                                                         result.getDurationSeconds(),
+                                                         true);
                 }
             }
 
@@ -115,7 +117,8 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
     private Bitmap mBarCode;
     private ProgressDialog mProgressDialog;
 
-    private ConnectionModel mConnectionModel;
+    private CaptureActivityPresenter mCaptureActivityPresenter;
+    private BoothSettings mBoothSettings;
 
     private static final String TAG = QrCodeProcessingTask.class.getSimpleName();
 }

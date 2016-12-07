@@ -47,13 +47,17 @@ public class Connection
         return new Connection(context, brokerEndPoint, clientEndPoint, connectionPolicy);
     }
 
-    public static Connection createInstance(Context context, String brokerHost)
+    public static Connection createInstance(
+            Context context,
+            String brokerHost,
+            ConnectionPolicy connectionPolicy
+            )
     {
         return new Connection(
                 context,
                 new MqttBrokerEndPoint(brokerHost),
                 new MqttClientEndPoint(),
-                new PreciseDeliveryConnectionPolicy()
+                connectionPolicy
         );
     }
 

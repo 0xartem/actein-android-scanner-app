@@ -25,26 +25,25 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
             ActionStatusObserver actionObserver)
     {
         mSubscriber = subscriber;
-        mVrBoothInfo = vrBoothInfo;
         mVrEventsHandler = vrEventsHandler;
 
         mSubscribeListener = new CommonActionListener(Action.SUBSCRIBE, actionObserver);
         mUnsubscribeListener = new CommonActionListener(Action.UNSUBSCRIBE, actionObserver);
 
         mAllVrEventsTopic = new VrTopicBuilder().setToAll()
-                                                .setBoothId(mVrBoothInfo.getId())
+                                                .setBoothId(vrBoothInfo.getId())
                                                 .build();
 
         mGameStatusVrTopic = new VrTopicBuilder().setToGameStatus()
-                                                 .setBoothId(mVrBoothInfo.getId())
+                                                 .setBoothId(vrBoothInfo.getId())
                                                  .build();
 
         mGameOnVrTopic = new VrTopicBuilder().setToGameOn()
-                                             .setBoothId(mVrBoothInfo.getId())
+                                             .setBoothId(vrBoothInfo.getId())
                                              .build();
 
         mGameOffVrTopic = new VrTopicBuilder().setToGameOff()
-                                              .setBoothId(mVrBoothInfo.getId())
+                                              .setBoothId(vrBoothInfo.getId())
                                               .build();
     }
 
@@ -119,10 +118,6 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         {
             processVrStatusEvent(message);
         }
-        else
-        {
-            throw new UnsupportedOperationException("Unknown vr event message type");
-        }
     }
 
     private void processGameOnEvent(MqttMessage message) throws InvalidProtocolBufferException
@@ -162,7 +157,6 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
 
     private Subscriber mSubscriber;
     private VrEventsHandler mVrEventsHandler;
-    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 
     private CommonActionListener mSubscribeListener;
     private CommonActionListener mUnsubscribeListener;

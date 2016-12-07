@@ -1,9 +1,16 @@
 package com.actein.transport.mqtt.policies;
 
+import com.actein.transport.mqtt.OnlineStatusProtos;
 import com.actein.transport.mqtt.Topics;
 
 public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
 {
+    public PreciseDeliveryConnectionPolicy(int boothId)
+    {
+        mLastWillTopic = Topics.EMB_DEVICE_ONLINE_STATUS.replace(Topics.BOOTH_ID,
+                                                                 Integer.toString(boothId));
+    }
+
     @Override
     public int getQualityOfService()
     {
@@ -37,12 +44,19 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     @Override
     public String getLastWillTopic()
     {
-        return Topics.EMB_DEVICE_ONLINE_STATUS;
+        return mLastWillTopic;
     }
 
     @Override
     public byte[] getLastWillPayload()
     {
-        return "offline".getBytes();//TODO
+        OnlineStatusProtos.OnlineStatusEvent event = OnlineStatusProtos.OnlineStatusEvent
+                .newBuilder()
+                .setStatus(OnlineStatusProtos.OnlineStatus.OFFLINE)
+                .build();
+
+        return event.toByteArray();
     }
+
+    private String mLastWillTopic;
 }
