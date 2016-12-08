@@ -51,7 +51,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else if (!mConnectionModel.isPcOnline())
         {
-            onPcOffline();
+            onPcOffline(true);
         }
         else
         {
@@ -71,7 +71,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else if (!mConnectionModel.isPcOnline())
         {
-            onPcOffline();
+            onPcOffline(true);
         }
         else
         {
@@ -165,12 +165,21 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void onPcOffline()
+    public void onPcOffline(boolean sendingRequest)
     {
         updateStarStopGameView();
-        mCaptureView.showErrorDialog(
-                mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
-                );
+        if (sendingRequest)
+        {
+            mCaptureView.showErrorDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
+                    );
+        }
+        else
+        {
+            mCaptureView.showInfoDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
+                    );
+        }
     }
 
     @Override

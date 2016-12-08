@@ -283,7 +283,7 @@ public class ConnectionModel
         Log.i(TAG, "PC online status changed: " + status.toString());
         if (status == OnlineStatusProtos.OnlineStatus.OFFLINE)
         {
-            mModelObserver.onPcOffline();
+            mModelObserver.onPcOffline(false);
         }
     }
 
