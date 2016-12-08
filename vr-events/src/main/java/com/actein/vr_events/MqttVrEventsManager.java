@@ -2,7 +2,7 @@ package com.actein.vr_events;
 
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
-import com.actein.transport.mqtt.interfaces.ConnectionObserver;
+import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsManager;
@@ -11,44 +11,41 @@ import com.actein.vr_events.interfaces.VrEventsSubscriber;
 
 public class MqttVrEventsManager implements VrEventsManager
 {
-    public MqttVrEventsManager(Connection connection, VrBoothInfoProtos.VrBoothInfo vrBoothInfo)
-    {
-        mConnection = connection;
-        mVrBoothInfo = vrBoothInfo;
-    }
-
-    @Override
-    public void start(VrEventsHandler vrEventsHandler,
-                      ConnectionObserver connectionObserver,
-                      ActionStatusObserver actionObserver) throws VrEventsException
+    public MqttVrEventsManager(Connection connection,
+                               VrEventsHandler vrEventsHandler,
+                               ActionStatusObserver actionObserver,
+                               VrBoothInfoProtos.VrBoothInfo vrBoothInfo)
     {
         mVrEventsPublisher = new MqttVrEventsPublisher(
-                mConnection.getPublisher(),
-                mVrBoothInfo,
+                connection.getPublisher(),
+                vrBoothInfo,
                 actionObserver
         );
 
         mVrEventsSubscriber = new MqttVrEventsSubscriber(
-                mConnection.getSubscriber(),
-                mVrBoothInfo,
+                connection.getSubscriber(),
+                vrBoothInfo,
                 vrEventsHandler,
-                connectionObserver,
                 actionObserver
         );
-
-        mIsRunning = true;
     }
 
     @Override
-    public void stop() throws VrEventsException
+    public synchronized void start() throws VrEventsException
     {
-        mIsRunning = false;
-        mVrEventsSubscriber = null;
-        mVrEventsPublisher = null;
+        mIsRunning = true;
+        mVrEventsSubscriber.subscribeToStatusEvent();
     }
 
     @Override
-    public boolean isRunning()
+    public synchronized void stop() throws VrEventsException
+    {
+        mVrEventsSubscriber.unsubscribeFromStatusEvent();
+        mIsRunning = false;
+    }
+
+    @Override
+    public synchronized boolean isRunning()
     {
         return mIsRunning;
     }
@@ -65,9 +62,13 @@ public class MqttVrEventsManager implements VrEventsManager
         return mVrEventsSubscriber;
     }
 
+    @Override
+    public MessageHandler getMessageHandler()
+    {
+        return mVrEventsSubscriber;
+    }
+
     private boolean mIsRunning = false;
     private MqttVrEventsPublisher mVrEventsPublisher = null;
     private MqttVrEventsSubscriber mVrEventsSubscriber = null;
-    private Connection mConnection;
-    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 }

@@ -6,7 +6,7 @@ import com.actein.transport.mqtt.policies.ConnectionPolicy;
 import org.eclipse.paho.android.service.MqttAndroidClient;
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
 import org.eclipse.paho.client.mqttv3.IMqttToken;
-import org.eclipse.paho.client.mqttv3.MqttCallback;
+import org.eclipse.paho.client.mqttv3.MqttCallbackExtended;
 import org.eclipse.paho.client.mqttv3.MqttException;
 
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class MqttSubscriber implements Subscriber
     }
 
     @Override
-    public void setupCallback(MqttCallback callback)
+    public void setupCallback(MqttCallbackExtended callback)
     {
         mClient.setCallback(callback);
     }

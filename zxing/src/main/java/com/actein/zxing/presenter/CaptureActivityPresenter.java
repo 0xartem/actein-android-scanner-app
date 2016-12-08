@@ -31,7 +31,8 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
                                      callback,
                                      resultHandler,
                                      barcode,
-                                     mConnectionModel).execute();
+                                     this,
+                                     mConnectionModel.getBoothSettings()).execute();
         }
         else
         {
@@ -44,13 +45,17 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     @Override
     public void turnGameOff()
     {
-        if (mConnectionModel.isConnected())
+        if (!mConnectionModel.isConnected())
         {
-            mConnectionModel.publishGameOffEvent();
+            onConnectionLost(true);
+        }
+        else if (!mConnectionModel.isPcOnline())
+        {
+            onPcOffline(true);
         }
         else
         {
-            onConnectionLost();
+            mConnectionModel.publishGameOffEvent();
         }
     }
 
@@ -60,13 +65,17 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
                            long durationSeconds,
                            boolean runTutorial)
     {
-        if (mConnectionModel.isConnected())
+        if (!mConnectionModel.isConnected())
         {
-            mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds, runTutorial);
+            onConnectionLost(true);
+        }
+        else if (!mConnectionModel.isPcOnline())
+        {
+            onPcOffline(true);
         }
         else
         {
-            onConnectionLost();
+            mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds, runTutorial);
         }
     }
 
@@ -156,11 +165,33 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void onConnectionLost()
+    public void onPcOffline(boolean sendingRequest)
     {
-        mCaptureView.showErrorDialog(
-                mCaptureView.getActivityContext().getString(R.string.msg_connection_lost)
-                );
+        updateStarStopGameView();
+        if (sendingRequest)
+        {
+            mCaptureView.showErrorDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
+                    );
+        }
+        else
+        {
+            mCaptureView.showInfoDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
+                    );
+        }
+    }
+
+    @Override
+    public void onConnectionLost(boolean showErrorMsg)
+    {
+        updateStarStopGameView();
+        if (showErrorMsg)
+        {
+            mCaptureView.showErrorDialog(
+                    mCaptureView.getActivityContext().getString(R.string.msg_connection_lost)
+                    );
+        }
     }
 
     @Override
@@ -173,18 +204,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
             mCaptureView.showToast(message);
         }
 
-        if (isGameRunning())
-        {
-            mCaptureView.onGameRunning();
-        }
-        else if (isGameStopped())
-        {
-            mCaptureView.onGameStopped();
-        }
-        else
-        {
-            mCaptureView.onGameLoading();
-        }
+        updateStarStopGameView();
     }
 
     @Override
@@ -197,6 +217,22 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     public void onInfo(String message)
     {
         mCaptureView.showInfoDialog(message);
+    }
+
+    private void updateStarStopGameView()
+    {
+        if (isGameRunning())
+        {
+            mCaptureView.onGameRunning();
+        }
+        else if (isGameStopped())
+        {
+            mCaptureView.onGameStopped();
+        }
+        else
+        {
+            mCaptureView.onGameLoading();
+        }
     }
 
     private boolean isDebug()
