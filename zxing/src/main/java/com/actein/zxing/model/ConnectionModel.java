@@ -31,6 +31,8 @@ import org.eclipse.paho.client.mqttv3.MqttMessage;
 
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ConnectionModel
         implements
@@ -167,6 +169,7 @@ public class ConnectionModel
     @Override
     public void onConnectionLost()
     {
+        this.startManualReconnectThread();
         mModelObserver.onConnectionLost(false);
     }
 
@@ -224,7 +227,8 @@ public class ConnectionModel
         switch (action)
         {
         case CONNECT:
-            mModelObserver.onConnectionLost(true);
+            this.startManualReconnectThread();
+            mModelObserver.onConnectionLost(false);
             break;
         case DISCONNECT:
         case SUBSCRIBE:
@@ -283,6 +287,27 @@ public class ConnectionModel
         }
     }
 
+    private void startManualReconnectThread()
+    {
+        mReconnectExecutor.execute(new Runnable()
+        {
+            public void run()
+            {
+                try
+                {
+                    Thread.sleep(3000);
+                    mConnection.connect(new CommonActionListener(Action.CONNECT,
+                                                                 ConnectionModel.this));
+                }
+                catch (Exception ex)
+                {
+                    Log.e(TAG, ex.toString(), ex);
+                    mModelObserver.onError(ex.getMessage());
+                }
+            }
+        });
+    }
+
     private Connection mConnection;
     private ConnectionModelObserver mModelObserver;
     private OnlineStatusProtos.OnlineStatus mPcOnlineStatus = OnlineStatusProtos.OnlineStatus.UNKNOWN;
@@ -292,6 +317,8 @@ public class ConnectionModel
 
     private VrEventsManager mVrEventsManager;
     private LastWillManager mLastWillManager;
+
+    private ExecutorService mReconnectExecutor = Executors.newSingleThreadExecutor();
 
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

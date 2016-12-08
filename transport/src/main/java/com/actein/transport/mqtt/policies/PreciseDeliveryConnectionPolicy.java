@@ -32,7 +32,21 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     @Override
     public boolean isAutomaticReconnect()
     {
-        return true;
+        // Automatic reconnect takes too long, so disable it until
+        // https://github.com/eclipse/paho.mqtt.java/issues/307 is fixed
+        return false;
+    }
+
+    @Override
+    public int getConnectionTimeout()
+    {
+        return 15;
+    }
+
+    @Override
+    public int getKeepAliveInterval()
+    {
+        return 30;
     }
 
     @Override
