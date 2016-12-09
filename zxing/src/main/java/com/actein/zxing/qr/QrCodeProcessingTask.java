@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import com.actein.utils.DateTimeUtils;
 import com.actein.zxing.model.BoothSettings;
 import com.actein.zxing.model.EquipmentType;
 import com.actein.zxing.presenter.CaptureActivityPresenter;
@@ -14,6 +15,9 @@ import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
+
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessingResult>
 {
@@ -96,7 +100,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
 
                     mCaptureActivityPresenter.turnGameOn(result.getGameName(),
                                                          result.getSteamGameId(),
-                                                         result.getDurationSeconds(),
+                                                         this.adjustGameDuration(result),
                                                          true);
                 }
             }
@@ -108,6 +112,25 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
             Log.e(TAG, ex.toString(), ex);
         }
         return new QrCodeProcessingResult(QrCodeStatus.QR_CODE_INVALID);
+    }
+
+    private long adjustGameDuration(ActeinCalendarParsedResult result)
+    {
+        long durationSeconds = result.getDurationSeconds();
+        if (!mQrCodeSettings.isAllowEarlyQrCodes() && !mQrCodeSettings.isAllowExpiredQrCodes())
+        {
+            Date now = new Date();
+            if (now.after(result.getInnerCalendarResult().getStart()))
+            {
+                long personLateFor = DateTimeUtils.getDateDifference(
+                        result.getInnerCalendarResult().getStart(),
+                        now,
+                        TimeUnit.SECONDS
+                        );
+                durationSeconds = result.getDurationSeconds() - personLateFor;
+            }
+        }
+        return durationSeconds;
     }
 
     private Context mContext;

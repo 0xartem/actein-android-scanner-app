@@ -87,13 +87,7 @@ public class ActeinCalendarParsedResult extends ParsedResult
 
     public long getDurationSeconds()
     {
-        Date start = calendarParsedResult.getStart();
-        Date now = new Date();
-        if (now.compareTo(start) > 0)
-        {
-            start = now;
-        }
-        return DateTimeUtils.getDateDifference(start,
+        return DateTimeUtils.getDateDifference(calendarParsedResult.getStart(),
                                                calendarParsedResult.getEnd(),
                                                TimeUnit.SECONDS);
     }
