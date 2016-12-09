@@ -171,13 +171,13 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         if (sendingRequest)
         {
             mCaptureView.showErrorDialog(
-                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
+                    mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
                     );
         }
         else
         {
             mCaptureView.showInfoDialog(
-                    mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
+                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
                     );
         }
     }
