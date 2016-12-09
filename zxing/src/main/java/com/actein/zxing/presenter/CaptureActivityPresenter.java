@@ -1,5 +1,6 @@
 package com.actein.zxing.presenter;
 
+import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 
@@ -36,9 +37,25 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else
         {
-            onInfo(mCaptureView.getActivityContext()
-                               .getResources()
-                               .getString(R.string.msg_game_already_running));
+            mCaptureView.showInfoDialog(mCaptureView.getActivityContext()
+                                                    .getResources()
+                                                    .getString(R.string.msg_game_already_running),
+                                        new DialogInterface.OnClickListener()
+                                        {
+                                            @Override
+                                            public void onClick(DialogInterface dialog, int which)
+                                            {
+                                                mCaptureView.restartPreviewAfterDelay(0L);
+                                            }
+                                        },
+                                        new DialogInterface.OnCancelListener()
+                                        {
+                                            @Override
+                                            public void onCancel(DialogInterface dialog)
+                                            {
+                                                mCaptureView.restartPreviewAfterDelay(0L);
+                                            }
+                                        });
         }
     }
 

@@ -37,6 +37,7 @@ import com.google.zxing.client.android.share.ShareActivity;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -515,6 +516,7 @@ public final class CaptureActivity
         builder.show();
     }
 
+    @Override
     public void restartPreviewAfterDelay(long delayMS) {
         if (handler != null) {
             handler.sendEmptyMessageDelayed(R.id.restart_preview, delayMS);
@@ -580,9 +582,18 @@ public final class CaptureActivity
     @Override
     public void showInfoDialog(String message)
     {
+        this.showInfoDialog(message, null, null);
+    }
+
+    @Override
+    public void showInfoDialog(String message,
+                               DialogInterface.OnClickListener okListener,
+                               DialogInterface.OnCancelListener cancelListener)
+    {
         new AlertDialog.Builder(this).setTitle(getString(R.string.msg_info))
                                      .setMessage(message)
-                                     .setPositiveButton(R.string.button_ok, null)
+                                     .setPositiveButton(R.string.button_ok, okListener)
+                                     .setOnCancelListener(cancelListener)
                                      .show();
     }
 

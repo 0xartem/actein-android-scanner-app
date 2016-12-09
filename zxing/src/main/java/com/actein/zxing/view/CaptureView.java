@@ -4,6 +4,7 @@ import com.actein.mvp.ActivityView;
 
 public interface CaptureView extends ActivityView
 {
+    void restartPreviewAfterDelay(long delayMS);
     void onGameRunning();
     void onGameStopped();
     void onGameLoading();
