@@ -62,7 +62,6 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
 
             IntentIntegrator intentIntegrator = new IntentIntegrator(mActivity);
             intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-            intentIntegrator.setPrompt(mActivity.getString(R.string.qrCodeScanPrompt));
             return intentIntegrator.createScanIntent();
         }
         catch (Exception ex)

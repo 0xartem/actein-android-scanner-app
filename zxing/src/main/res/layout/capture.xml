@@ -49,19 +49,21 @@
           android:gravity="right|center_vertical">
 
         <ImageView android:id="@+id/barcode_image_view"
-                   android:layout_width="160dip"
+                   android:layout_width="wrap_content"
                    android:layout_height="wrap_content"
                    android:maxWidth="160dip"
                    android:maxHeight="160dip"
                    android:layout_marginBottom="@dimen/half_padding"
                    android:adjustViewBounds="true"
+                   android:layout_gravity="center"
                    android:scaleType="centerInside"
                    tools:ignore="ContentDescription"/>
 
         <TextView android:id="@+id/qr_result_text_view"
                   android:layout_width="wrap_content"
                   android:layout_height="wrap_content"
-                  android:textColor="@color/result_minor_text"/>
+                  android:textSize="@dimen/status_result_text_size"
+                  android:textColor="@color/result_text"/>
 
         <LinearLayout
           android:orientation="horizontal"
@@ -207,6 +209,7 @@
             android:layout_gravity="bottom|center_horizontal"
             android:background="@color/transparent"
             android:text="@string/msg_default_status"
+            android:textSize="@dimen/status_result_text_size"
             android:textColor="@color/status_text"/>
 
 </merge>

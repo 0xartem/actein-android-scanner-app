@@ -58,20 +58,32 @@ class DecodeResultViewer
         mResultView.setVisibility(visibility);
     }
 
-    private void buildBarcodeView(Bitmap barcode)
+    private void buildBarcodeView(QrCodeProcessingResult result, Bitmap barcode, boolean internal)
     {
         ImageView barcodeImageView = (ImageView) mActivity.findViewById(R.id.barcode_image_view);
-        if (barcode == null)
+
+        if (internal)
         {
-            barcodeImageView.setImageBitmap(
-                    BitmapFactory.decodeResource(
-                            mActivity.getResources(),
-                            R.mipmap.ic_launcher_gradient
-                    ));
+            if (barcode == null)
+            {
+                barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(mActivity.getResources(),
+                                                                             R.mipmap.ic_launcher_gradient));
+            }
+            else
+            {
+                barcodeImageView.setImageBitmap(barcode);
+            }
         }
         else
         {
-            barcodeImageView.setImageBitmap(barcode);
+            int resourceId = R.drawable.qr_scanning_fail;
+            if (result.getStatus() == QrCodeStatus.SUCCESS)
+            {
+                resourceId = R.drawable.qr_scanning_success;
+
+            }
+            barcodeImageView.setImageBitmap(BitmapFactory.decodeResource(mActivity.getResources(),
+                                                                         resourceId));
         }
     }
 
@@ -241,7 +253,8 @@ class DecodeResultViewer
             message = mActivity.getString(R.string.alert_dialog_qr_code_digital_sign);
             break;
         case SUCCESS:
-            message = mActivity.getString(R.string.alert_dialog_qr_code_success);
+            message = mActivity.getString(R.string.alert_dialog_qr_code_success,
+                                          result.getParsedResult().getEquipment());
             break;
         case QR_CODE_INVALID:
         default:
@@ -249,13 +262,13 @@ class DecodeResultViewer
         }
 
         buildResultTextView(View.VISIBLE, message);
-        if (!internal && result.getStatus() == QrCodeStatus.QR_CODE_INVALID)
+        if (!internal)
         {
-            buildContentsView(View.GONE, resultHandler);
+            buildContentsView(View.VISIBLE, resultHandler);
         }
         else
         {
-            buildContentsView(View.VISIBLE, resultHandler);
+            buildContentsView(View.GONE, resultHandler);
         }
     }
 
@@ -292,7 +305,7 @@ class DecodeResultViewer
         buildViewfinderView(View.GONE);
         buildResultView(View.VISIBLE);
 
-        buildBarcodeView(barcode);
+        buildBarcodeView(result, barcode, true);
 
         buildFormatView(View.VISIBLE, rawResult);
         buildTypeView(View.VISIBLE, resultHandler);
@@ -322,7 +335,7 @@ class DecodeResultViewer
         buildViewfinderView(View.GONE);
         buildResultView(View.VISIBLE);
 
-        buildBarcodeView(barcode);
+        buildBarcodeView(result, barcode, false);
 
         buildFormatView(View.GONE, rawResult);
         buildTypeView(View.GONE, resultHandler);
@@ -335,7 +348,7 @@ class DecodeResultViewer
         buildResultButtonView(View.GONE, resultHandler);
 
         copyToClipBoard(resultHandler);
-        long showDuration = 10000;
+        long showDuration = 20000;
         setViewDuration(showDuration);
     }
 

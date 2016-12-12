@@ -24,7 +24,6 @@ public class LaunchActivity extends Activity
         {
             IntentIntegrator intentIntegrator = new IntentIntegrator(LaunchActivity.this);
             intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-            intentIntegrator.setPrompt(getString(R.string.qrCodeScanPrompt));
             Intent scanIntent = intentIntegrator.createScanIntent();
             startActivity(scanIntent);
         }
