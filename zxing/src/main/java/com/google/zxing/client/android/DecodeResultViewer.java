@@ -262,7 +262,7 @@ class DecodeResultViewer
         }
 
         buildResultTextView(View.VISIBLE, message);
-        if (!internal)
+        if (internal)
         {
             buildContentsView(View.VISIBLE, resultHandler);
         }
