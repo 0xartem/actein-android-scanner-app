@@ -13,6 +13,8 @@ public interface CapturePresenter extends Presenter
                               Bitmap barcode);
     void turnGameOff();
     void turnGameOn(String gameName, long steamGameId, long durationSeconds, boolean runTutorial);
+    void updateStarStopGameView();
+
     boolean isGameRunning();
     boolean isGameAboutToStart();
     boolean isGameAboutToStop();

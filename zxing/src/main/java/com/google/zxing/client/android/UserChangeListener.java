@@ -33,7 +33,7 @@ class UserChangeListener implements Preference.OnPreferenceClickListener
             if (User.isAdmin(mActivity))
             {
                 User.changeUser(mActivity);
-                runCaptureActivity();
+                mActivity.finish();
             }
             else
             {
@@ -119,7 +119,7 @@ class UserChangeListener implements Preference.OnPreferenceClickListener
             if (User.isAdminPasswordCorrect(mActivity, password))
             {
                 User.changeUser(mActivity);
-                runCaptureActivity();
+                mActivity.finish();
             }
             else
             {
@@ -134,15 +134,6 @@ class UserChangeListener implements Preference.OnPreferenceClickListener
         {
             Log.e(TAG, ex.getMessage(), ex);
         }
-    }
-
-    private void runCaptureActivity()
-    {
-        IntentIntegrator intentIntegrator = new IntentIntegrator(mActivity);
-        intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);
-        intentIntegrator.setPrompt(mActivity.getString(R.string.msg_default_status));
-        Intent scanIntent = intentIntegrator.createScanIntent();
-        mActivity.startActivity(scanIntent);
     }
 
     private Activity mActivity;

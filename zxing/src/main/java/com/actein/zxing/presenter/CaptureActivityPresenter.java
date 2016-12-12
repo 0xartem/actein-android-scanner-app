@@ -236,7 +236,8 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         mCaptureView.showInfoDialog(message);
     }
 
-    private void updateStarStopGameView()
+    @Override
+    public void updateStarStopGameView()
     {
         if (isGameRunning())
         {

@@ -154,6 +154,7 @@ public final class CaptureActivity
     @Override
     protected void onResume() {
         super.onResume();
+        invalidateOptionsMenu();
 
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -311,6 +312,7 @@ public final class CaptureActivity
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
         startGameMenuItem = menu.findItem(R.id.menu_start_game);
+        presenter.updateStarStopGameView();
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
