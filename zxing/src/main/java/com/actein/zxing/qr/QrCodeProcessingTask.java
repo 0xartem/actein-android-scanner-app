@@ -116,7 +116,8 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
 
     private long adjustGameDuration(ActeinCalendarParsedResult result)
     {
-        long durationSeconds = result.getDurationSeconds();
+        long threeMinutes = 3 * 60; // time to grab equipment
+        long durationSeconds = result.getDurationSeconds() + threeMinutes;
         if (!mQrCodeSettings.isAllowEarlyQrCodes() && !mQrCodeSettings.isAllowExpiredQrCodes())
         {
             Date now = new Date();
@@ -127,7 +128,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                         now,
                         TimeUnit.SECONDS
                         );
-                durationSeconds = result.getDurationSeconds() - personLateFor;
+                durationSeconds = durationSeconds - personLateFor;
             }
         }
         return durationSeconds;
