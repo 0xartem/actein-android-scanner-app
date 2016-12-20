@@ -6,11 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 public class DateTimeUtils
 {
-    public static Date dateTimeMinus5Minutes(Date dateTime)
+    public static Date dateTimeMinus15Minutes(Date dateTime)
     {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(dateTime);
-        calendar.add(Calendar.MINUTE, -5);
+        calendar.add(Calendar.MINUTE, -15);
         return calendar.getTime();
     }
 

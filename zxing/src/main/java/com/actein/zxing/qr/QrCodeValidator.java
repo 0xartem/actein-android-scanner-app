@@ -65,11 +65,11 @@ class QrCodeValidator
     private QrCodeStatus validateDateTime()
     {
         Date now = InternetTime.getCurrentDateTime();
-        Date startMinus5Min = DateTimeUtils.dateTimeMinus5Minutes(
+        Date startMinus15Min = DateTimeUtils.dateTimeMinus15Minutes(
                 mActeinCalParsedResult.getInnerCalendarResult().getStart()
                 );
 
-        if (!mQrCodeSettings.isAllowEarlyQrCodes() && now.before(startMinus5Min))
+        if (!mQrCodeSettings.isAllowEarlyQrCodes() && now.before(startMinus15Min))
         {
             return QrCodeStatus.QR_CODE_NOT_STARTED_YET;
         }
