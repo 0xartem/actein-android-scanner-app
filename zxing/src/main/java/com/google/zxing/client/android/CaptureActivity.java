@@ -108,6 +108,7 @@ public final class CaptureActivity
     private CapturePresenter presenter;
     private MenuItem startGameMenuItem;
     private final Object gameStateLock = new Object();
+    private MenuItem pcOnlineMenuItem;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -311,8 +312,10 @@ public final class CaptureActivity
         menuInflater.inflate(R.menu.capture, menu);
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
+        pcOnlineMenuItem = menu.findItem(R.id.menu_pc_status);
         startGameMenuItem = menu.findItem(R.id.menu_start_game);
         presenter.updateStarStopGameView();
+        presenter.updateOnlineStatus();
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
@@ -609,6 +612,22 @@ public final class CaptureActivity
     public Context getApplicationContext()
     {
         return super.getApplicationContext();
+    }
+
+    @Override
+    public void changePcOnlineStatus(boolean online)
+    {
+        if (pcOnlineMenuItem != null)
+        {
+            if (online)
+            {
+                pcOnlineMenuItem.setIcon(R.drawable.monitor_blue);
+            }
+            else
+            {
+                pcOnlineMenuItem.setIcon(R.drawable.monitor_grey);
+            }
+        }
     }
 
     @Override

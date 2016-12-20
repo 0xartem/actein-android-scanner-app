@@ -182,21 +182,31 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
+    public void onPcOnline()
+    {
+        mCaptureView.changePcOnlineStatus(true);
+    }
+
+    @Override
     public void onPcOffline(boolean sendingRequest)
     {
         updateStarStopGameView();
         if (sendingRequest)
         {
             mCaptureView.showErrorDialog(
-                    mCaptureView.getActivityContext().getString(R.string.msg_pc_offline)
+                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
                     );
         }
         else
         {
-            mCaptureView.showInfoDialog(
-                    mCaptureView.getActivityContext().getString(R.string.msg_request_pc_offline)
-                    );
+            mCaptureView.changePcOnlineStatus(false);
         }
+    }
+
+    @Override
+    public void updateOnlineStatus()
+    {
+        mCaptureView.changePcOnlineStatus(mConnectionModel.isPcOnline());
     }
 
     @Override

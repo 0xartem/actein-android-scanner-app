@@ -10,6 +10,7 @@ public interface ConnectionModelObserver
     void onUnsubscribed(String message);
     void onPublished(String message);
 
+    void onPcOnline();
     void onPcOffline(boolean sendingRequest);
     void onConnectionLost(boolean showErrorMsg);
     void onError(String message);

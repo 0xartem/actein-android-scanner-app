@@ -14,6 +14,7 @@ public interface CapturePresenter extends Presenter
     void turnGameOff();
     void turnGameOn(String gameName, long steamGameId, long durationSeconds, boolean runTutorial);
     void updateStarStopGameView();
+    void updateOnlineStatus();
 
     boolean isGameRunning();
     boolean isGameAboutToStart();

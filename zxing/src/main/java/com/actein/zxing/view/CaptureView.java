@@ -8,4 +8,5 @@ public interface CaptureView extends ActivityView
     void onGameRunning();
     void onGameStopped();
     void onGameLoading();
+    void changePcOnlineStatus(boolean online);
 }

@@ -285,6 +285,10 @@ public class ConnectionModel
         {
             mModelObserver.onPcOffline(false);
         }
+        else
+        {
+            mModelObserver.onPcOnline();
+        }
     }
 
     private void startManualReconnectThread()
