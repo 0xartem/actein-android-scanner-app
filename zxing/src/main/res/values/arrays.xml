@@ -60,6 +60,8 @@
     <item>@string/preferences_front_light_off</item>
   </string-array>
   <string-array name="games_list">
+    <item>Arizona Sunshine|342180</item>
+    <item>Thumper|356400</item>
     <item>Hover Junkers|380220</item>
     <item>Rec Room (Early Access)|471710</item>
     <item>The Lab|450390</item>
