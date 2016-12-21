@@ -33,26 +33,33 @@ public class ActeinVEventResultParser extends ResultParser
         String steamGameIdStr = matchSingleVCardPrefixedField("STEAM_GAME_ID", rawText, true);
         String boothIdStr = matchSingleVCardPrefixedField("BOOTH", rawText, true);
 
-        int signatureIdx = rawText.indexOf("SIGNATURE:");
-        if (signatureIdx == -1 || signatureIdx == 0)
-        {
-            return null;
-        }
-        // move one byte back to ignore last \n
-        byte[] signedData = rawText.substring(0, signatureIdx - 1).getBytes();
-        String signature = rawText.substring(signatureIdx + "SIGNATURE:".length(), rawText.length());
-
-        if (eventType == null || equipment == null || gameName == null ||
-            steamGameIdStr == null || boothIdStr == null)
-        {
-            return null;
-        }
-
         int version = 1;
         if (versionStr != null)
         {
             version = Integer.parseInt(versionStr);
         }
+
+        byte[] signedData = null;
+        String signature = null;
+
+        if (version == 1)
+        {
+            int signatureIdx = rawText.indexOf("SIGNATURE:");
+            if (signatureIdx == -1 || signatureIdx == 0)
+            {
+                return null;
+            }
+            // move one byte back to ignore last \n
+            signedData = rawText.substring(0, signatureIdx - 1).getBytes();
+            signature = rawText.substring(signatureIdx + "SIGNATURE:".length(), rawText.length());
+        }
+
+        if (equipment == null || gameName == null ||
+            steamGameIdStr == null || boothIdStr == null)
+        {
+            return null;
+        }
+
         long steamGameId = Long.parseLong(steamGameIdStr);
         int boothId = Integer.parseInt(boothIdStr);
 

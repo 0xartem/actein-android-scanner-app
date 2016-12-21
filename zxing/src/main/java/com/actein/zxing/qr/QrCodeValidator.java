@@ -28,11 +28,12 @@ class QrCodeValidator
         if (!isParsedResultDataValid())
             return QrCodeStatus.QR_CODE_INVALID;
 
-        QrCodeStatus status = mSignatureVerifier.verify();
+        //TODO: disable temp
+        /*QrCodeStatus status = mSignatureVerifier.verify();
         if (!QrCodeStatus.isSuccess(status))
-            return status;
+            return status;*/
 
-        status = validateDateTime();
+        QrCodeStatus status = validateDateTime();
         if (!QrCodeStatus.isSuccess(status))
             return status;
 
@@ -51,13 +52,10 @@ class QrCodeValidator
     {
         return (mActeinCalParsedResult.getVersion() > 0 &&
                 mActeinCalParsedResult.getBid() != null &&
-                mActeinCalParsedResult.getEventType() != null &&
                 mActeinCalParsedResult.getEquipment() != null &&
                 mActeinCalParsedResult.getGameName() != null &&
                 mActeinCalParsedResult.getSteamGameId() >= 0 &&
                 mActeinCalParsedResult.getBoothId() > 0 &&
-                mActeinCalParsedResult.getSignature() != null &&
-                mActeinCalParsedResult.getSignedData() != null &&
                 mActeinCalParsedResult.getInnerCalendarResult().getStart() != null &&
                 mActeinCalParsedResult.getInnerCalendarResult().getEnd() != null);
     }
