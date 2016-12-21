@@ -15,16 +15,16 @@
  limitations under the License.
  -->
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-  <item android:id="@+id/menu_pc_status"
-        android:icon="@drawable/monitor_grey"
-        android:title=""
-        android:orderInCategory="1"
-        android:showAsAction="withText|ifRoom" />
   <item android:id="@+id/menu_start_game"
         android:title="@string/menu_start_game_loading"
-        android:orderInCategory="2"
+        android:orderInCategory="1"
         android:showAsAction="withText|ifRoom"
         android:actionLayout="@layout/start_game_progress_bar"/>
+  <item android:id="@+id/menu_pc_status"
+        android:icon="@drawable/monitor_grey"
+        android:title=" PC"
+        android:orderInCategory="2"
+        android:showAsAction="withText|ifRoom" />
   <item android:id="@+id/menu_history"
         android:title="@string/menu_history"
         android:icon="@android:drawable/ic_menu_recent_history"

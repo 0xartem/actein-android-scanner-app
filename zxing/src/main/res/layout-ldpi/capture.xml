@@ -63,7 +63,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content">
 
-          <TextView android:layout_width="wrap_content"
+          <TextView android:id="@+id/format_text_view_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/msg_default_format"
                     android:textColor="@color/result_minor_text"
@@ -82,7 +83,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content">
 
-          <TextView android:layout_width="wrap_content"
+          <TextView android:id="@+id/type_text_view_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/msg_default_type"
                     android:textColor="@color/result_minor_text"
@@ -101,7 +103,8 @@
           android:layout_width="wrap_content"
           android:layout_height="wrap_content">
 
-          <TextView android:layout_width="wrap_content"
+          <TextView android:id="@+id/time_text_view_label"
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="@string/msg_default_time"
                     android:textColor="@color/result_minor_text"
@@ -193,12 +196,28 @@
 
   </LinearLayout>
 
+
+  <RelativeLayout android:layout_gravity="bottom"
+                  android:layout_width="wrap_content"
+                  android:layout_height="wrap_content">
+
   <TextView android:id="@+id/status_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center_horizontal"
             android:background="@color/transparent"
             android:text="@string/msg_default_status"
+            android:textSize="@dimen/status_result_text_size"
             android:textColor="@color/status_text"/>
+
+  <TextView
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_below="@+id/status_view"
+      android:layout_alignParentEnd="true"
+      android:layout_alignParentRight="true"
+      android:id="@+id/count_down_timer_view"
+      android:visibility="gone"/>
+  </RelativeLayout>
 
 </merge>

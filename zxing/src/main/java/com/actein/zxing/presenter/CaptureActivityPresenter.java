@@ -3,6 +3,7 @@ package com.actein.zxing.presenter;
 import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
+import android.os.CountDownTimer;
 
 import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.zxing.view.CaptureView;
@@ -12,6 +13,11 @@ import com.actein.zxing.qr.QrCodeProcessingCallback;
 import com.actein.zxing.qr.QrCodeProcessingTask;
 import com.google.zxing.client.android.R;
 import com.google.zxing.client.android.result.ResultHandler;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.TimeZone;
 
 public class CaptureActivityPresenter implements CapturePresenter, ConnectionModelObserver
 {
@@ -73,6 +79,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         else
         {
             mConnectionModel.publishGameOffEvent();
+            mCurrentDurationSeconds = 0;
         }
     }
 
@@ -93,6 +100,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         else
         {
             mConnectionModel.publishGameOnEvent(gameName, steamGameId, durationSeconds, runTutorial);
+            mCurrentDurationSeconds = durationSeconds;
         }
     }
 
@@ -231,6 +239,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
             mCaptureView.showToast(message);
         }
 
+        updateCountDownView();
         updateStarStopGameView();
     }
 
@@ -263,6 +272,35 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
     }
 
+    private void updateCountDownView()
+    {
+        if (isGameRunning())
+        {
+            mGameCountDownTimer = new CountDownTimer(mCurrentDurationSeconds * 1000, 1000)
+            {
+                public void onTick(long millisUntilFinished)
+                {
+                    mCurrentDurationSeconds = millisUntilFinished / 1000;
+                    DateFormat formatter = new SimpleDateFormat("HH:mm:ss");
+                    formatter.setTimeZone(TimeZone.getTimeZone("UTC"));
+                    String timeLeft = formatter.format(new Date(millisUntilFinished));
+                    mCaptureView.onCountDownTick(timeLeft);
+                }
+
+                public void onFinish()
+                {
+                    mCaptureView.onCountDownFinish();
+                }
+            }.start();
+            mCaptureView.onCountDownStart();
+        }
+        else if (isGameStopped() && mGameCountDownTimer != null)
+        {
+            mGameCountDownTimer.cancel();
+            mCaptureView.onCountDownFinish();
+        }
+    }
+
     private boolean isDebug()
     {
         return (mCaptureView.getApplicationContext().getApplicationInfo().flags &
@@ -272,4 +310,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     private CaptureView mCaptureView;
     private ConnectionModel mConnectionModel;
     private VrGameStatusProtos.VrGameStatus mCurStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
+
+    private CountDownTimer mGameCountDownTimer = null;
+    private long mCurrentDurationSeconds = 0;
 }

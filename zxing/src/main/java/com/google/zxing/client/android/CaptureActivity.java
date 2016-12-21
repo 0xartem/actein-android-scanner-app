@@ -109,6 +109,7 @@ public final class CaptureActivity
     private MenuItem startGameMenuItem;
     private final Object gameStateLock = new Object();
     private MenuItem pcOnlineMenuItem;
+    private TextView mCountDownTextView;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -139,6 +140,8 @@ public final class CaptureActivity
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.capture);
+
+        mCountDownTextView = (TextView) findViewById(R.id.count_down_timer_view);
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -670,5 +673,23 @@ public final class CaptureActivity
                 startGameMenuItem.setTitle(R.string.menu_start_game_loading);
             }
         }
+    }
+
+    @Override
+    public void onCountDownStart()
+    {
+        mCountDownTextView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onCountDownTick(String timeLeft)
+    {
+        mCountDownTextView.setText(timeLeft);
+    }
+
+    @Override
+    public void onCountDownFinish()
+    {
+        mCountDownTextView.setVisibility(View.GONE);
     }
 }
