@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.content.pm.ApplicationInfo;
 import android.graphics.Bitmap;
 import android.os.CountDownTimer;
+import android.os.Handler;
 
 import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.zxing.view.CaptureView;
@@ -66,7 +67,7 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     }
 
     @Override
-    public void turnGameOff()
+    public synchronized void turnGameOff()
     {
         if (!mConnectionModel.isConnected())
         {
@@ -79,12 +80,11 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         else
         {
             mConnectionModel.publishGameOffEvent();
-            mCurrentDurationSeconds = 0;
         }
     }
 
     @Override
-    public void turnGameOn(String gameName,
+    public synchronized void turnGameOn(String gameName,
                            long steamGameId,
                            long durationSeconds,
                            boolean runTutorial)
@@ -296,8 +296,16 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
         }
         else if (isGameStopped() && mGameCountDownTimer != null)
         {
-            mGameCountDownTimer.cancel();
-            mCaptureView.onCountDownFinish();
+            new Handler().post(new Runnable()
+            {
+                @Override
+                public void run()
+                {
+                    mGameCountDownTimer.cancel();
+                    mCaptureView.onCountDownFinish();
+                    mCurrentDurationSeconds = 0;
+                }
+            });
         }
     }
 
