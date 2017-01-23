@@ -2,7 +2,7 @@ package com.actein.transport.mqtt.policies;
 
 import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 
-public abstract class DefaultConnectionPolicy implements ConnectionPolicy
+abstract class DefaultConnectionPolicy implements ConnectionPolicy
 {
     @Override
     public boolean isPersistentSession()
