@@ -21,7 +21,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Mockito.*;
 
-//@RunWith(MockitoJUnitRunner.class)
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
 public class MqttVrEventsSubscriberTest
