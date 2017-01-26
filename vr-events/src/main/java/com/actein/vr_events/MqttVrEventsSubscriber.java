@@ -30,7 +30,7 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
         mSubscribeListener = new CommonActionListener(Action.SUBSCRIBE, actionObserver);
         mUnsubscribeListener = new CommonActionListener(Action.UNSUBSCRIBE, actionObserver);
 
-        mAllVrEventsTopic = new VrTopicBuilder().setToAll()
+        mAllVrEventsTopic = new VrTopicBuilder().setToGameAll()
                                                 .setBoothId(vrBoothInfo.getId())
                                                 .build();
 
