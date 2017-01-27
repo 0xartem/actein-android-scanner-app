@@ -10,8 +10,11 @@ public class Base64Utils
 {
     public static String hashStringToBase64(String string, HashAlgorithm hashAlgorithm)
     {
-        byte[] rawHash = hashAlgorithm.hashData(string.getBytes(Charset.forName("UTF-8")));
-        byte[] strHashBase64 = Base64.encode(rawHash, Base64.DEFAULT);
-        return new String(strHashBase64, Charset.forName("US-ASCII"));
+        if (hashAlgorithm != null)
+        {
+            byte[] rawHash = hashAlgorithm.hashData(string.getBytes(Charset.forName("UTF-8")));
+            return Base64.encodeToString(rawHash, Base64.NO_WRAP);
+        }
+        return "";
     }
 }
