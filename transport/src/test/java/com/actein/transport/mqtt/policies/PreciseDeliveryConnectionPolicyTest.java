@@ -70,5 +70,5 @@ public class PreciseDeliveryConnectionPolicyTest
                      "factory/booths/1/embDevice/status");
     }
 
-    PreciseDeliveryConnectionPolicy mPolicy;
+    private PreciseDeliveryConnectionPolicy mPolicy;
 }

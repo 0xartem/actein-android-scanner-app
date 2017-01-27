@@ -3,7 +3,6 @@ package com.actein.vr_events;
 import android.util.Log;
 
 import com.actein.transport.mqtt.interfaces.Publisher;
-import com.actein.transport.mqtt.interfaces.Subscriber;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.google.protobuf.MessageLite;
 
