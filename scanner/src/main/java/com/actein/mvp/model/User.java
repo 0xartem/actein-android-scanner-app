@@ -1,4 +1,4 @@
-package com.actein.data;
+package com.actein.mvp.model;
 
 import android.content.Context;
 

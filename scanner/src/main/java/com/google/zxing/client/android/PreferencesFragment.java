@@ -27,7 +27,7 @@ import android.view.KeyEvent;
 import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
-import com.actein.data.User;
+import com.actein.mvp.model.User;
 import com.actein.scanner.R;
 import com.google.zxing.client.android.custom.ValidatedEditTextPreference;
 

@@ -47,7 +47,7 @@ public class ConnectionModel
 
         mConnection = Connection.createInstance(
                 contextOwner.getApplicationContext(),
-                Preferences.getBrokerUri(contextOwner.getApplicationContext()),
+                Preferences.getBrokerAddr(contextOwner.getApplicationContext()),
                 new PreciseDeliveryConnectionPolicy(mBoothSettings.getBoothId())
                 );
 

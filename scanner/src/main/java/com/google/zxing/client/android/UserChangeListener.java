@@ -14,7 +14,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
-import com.actein.data.User;
+import com.actein.mvp.model.User;
 import com.actein.scanner.R;
 
 class UserChangeListener implements Preference.OnPreferenceClickListener

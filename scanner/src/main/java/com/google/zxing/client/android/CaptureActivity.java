@@ -21,7 +21,7 @@ import com.actein.mvp.presenter.CaptureActivityPresenter;
 import com.actein.mvp.presenter.CapturePresenter;
 import com.actein.qr.QrCodeProcessingCallback;
 import com.actein.qr.QrCodeProcessingResult;
-import com.actein.data.User;
+import com.actein.mvp.model.User;
 import com.actein.scanner.R;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;

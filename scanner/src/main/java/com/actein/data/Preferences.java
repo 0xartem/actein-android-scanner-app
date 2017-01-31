@@ -11,7 +11,7 @@ public class Preferences
         return getSharedPrefs(context).contains(BROKER_URI);
     }
 
-    public static void setBrokerUri(Context context, String brokerUri)
+    public static void setBrokerAddr(Context context, String brokerUri)
     {
         getSharedPrefs(context)
                 .edit()
@@ -19,14 +19,14 @@ public class Preferences
                 .apply();
     }
 
-    public static boolean containsBrokerUri(Context context)
+    public static boolean containsBrokerAddr(Context context)
     {
         return getSharedPrefs(context).contains(BROKER_URI);
     }
 
-    public static String getBrokerUri(Context context)
+    public static String getBrokerAddr(Context context)
     {
-        if (!containsBrokerUri(context))
+        if (!containsBrokerAddr(context))
         {
             throw new AssertionError(BROKER_URI + " can not be empty");
         }

@@ -34,6 +34,7 @@ public class StringUtilsTest
         assertTrue(StringUtils.isNetworkAddressValid("actein.com"));
     }
 
+    @Test
     public void isNetworkAddressValid_OrdinaryString() throws Exception
     {
         assertFalse(StringUtils.isNetworkAddressValid("Hello address!"));
