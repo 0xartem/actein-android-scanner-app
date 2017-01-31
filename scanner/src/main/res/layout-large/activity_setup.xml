@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:fillViewport="true">
+
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                  xmlns:tools="http://schemas.android.com/tools"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:gravity="center"
+                  android:orientation="vertical"
+                  android:paddingBottom="@dimen/activity_vertical_margin"
+                  android:paddingLeft="64dp"
+                  android:paddingRight="64dp"
+                  android:paddingTop="@dimen/activity_vertical_margin"
+                  tools:context="com.actein.activity.SetupActivity">
+
+        <ImageView
+            android:id="@+id/acteinLogoImageView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:contentDescription="@string/acteinLogoDescription"
+            android:src="@drawable/actein_logo_pack_web_06"/>
+
+        <EditText
+            android:id="@+id/brokerAddressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/brokerAddressHint"
+            android:text="@string/brokerDefaultAddress"
+            android:inputType="textUri"/>
+
+        <EditText
+            android:id="@+id/philipsHueBridgeAddressEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/philipsHueBridgeAddressHint"
+            android:inputType="textUri"/>
+
+        <EditText
+            android:id="@+id/adminPasswordEditText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="@string/adminPasswordHint"
+            android:inputType="textPassword"/>
+
+        <Spinner
+            android:id="@+id/boothsSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"/>
+
+        <Button
+            android:id="@+id/okButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/okButtonCaption"/>
+
+    </LinearLayout>
+</ScrollView>

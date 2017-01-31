@@ -1,0 +1,70 @@
+apply plugin: 'com.android.application'
+
+android {
+    signingConfigs {
+        acteinScannerConfigRelease
+    }
+
+    compileSdkVersion 24
+    buildToolsVersion "24.0.2"
+
+    defaultConfig {
+        applicationId "com.actein.scanner"
+        minSdkVersion 15
+        targetSdkVersion 22
+        versionCode 1
+        versionName "1.0.4"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.acteinScannerConfigRelease
+
+            applicationVariants.all { variant ->
+                variant.outputs.each { output ->
+                    def file = output.outputFile
+                    def appId = android.defaultConfig.applicationId
+                    def fileName = appId + "-" + defaultConfig.versionName + "-" + variant.buildType.name +".apk"
+                    output.outputFile = new File(file.parent, fileName)
+                }
+            }
+        }
+    }
+}
+
+def Properties keystoreProps = new Properties()
+def propFile = rootProject.file('keystore.properties')
+if (propFile.canRead()) {
+    keystoreProps.load(new FileInputStream(propFile))
+
+    if (keystoreProps != null &&
+            keystoreProps.containsKey('storeFile') && keystoreProps.containsKey('storePassword') &&
+            keystoreProps.containsKey('keyAlias') && keystoreProps.containsKey('keyPassword')) {
+        android.signingConfigs.acteinScannerConfigRelease.storeFile = file(keystoreProps['storeFile'])
+        android.signingConfigs.acteinScannerConfigRelease.storePassword = keystoreProps['storePassword']
+        android.signingConfigs.acteinScannerConfigRelease.keyAlias = keystoreProps['keyAlias']
+        android.signingConfigs.acteinScannerConfigRelease.keyPassword = keystoreProps['keyPassword']
+    } else {
+        println 'keystore.properties found but some entries are missing'
+        android.buildTypes.release.signingConfig = null
+    }
+}else {
+    println 'keystore.properties not found'
+    android.buildTypes.release.signingConfig = null
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    testCompile 'junit:junit:4.12'
+
+    compile 'com.android.support:appcompat-v7:24.2.1'
+    compile 'com.google.zxing:android-core:3.2.0'
+
+    compile project(':utils')
+    compile project(':android-utils')
+    compile project(':zxing-core')
+    compile project(':vr-events')
+}

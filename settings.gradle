@@ -1,1 +1,1 @@
-include ':app', ':zxing', ':transport', ':vr-events', ':zxing-core', ':android-utils', ':utils'
+include ':scanner', ':transport', ':vr-events', ':zxing-core', ':android-utils', ':utils'
