@@ -1,5 +1,6 @@
 package com.actein.data;
 
+import android.app.Instrumentation;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;

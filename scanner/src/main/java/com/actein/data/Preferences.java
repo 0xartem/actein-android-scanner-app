@@ -8,29 +8,29 @@ public class Preferences
 {
     public static boolean appPreviouslyStarted(Context context)
     {
-        return getSharedPrefs(context).contains(BROKER_URI);
+        return getSharedPrefs(context).contains(BROKER_ADDR);
     }
 
     public static void setBrokerAddr(Context context, String brokerUri)
     {
         getSharedPrefs(context)
                 .edit()
-                .putString(BROKER_URI, brokerUri)
+                .putString(BROKER_ADDR, brokerUri)
                 .apply();
     }
 
     public static boolean containsBrokerAddr(Context context)
     {
-        return getSharedPrefs(context).contains(BROKER_URI);
+        return getSharedPrefs(context).contains(BROKER_ADDR);
     }
 
     public static String getBrokerAddr(Context context)
     {
         if (!containsBrokerAddr(context))
         {
-            throw new AssertionError(BROKER_URI + " can not be empty");
+            throw new AssertionError(BROKER_ADDR + " can not be empty");
         }
-        return getSharedPrefs(context).getString(BROKER_URI, "");
+        return getSharedPrefs(context).getString(BROKER_ADDR, "");
     }
 
     public static void setPhilipsHueUri(Context context, String philipsHueUri)
@@ -84,7 +84,7 @@ public class Preferences
 
     private static final String ADMIN_PASSWORD_HASH = "admin_password_hash";
     private static final String IS_ADMIN_USER = "is_admin_user";
-    private static final String BROKER_URI = "broker_uri";
+    private static final String BROKER_ADDR = "broker_addr";
     private static final String PHILIPS_HUE_URI = "philips_hue_uri";
     private static final String BOOTH_ID = "booth_id";
 }
