@@ -6,6 +6,10 @@ import android.graphics.Bitmap;
 import android.os.CountDownTimer;
 import android.os.Handler;
 
+import com.actein.data.BoothSettings;
+import com.actein.data.Preferences;
+import com.actein.transport.mqtt.Connection;
+import com.actein.transport.mqtt.policies.PreciseDeliveryConnectionPolicy;
 import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.mvp.view.CaptureView;
 import com.actein.mvp.model.ConnectionModelObserver;
@@ -25,7 +29,15 @@ public class CaptureActivityPresenter implements CapturePresenter, ConnectionMod
     public CaptureActivityPresenter(CaptureView captureView)
     {
         mCaptureView = captureView;
-        mConnectionModel = new ConnectionModel(captureView, this);
+        BoothSettings boothSettings = new BoothSettings(captureView.getActivityContext());
+
+        Connection connection = Connection.createInstance(
+                captureView.getApplicationContext(),
+                Preferences.getBrokerAddr(captureView.getApplicationContext()),
+                new PreciseDeliveryConnectionPolicy(boothSettings.getBoothId())
+                );
+
+        mConnectionModel = new ConnectionModel(connection, boothSettings, this);
     }
 
     @Override

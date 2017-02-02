@@ -4,7 +4,6 @@ import android.util.Log;
 
 import com.actein.data.BoothSettings;
 import com.actein.transport.mqtt.OnlineStatusProtos;
-import com.actein.mvp.view.ContextOwner;
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.LastWillManager;
@@ -14,7 +13,6 @@ import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.transport.mqtt.interfaces.PcOnlineStatusHandler;
-import com.actein.transport.mqtt.policies.PreciseDeliveryConnectionPolicy;
 import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
 import com.actein.vr_events.VrGameOffProtos;
@@ -24,7 +22,6 @@ import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsManager;
-import com.actein.data.Preferences;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
@@ -40,16 +37,13 @@ public class ConnectionModel
         MessageHandler, ConnectionObserver, ActionStatusObserver,
         VrEventsHandler, PcOnlineStatusHandler
 {
-    public ConnectionModel(ContextOwner contextOwner, ConnectionModelObserver modelObserver)
+    public ConnectionModel(Connection connection,
+                           BoothSettings boothSettings,
+                           ConnectionModelObserver modelObserver)
     {
+        mConnection = connection;
+        mBoothSettings = boothSettings;
         mModelObserver = modelObserver;
-        mBoothSettings = new BoothSettings(contextOwner.getActivityContext());
-
-        mConnection = Connection.createInstance(
-                contextOwner.getApplicationContext(),
-                Preferences.getBrokerAddr(contextOwner.getApplicationContext()),
-                new PreciseDeliveryConnectionPolicy(mBoothSettings.getBoothId())
-                );
 
         mLastWillManager = new LastWillManager(mConnection, this, this, mBoothSettings.getBoothId());
 
