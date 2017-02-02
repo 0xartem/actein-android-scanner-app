@@ -70,6 +70,9 @@ dependencies {
     //})
 
     testCompile 'junit:junit:4.12'
+    testCompile 'org.powermock:powermock:1.6.5'
+    testCompile 'org.powermock:powermock-module-junit4:1.6.5'
+    testCompile 'org.powermock:powermock-api-mockito:1.6.5'
 
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.google.zxing:android-core:3.2.0'

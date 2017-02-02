@@ -30,16 +30,23 @@ public class LastWillManager implements MessageHandler
                                                                           Integer.toString(boothId));
     }
 
-    public void start() throws MqttException
+    public synchronized void start() throws MqttException
     {
+        mIsRunning = true;
         subscribeToPcLastWill();
         publishEmbDeviceOnlineStatus(true);
     }
 
-    public void stop() throws MqttException
+    public synchronized void stop() throws MqttException
     {
         unsubscribeFromPcLastWill();
         publishEmbDeviceOnlineStatus(false);
+        mIsRunning = false;
+    }
+
+    public synchronized boolean isRunning()
+    {
+        return mIsRunning;
     }
 
     public void publishEmbDeviceOnlineStatus(boolean online) throws MqttException
@@ -91,6 +98,7 @@ public class LastWillManager implements MessageHandler
         }
     }
 
+    private boolean mIsRunning = false;
     private String mPcLastWillTopic;
     private String mEmbDeviceLastWillTopic;
     private Publisher mPublisher;

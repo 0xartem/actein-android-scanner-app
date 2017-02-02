@@ -131,7 +131,10 @@ public class ConnectionModel
         {
             if (!isChangingConfiguration)
             {
-                mLastWillManager.stop();
+                if (mLastWillManager.isRunning())
+                {
+                    mLastWillManager.stop();
+                }
                 if (mVrEventsManager.isRunning())
                 {
                     mVrEventsManager.stop();
