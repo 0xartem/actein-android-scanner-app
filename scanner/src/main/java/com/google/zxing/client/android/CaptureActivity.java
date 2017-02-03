@@ -16,6 +16,8 @@
 
 package com.google.zxing.client.android;
 
+import com.actein.activity.StartGameActivity;
+import com.actein.common.Intents.StartGame;
 import com.actein.mvp.view.CaptureView;
 import com.actein.mvp.presenter.CaptureActivityPresenter;
 import com.actein.mvp.presenter.CapturePresenter;
@@ -379,10 +381,10 @@ public final class CaptureActivity
                 }
             } else if (requestCode == GAME_START_REQUEST_CODE) {
                 onGameLoading();
-                presenter.turnGameOn(intent.getStringExtra(Intents.StartGame.GAME_NAME),
-                                     intent.getLongExtra(Intents.StartGame.GAME_STEAM_ID, 0),
-                                     intent.getLongExtra(Intents.StartGame.DURATION_SECONDS, 0),
-                                     intent.getBooleanExtra(Intents.StartGame.RUN_TUTORIAL, true));
+                presenter.turnGameOn(intent.getStringExtra(StartGame.GAME_NAME),
+                                     intent.getLongExtra(StartGame.GAME_STEAM_ID, 0),
+                                     intent.getLongExtra(StartGame.DURATION_SECONDS, 0),
+                                     intent.getBooleanExtra(StartGame.RUN_TUTORIAL, true));
             }
         }
     }

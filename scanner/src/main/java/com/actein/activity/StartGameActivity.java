@@ -1,4 +1,4 @@
-package com.google.zxing.client.android;
+package com.actein.activity;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -14,6 +14,7 @@ import android.widget.NumberPicker;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.actein.common.Intents.StartGame;
 import com.actein.mvp.view.ContextOwner;
 import com.actein.data.GamesInfo;
 import com.actein.scanner.R;
@@ -75,10 +76,10 @@ public class StartGameActivity extends Activity implements ContextOwner
                     CheckBox runTutorial = (CheckBox) findViewById(R.id.check_box_run_tutorial);
 
                     Intent resultIntent = new Intent();
-                    resultIntent.putExtra(Intents.StartGame.GAME_NAME, gameStr);
-                    resultIntent.putExtra(Intents.StartGame.GAME_STEAM_ID, steamGameId);
-                    resultIntent.putExtra(Intents.StartGame.DURATION_SECONDS, durationSeconds);
-                    resultIntent.putExtra(Intents.StartGame.RUN_TUTORIAL, runTutorial.isChecked());
+                    resultIntent.putExtra(StartGame.GAME_NAME, gameStr);
+                    resultIntent.putExtra(StartGame.GAME_STEAM_ID, steamGameId);
+                    resultIntent.putExtra(StartGame.DURATION_SECONDS, durationSeconds);
+                    resultIntent.putExtra(StartGame.RUN_TUTORIAL, runTutorial.isChecked());
                     setResult(RESULT_OK, resultIntent);
                     finish();
                 }

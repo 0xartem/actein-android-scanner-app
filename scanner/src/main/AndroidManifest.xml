@@ -161,7 +161,7 @@
               android:label="@string/menu_help"
               android:screenOrientation="user"
               android:stateNotNeeded="true"/>
-      <activity android:name="com.google.zxing.client.android.StartGameActivity">
+      <activity android:name="com.actein.activity.StartGameActivity">
       </activity>
   </application>
 

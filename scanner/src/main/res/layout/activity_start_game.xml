@@ -9,7 +9,7 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.google.zxing.client.android.StartGameActivity"
+    tools:context="com.actein.activity.StartGameActivity"
     android:layout_gravity="center_vertical">
 
     <NumberPicker
