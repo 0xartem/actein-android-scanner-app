@@ -32,24 +32,27 @@ public class MqttVrEventsPublisherTest
     private Publisher mMockPublisher;
 
     private MqttVrEventsPublisher mMqttVrEventsPublisher;
+    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 
     @Before
     public void setUp() throws Exception
     {
         PowerMockito.mockStatic(Log.class);
 
-        VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
+        mVrBoothInfo = VrBoothInfoProtos.VrBoothInfo
                 .newBuilder()
                 .setId(10)
                 .build();
 
-        mMqttVrEventsPublisher = new MqttVrEventsPublisher(mMockPublisher, vrBoothInfo, null);
+        mMqttVrEventsPublisher = new MqttVrEventsPublisher(mMockPublisher, null);
     }
 
     @Test
     public void publishVrGameOnEvent() throws Exception
     {
-        mMqttVrEventsPublisher.publishVrGameOnEvent(VrGameProtos.VrGame.getDefaultInstance());
+        mMqttVrEventsPublisher.publishVrGameOnEvent(mVrBoothInfo,
+                                                    VrGameProtos.VrGame.getDefaultInstance());
+
         verify(mMockPublisher).publish(eq("factory/booths/10/pc/vr/game/on"),
                                        any(VrGameOnProtos.VrGameOnEvent.class),
                                        any(IMqttActionListener.class),
@@ -59,7 +62,7 @@ public class MqttVrEventsPublisherTest
     @Test
     public void publishVrGameOffEvent() throws Exception
     {
-        mMqttVrEventsPublisher.publishVrGameOffEvent();
+        mMqttVrEventsPublisher.publishVrGameOffEvent(mVrBoothInfo);
         verify(mMockPublisher).publish(eq("factory/booths/10/pc/vr/game/off"),
                                        any(VrGameOffProtos.VrGameOffEvent.class),
                                        any(IMqttActionListener.class),
@@ -69,7 +72,8 @@ public class MqttVrEventsPublisherTest
     @Test
     public void publishVrGameStatusEvent() throws Exception
     {
-        mMqttVrEventsPublisher.publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus.GAME_ON);
+        mMqttVrEventsPublisher.publishVrGameStatusEvent(mVrBoothInfo,
+                                                        VrGameStatusProtos.VrGameStatus.GAME_ON);
 
         ArgumentCaptor<VrGameStatusProtos.VrGameStatusEvent> argument =
                 ArgumentCaptor.forClass(VrGameStatusProtos.VrGameStatusEvent.class);
@@ -86,6 +90,7 @@ public class MqttVrEventsPublisherTest
     public void publishVrGameStatusEvent_Error() throws Exception
     {
         mMqttVrEventsPublisher.publishVrGameStatusEvent(
+                mVrBoothInfo,
                 VrGameStatusProtos.VrGameStatus.GAME_OFF,
                 VrGameErrorProtos.VrGameError
                         .newBuilder()
@@ -116,7 +121,8 @@ public class MqttVrEventsPublisherTest
                          eq(false));
 
         mThrown.expect(VrEventsException.class);
-        mMqttVrEventsPublisher.publishVrGameOnEvent(VrGameProtos.VrGame.getDefaultInstance());
+        mMqttVrEventsPublisher.publishVrGameOnEvent(mVrBoothInfo,
+                                                    VrGameProtos.VrGame.getDefaultInstance());
     }
 
     @Test
@@ -130,7 +136,7 @@ public class MqttVrEventsPublisherTest
                          eq(false));
 
         mThrown.expect(VrEventsException.class);
-        mMqttVrEventsPublisher.publishVrGameOffEvent();
+        mMqttVrEventsPublisher.publishVrGameOffEvent(mVrBoothInfo);
     }
 
     @Test
@@ -143,7 +149,8 @@ public class MqttVrEventsPublisherTest
                          any(IMqttActionListener.class));
 
         mThrown.expect(VrEventsException.class);
-        mMqttVrEventsPublisher.publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus.GAME_ON);
+        mMqttVrEventsPublisher.publishVrGameStatusEvent(mVrBoothInfo,
+                                                        VrGameStatusProtos.VrGameStatus.GAME_ON);
     }
 
 }

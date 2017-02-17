@@ -14,12 +14,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import static org.mockito.Mockito.*;
+import static org.junit.Assert.*;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Log.class})
@@ -39,22 +41,16 @@ public class MqttVrEventsSubscriberTest
     {
         PowerMockito.mockStatic(Log.class);
 
-        VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
-                .newBuilder()
-                .setId(65)
-                .build();
-
         mMqttVrEventsSubscriber = new MqttVrEventsSubscriber(mMockSubscriber,
-                                                             vrBoothInfo,
-                                                             mMockVrEventsHandler,
                                                              null);
+        mMqttVrEventsSubscriber.registerVrEventsHandler(mMockVrEventsHandler);
     }
 
     @Test
     public void subscribeToAll() throws Exception
     {
         mMqttVrEventsSubscriber.subscribeToAll();
-        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/65/pc/vr/game/#"),
+        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/+/pc/vr/game/#"),
                                                     any(CommonActionListener.class));
     }
 
@@ -62,7 +58,7 @@ public class MqttVrEventsSubscriberTest
     public void unsubscribeFromAll() throws Exception
     {
         mMqttVrEventsSubscriber.unsubscribeFromAll();
-        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/65/pc/vr/game/#"),
+        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/+/pc/vr/game/#"),
                                                       any(CommonActionListener.class));
     }
 
@@ -70,7 +66,7 @@ public class MqttVrEventsSubscriberTest
     public void subscribeToStatusEvent() throws Exception
     {
         mMqttVrEventsSubscriber.subscribeToStatusEvent();
-        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/65/pc/vr/game/status"),
+        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/+/pc/vr/game/status"),
                                                       any(CommonActionListener.class));
     }
 
@@ -78,7 +74,7 @@ public class MqttVrEventsSubscriberTest
     public void unsubscribeFromStatusEvent() throws Exception
     {
         mMqttVrEventsSubscriber.unsubscribeFromStatusEvent();
-        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/65/pc/vr/game/status"),
+        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/+/pc/vr/game/status"),
                                                       any(CommonActionListener.class));
     }
 
@@ -135,7 +131,13 @@ public class MqttVrEventsSubscriberTest
                                                                       .build()
                                                                       .toByteArray()));
 
-        verify(mMockVrEventsHandler).handleVrGameOnEvent(any(VrGameOnProtos.VrGameOnEvent.class));
+        ArgumentCaptor<VrBoothInfoProtos.VrBoothInfo> vrBoothInfoCaptor =
+                ArgumentCaptor.forClass(VrBoothInfoProtos.VrBoothInfo.class);
+
+        verify(mMockVrEventsHandler).handleVrGameOnEvent(vrBoothInfoCaptor.capture(),
+                                                         any(VrGameOnProtos.VrGameOnEvent.class));
+
+        assertEquals(vrBoothInfoCaptor.getValue().getId(), 65);
     }
 
     @Test
@@ -147,7 +149,13 @@ public class MqttVrEventsSubscriberTest
                                                                       .build()
                                                                       .toByteArray()));
 
-        verify(mMockVrEventsHandler).handleVrGameOffEvent(any(VrGameOffProtos.VrGameOffEvent.class));
+        ArgumentCaptor<VrBoothInfoProtos.VrBoothInfo> vrBoothInfoCaptor =
+                ArgumentCaptor.forClass(VrBoothInfoProtos.VrBoothInfo.class);
+
+        verify(mMockVrEventsHandler).handleVrGameOffEvent(vrBoothInfoCaptor.capture(),
+                                                          any(VrGameOffProtos.VrGameOffEvent.class));
+
+        assertEquals(vrBoothInfoCaptor.getValue().getId(), 65);
     }
 
     @Test
@@ -159,6 +167,12 @@ public class MqttVrEventsSubscriberTest
                                                                       .build()
                                                                       .toByteArray()));
 
-        verify(mMockVrEventsHandler).handleVrGameStatusEvent(any(VrGameStatusProtos.VrGameStatusEvent.class));
+        ArgumentCaptor<VrBoothInfoProtos.VrBoothInfo> vrBoothInfoCaptor =
+                ArgumentCaptor.forClass(VrBoothInfoProtos.VrBoothInfo.class);
+
+        verify(mMockVrEventsHandler).handleVrGameStatusEvent(vrBoothInfoCaptor.capture(),
+                                                             any(VrGameStatusProtos.VrGameStatusEvent.class));
+
+        assertEquals(vrBoothInfoCaptor.getValue().getId(), 65);
     }
 }

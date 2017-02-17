@@ -44,4 +44,10 @@ public class VrTopicBuilderTest
     {
         assertEquals("factory/booths/+/pc/vr/game/status", mBuilder.setToGameStatus().setAllBooths().build());
     }
+
+    @Test
+    public void setBoothDigitPattern() throws Exception
+    {
+        assertEquals("factory/booths/\\d+/pc/vr/game/#", mBuilder.setToGameAll().setBoothDigitPattern().build());
+    }
 }

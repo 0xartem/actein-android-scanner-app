@@ -6,5 +6,6 @@ public interface VrEventsSubscriber
     void unsubscribeFromAll() throws VrEventsException;
     void subscribeToStatusEvent() throws VrEventsException;
     void unsubscribeFromStatusEvent()throws VrEventsException;
+    void registerVrEventsHandler(VrEventsHandler vrEventsHandler);
 
 }

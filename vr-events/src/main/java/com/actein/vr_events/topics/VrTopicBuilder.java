@@ -34,6 +34,12 @@ public class VrTopicBuilder
         return this;
     }
 
+    public VrTopicBuilder setBoothDigitPattern()
+    {
+        setBoothIdOrWildcard("\\d+");
+        return this;
+    }
+
     public VrTopicBuilder setBoothId(Integer boothId)
     {
         setBoothIdOrWildcard(boothId.toString());
