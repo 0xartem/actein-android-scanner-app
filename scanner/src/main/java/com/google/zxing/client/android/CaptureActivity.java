@@ -16,12 +16,11 @@
 
 package com.google.zxing.client.android;
 
-import com.actein.activity.StartGameActivity;
-import com.actein.common.Intents.StartGame;
+import com.actein.activity.BaseActivity;
+
 import com.actein.mvp.view.CaptureView;
 import com.actein.mvp.presenter.CaptureActivityPresenter;
 import com.actein.mvp.presenter.CapturePresenter;
-import com.actein.qr.QrCodeProcessingCallback;
 import com.actein.qr.QrCodeProcessingResult;
 import com.actein.mvp.model.User;
 import com.actein.scanner.R;
@@ -37,10 +36,7 @@ import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.android.result.ResultHandlerFactory;
 import com.google.zxing.client.android.share.ShareActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -77,8 +73,8 @@ import java.util.Map;
  * @author Sean Owen
  */
 public final class CaptureActivity
-        extends Activity
-        implements SurfaceHolder.Callback, QrCodeProcessingCallback, CaptureView
+        extends BaseActivity
+        implements SurfaceHolder.Callback, CaptureView
 {
 
     private static final String TAG = CaptureActivity.class.getSimpleName();
@@ -109,10 +105,6 @@ public final class CaptureActivity
     private ConfigurationManager configurationManager;
 
     private CapturePresenter presenter;
-    private MenuItem startGameMenuItem;
-    private final Object gameStateLock = new Object();
-    private MenuItem pcOnlineMenuItem;
-    private TextView mCountDownTextView;
 
     ViewfinderView getViewfinderView() {
         return viewfinderView;
@@ -143,8 +135,6 @@ public final class CaptureActivity
         Window window = getWindow();
         window.addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.capture);
-
-        mCountDownTextView = (TextView) findViewById(R.id.count_down_timer_view);
 
         hasSurface = false;
         inactivityTimer = new InactivityTimer(this);
@@ -318,15 +308,12 @@ public final class CaptureActivity
         menuInflater.inflate(R.menu.capture, menu);
         MenuItem shareItem = menu.findItem(R.id.menu_share);
         shareItem.setVisible(false);
-        pcOnlineMenuItem = menu.findItem(R.id.menu_pc_status);
-        startGameMenuItem = menu.findItem(R.id.menu_start_game);
-        presenter.updateStarStopGameView();
-        presenter.updateOnlineStatus();
+        MenuItem vrStationsItem = menu.findItem(R.id.menu_vr_stations);
         if (!User.isAdmin(CaptureActivity.this))
         {
             MenuItem historyItem = menu.findItem(R.id.menu_history);
             historyItem.setVisible(false);
-            startGameMenuItem.setEnabled(false);
+            vrStationsItem.setEnabled(false);
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -353,17 +340,10 @@ public final class CaptureActivity
             intent.setClassName(this, HelpActivity.class.getName());
             startActivity(intent);
 
-        } else if (i == R.id.menu_start_game) {
-            synchronized (gameStateLock) {
-                if (presenter.isGameRunning()) {
-                    onGameLoading();
-                    presenter.turnGameOff();
-                }
-                else if (presenter.isGameStopped()) {
-                    intent.setClassName(this, StartGameActivity.class.getName());
-                    startActivityForResult(intent, GAME_START_REQUEST_CODE);
-                }
-            }
+        } else if (i == R.id.menu_vr_stations) {
+            intent.setClassName(this, VrStationsManagementActivity.class.getName());
+            startActivity(intent);
+
         } else {
             return super.onOptionsItemSelected(item);
         }
@@ -379,12 +359,6 @@ public final class CaptureActivity
                     HistoryItem historyItem = historyManager.buildHistoryItem(itemNumber);
                     decodeOrStoreSavedBitmap(null, historyItem.getResult());
                 }
-            } else if (requestCode == GAME_START_REQUEST_CODE) {
-                onGameLoading();
-                presenter.turnGameOn(intent.getStringExtra(StartGame.GAME_NAME),
-                                     intent.getLongExtra(StartGame.GAME_STEAM_ID, 0),
-                                     intent.getLongExtra(StartGame.DURATION_SECONDS, 0),
-                                     intent.getBooleanExtra(StartGame.RUN_TUTORIAL, true));
             }
         }
     }
@@ -446,7 +420,7 @@ public final class CaptureActivity
             drawResultPoints(barcode, scaleFactor, rawResult);
         }
 
-        presenter.onHandleDecodeResult(this, resultHandler, barcode);
+        presenter.onHandleDecodeResult(resultHandler, barcode);
     }
 
     /**
@@ -547,8 +521,7 @@ public final class CaptureActivity
         viewfinderView.drawViewfinder();
     }
 
-    // QrCodeProcessingCallback implementation
-    public void onQrCodeValidated(QrCodeProcessingResult result, ResultHandler resultHandler, Bitmap barCode) {
+    public void processScanningResult(QrCodeProcessingResult result, ResultHandler resultHandler, Bitmap barCode) {
         switch (source) {
             case NATIVE_APP_INTENT:
                 decodeResultViewer.handleDecodeResultExternally(result, lastResult, resultHandler, barCode);
@@ -566,133 +539,5 @@ public final class CaptureActivity
                 }
                 break;
         }
-    }
-
-    // ActivityView implementation
-    @Override
-    public void showToast(String message)
-    {
-        Toast.makeText(getApplicationContext(), message, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void showToast(String message, int duration)
-    {
-        Toast.makeText(getApplicationContext(), message, duration).show();
-    }
-
-    @Override
-    public void showErrorDialog(String message)
-    {
-        new AlertDialog.Builder(this).setTitle(getString(R.string.msg_error))
-                                     .setMessage(message)
-                                     .setPositiveButton(R.string.button_ok, null)
-                                     .show();
-    }
-
-    @Override
-    public void showInfoDialog(String message)
-    {
-        this.showInfoDialog(message, null, null);
-    }
-
-    @Override
-    public void showInfoDialog(String message,
-                               DialogInterface.OnClickListener okListener,
-                               DialogInterface.OnCancelListener cancelListener)
-    {
-        new AlertDialog.Builder(this).setTitle(getString(R.string.msg_info))
-                                     .setMessage(message)
-                                     .setPositiveButton(R.string.button_ok, okListener)
-                                     .setOnCancelListener(cancelListener)
-                                     .show();
-    }
-
-    @Override
-    public Context getActivityContext()
-    {
-        return this;
-    }
-
-    @Override
-    public Context getApplicationContext()
-    {
-        return super.getApplicationContext();
-    }
-
-    @Override
-    public void changePcOnlineStatus(boolean online)
-    {
-        if (pcOnlineMenuItem != null)
-        {
-            if (online)
-            {
-                pcOnlineMenuItem.setIcon(R.drawable.monitor_blue);
-            }
-            else
-            {
-                pcOnlineMenuItem.setIcon(R.drawable.monitor_grey);
-            }
-        }
-    }
-
-    @Override
-    public void onGameRunning()
-    {
-        synchronized (gameStateLock)
-        {
-            if (startGameMenuItem != null)
-            {
-                startGameMenuItem.setActionView(null);
-                startGameMenuItem.setIcon(R.drawable.stop);
-                startGameMenuItem.setTitle(R.string.menu_stop_game);
-            }
-        }
-    }
-
-    @Override
-    public void onGameStopped()
-    {
-        synchronized (gameStateLock)
-        {
-            if (startGameMenuItem != null)
-            {
-                startGameMenuItem.setActionView(null);
-                startGameMenuItem.setIcon(R.drawable.start);
-                startGameMenuItem.setTitle(R.string.menu_start_game);
-            }
-        }
-    }
-
-    @Override
-    public void onGameLoading()
-    {
-        synchronized (gameStateLock)
-        {
-            if (startGameMenuItem != null)
-            {
-                startGameMenuItem.setIcon(null);
-                startGameMenuItem.setActionView(R.layout.start_game_progress_bar);
-                startGameMenuItem.setTitle(R.string.menu_start_game_loading);
-            }
-        }
-    }
-
-    @Override
-    public void onCountDownStart()
-    {
-        mCountDownTextView.setVisibility(View.VISIBLE);
-    }
-
-    @Override
-    public void onCountDownTick(String timeLeft)
-    {
-        mCountDownTextView.setText(timeLeft);
-    }
-
-    @Override
-    public void onCountDownFinish()
-    {
-        mCountDownTextView.setVisibility(View.GONE);
     }
 }

@@ -2,17 +2,14 @@ package com.actein.mvp.model;
 
 import android.util.Log;
 
-import com.actein.data.BoothSettings;
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.OnlineStatusProtos;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.interfaces.Publisher;
 import com.actein.transport.mqtt.interfaces.Subscriber;
-import com.actein.vr_events.VrGameErrorProtos;
 import com.actein.vr_events.VrGameOffProtos;
 import com.actein.vr_events.VrGameOnProtos;
-import com.actein.vr_events.VrGameStatusProtos;
 import com.google.protobuf.MessageLite;
 
 import org.eclipse.paho.client.mqttv3.IMqttActionListener;
@@ -45,8 +42,6 @@ public class ConnectionModelTest
     @Mock
     private Publisher mMockPublisher;
     @Mock
-    private BoothSettings mMockBoothSettings;
-    @Mock
     private ConnectionModelObserver mMockModelObserver;
 
     private ConnectionModel mConnectionModel;
@@ -60,11 +55,9 @@ public class ConnectionModelTest
         when(mMockConnection.getPublisher()).thenReturn(mMockPublisher);
         when(mMockConnection.getClient()).thenReturn(mMockMqttClient);
 
-        when(mMockBoothSettings.getBoothId()).thenReturn(34);
-
-        mConnectionModel = new ConnectionModel(mMockConnection,
-                                               mMockBoothSettings,
-                                               mMockModelObserver);
+        mConnectionModel = ConnectionModel.createInstance(mMockConnection,
+                                                          mMockModelObserver,
+                                                          "clientId");
     }
 
     @After
@@ -88,29 +81,9 @@ public class ConnectionModelTest
     }
 
     @Test
-    public void isPcOnline_StatusUnknown() throws Exception
-    {
-        assertFalse(mConnectionModel.isPcOnline());
-    }
-
-    @Test
-    public void isPcOnline_StatusOffline() throws Exception
-    {
-        mConnectionModel.onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus.OFFLINE);
-        assertFalse(mConnectionModel.isPcOnline());
-    }
-
-    @Test
-    public void isPcOnline_StatusOnline() throws Exception
-    {
-        mConnectionModel.onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus.ONLINE);
-        assertTrue(mConnectionModel.isPcOnline());
-    }
-
-    @Test
     public void publishGameOffEvent() throws Exception
     {
-        mConnectionModel.publishGameOffEvent();
+        mConnectionModel.publishGameOffEvent(34);
 
         ArgumentCaptor<VrGameOffProtos.VrGameOffEvent> argument =
                 ArgumentCaptor.forClass(VrGameOffProtos.VrGameOffEvent.class);
@@ -133,14 +106,14 @@ public class ConnectionModelTest
                          any(IMqttActionListener.class),
                          eq(false));
 
-        mConnectionModel.publishGameOffEvent();
+        mConnectionModel.publishGameOffEvent(34);
         verify(mMockModelObserver).onError(anyString());
     }
 
     @Test
     public void publishGameOnEvent() throws Exception
     {
-        mConnectionModel.publishGameOnEvent("Far Cry", 234, 60000, true);
+        mConnectionModel.publishGameOnEvent(34, "Far Cry", 234, 60000, true);
 
         ArgumentCaptor<VrGameOnProtos.VrGameOnEvent> argument =
                 ArgumentCaptor.forClass(VrGameOnProtos.VrGameOnEvent.class);
@@ -167,7 +140,7 @@ public class ConnectionModelTest
                          any(IMqttActionListener.class),
                          eq(false));
 
-        mConnectionModel.publishGameOnEvent("Far Cry", 234, 60000, true);
+        mConnectionModel.publishGameOnEvent(34, "Far Cry", 234, 60000, true);
         verify(mMockModelObserver).onError(anyString());
     }
 
@@ -188,19 +161,19 @@ public class ConnectionModelTest
 
         mConnectionModel.onDestroy(false);
 
-        verify(mMockSubscriber).unsubscribe(eq("factory/booths/34/pc/status"),
+        verify(mMockSubscriber).unsubscribe(eq("factory/booths/+/pc/status"),
                                             any(IMqttActionListener.class));
 
         ArgumentCaptor<OnlineStatusProtos.OnlineStatusEvent> argument =
                 ArgumentCaptor.forClass(OnlineStatusProtos.OnlineStatusEvent.class);
 
-        verify(mMockPublisher, times(2)).publish(eq("factory/booths/34/embDevice/status"),
+        verify(mMockPublisher, times(2)).publish(eq("factory/embDevice/clientId/status"),
                                                  argument.capture(),
                                                  any(IMqttActionListener.class));
 
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.OFFLINE);
 
-        verify(mMockSubscriber).unsubscribe(eq("factory/booths/34/pc/vr/game/status"),
+        verify(mMockSubscriber).unsubscribe(eq("factory/booths/+/pc/vr/game/status"),
                                             any(IMqttActionListener.class));
 
         verify(mMockConnection).disconnect(any(IMqttActionListener.class));
@@ -213,14 +186,14 @@ public class ConnectionModelTest
 
         mConnectionModel.onDestroy(false);
 
-        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/34/pc/status"),
+        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/+/pc/status"),
                                                      any(IMqttActionListener.class));
 
-        verify(mMockPublisher, never()).publish(eq("factory/booths/34/embDevice/status"),
+        verify(mMockPublisher, never()).publish(eq("factory/embDevice/clientId/status"),
                                                 any(OnlineStatusProtos.OnlineStatusEvent.class),
                                                 any(IMqttActionListener.class));
 
-        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/34/pc/vr/game/status"),
+        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/+/pc/vr/game/status"),
                                                      any(IMqttActionListener.class));
 
         verify(mMockConnection, never()).disconnect(any(IMqttActionListener.class));
@@ -234,10 +207,10 @@ public class ConnectionModelTest
 
         mConnectionModel.onDestroy(true);
 
-        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/34/pc/status"),
+        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/+/pc/status"),
                                                      any(IMqttActionListener.class));
 
-        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/34/pc/vr/game/status"),
+        verify(mMockSubscriber, never()).unsubscribe(eq("factory/booths/+/pc/vr/game/status"),
                                                      any(IMqttActionListener.class));
 
         verify(mMockConnection, never()).disconnect(any(IMqttActionListener.class));
@@ -258,15 +231,15 @@ public class ConnectionModelTest
         ArgumentCaptor<OnlineStatusProtos.OnlineStatusEvent> argument =
                 ArgumentCaptor.forClass(OnlineStatusProtos.OnlineStatusEvent.class);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/34/pc/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/status"),
                                           any(IMqttActionListener.class));
 
-        verify(mMockPublisher).publish(eq("factory/booths/34/embDevice/status"),
+        verify(mMockPublisher).publish(eq("factory/embDevice/clientId/status"),
                                        argument.capture(),
                                        any(IMqttActionListener.class));
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.ONLINE);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/34/pc/vr/game/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/status"),
                                           any(IMqttActionListener.class));
     }
 
@@ -278,15 +251,15 @@ public class ConnectionModelTest
         ArgumentCaptor<OnlineStatusProtos.OnlineStatusEvent> argument =
                 ArgumentCaptor.forClass(OnlineStatusProtos.OnlineStatusEvent.class);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/34/pc/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/status"),
                                           any(IMqttActionListener.class));
 
-        verify(mMockPublisher).publish(eq("factory/booths/34/embDevice/status"),
+        verify(mMockPublisher).publish(eq("factory/embDevice/clientId/status"),
                                        argument.capture(),
                                        any(IMqttActionListener.class));
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.ONLINE);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/34/pc/vr/game/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/status"),
                                           any(IMqttActionListener.class));
 
         verify(mMockModelObserver).onConnected("MQTT reconnection succeed");
@@ -361,63 +334,4 @@ public class ConnectionModelTest
         mConnectionModel.onActionFailure(Action.PUBLISH, "PUBLISH");
         verify(mMockModelObserver).onError("PUBLISH");
     }
-
-    @Test
-    public void handleVrGameOnEvent() throws Exception
-    {
-
-    }
-
-    @Test
-    public void handleVrGameOffEvent() throws Exception
-    {
-
-    }
-
-    @Test
-    public void handleVrGameStatusEvent() throws Exception
-    {
-        VrGameStatusProtos.VrGameStatusEvent event = VrGameStatusProtos.VrGameStatusEvent
-                .newBuilder()
-                .setStatus(VrGameStatusProtos.VrGameStatus.GAME_ON)
-                .build();
-
-        mConnectionModel.handleVrGameStatusEvent(event);
-        verify(mMockModelObserver).onVrEventStatusReceived(eq(VrGameStatusProtos.VrGameStatus.GAME_ON),
-                                                           anyString());
-    }
-
-    @Test
-    public void handleVrGameStatusEvent_WithError() throws Exception
-    {
-        VrGameStatusProtos.VrGameStatusEvent event = VrGameStatusProtos.VrGameStatusEvent
-                .newBuilder()
-                .setStatus(VrGameStatusProtos.VrGameStatus.GAME_OFF)
-                .setError(VrGameErrorProtos.VrGameError
-                                  .newBuilder()
-                                  .setErrorCode(VrGameErrorProtos.VrGameErrorCode.CANNOT_START_STEAM_VR)
-                                  .setErrorMessage("Can not start steam vr"))
-                .build();
-
-
-        mConnectionModel.handleVrGameStatusEvent(event);
-        verify(mMockModelObserver).onVrEventStatusReceived(eq(VrGameStatusProtos.VrGameStatus.GAME_OFF),
-                                                           anyString());
-        verify(mMockModelObserver).onError("Can not start steam vr");
-    }
-
-    @Test
-    public void onPcOnlineStatusChanged_Offline() throws Exception
-    {
-        mConnectionModel.onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus.OFFLINE);
-        verify(mMockModelObserver).onPcOffline(false);
-    }
-
-    @Test
-    public void onPcOnlineStatusChanged_Online() throws Exception
-    {
-        mConnectionModel.onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus.ONLINE);
-        verify(mMockModelObserver).onPcOnline();
-    }
-
 }

@@ -27,4 +27,8 @@
   <color name="viewfinder_laser">#ffcc0000</color> <!-- Android standard ICS color -->
   <color name="viewfinder_mask">#60000000</color>
   <color name="start_button_color">#4caf50</color>
+
+  <color name="table_header_text">#CCFFFFFF</color>
+  <color name="table_data_row_even">#11C5CAE9</color>
+  <color name="table_data_row_odd">#33C5CAE9</color>
 </resources>

@@ -246,10 +246,6 @@ class DecodeResultViewer
             message = mActivity.getString(R.string.alert_dialog_qr_code_wrong_location,
                                           result.getParsedResult().getInnerCalendarResult().getLocation());
             break;
-        case WRONG_BOOTH:
-            message = mActivity.getString(R.string.alert_dialog_qr_code_wrong_booth,
-                                          result.getParsedResult().getBoothId());
-            break;
         case DIGITAL_SIGNATURE_INVALID:
             message = mActivity.getString(R.string.alert_dialog_qr_code_digital_sign);
             break;

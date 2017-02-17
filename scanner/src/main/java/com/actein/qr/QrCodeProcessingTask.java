@@ -8,14 +8,17 @@ import android.preference.PreferenceManager;
 import android.util.Log;
 
 import com.actein.data.QrCodeSettings;
+import com.actein.event.TurnGameOnEvent;
+import com.actein.mvp.model.VrStation;
+import com.actein.mvp.model.VrStationsModel;
 import com.actein.utils.DateTimeUtils;
-import com.actein.data.BoothSettings;
 import com.actein.mvp.model.EquipmentType;
-import com.actein.mvp.presenter.CaptureActivityPresenter;
 import com.actein.scanner.R;
 import com.google.zxing.client.android.result.ResultHandler;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 import com.google.zxing.client.result.ParsedResultType;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -27,17 +30,13 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
             Context context,
             QrCodeProcessingCallback callback,
             ResultHandler parsedResultHandler,
-            Bitmap barCode,
-            CaptureActivityPresenter captureActivityPresenter,
-            BoothSettings boothSettings
+            Bitmap barCode
             )
     {
         mContext = context;
         mCallback = callback;
         mParsedResultHandler = parsedResultHandler;
         mBarCode = barCode;
-        mCaptureActivityPresenter = captureActivityPresenter;
-        mBoothSettings = boothSettings;
 
         mQrCodeSettings = new QrCodeSettings(PreferenceManager.getDefaultSharedPreferences(context));
 
@@ -86,11 +85,11 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
             QrCodeValidator qrCodeValidator = new QrCodeValidator(
                     mContext,
                     result,
-                    mQrCodeSettings,
-                    mBoothSettings
+                    mQrCodeSettings
             );
 
             QrCodeStatus status = qrCodeValidator.validateQrCode();
+            VrStation vrStation = VrStationsModel.getInstance().findVrStation(result.getBoothId());
             if (QrCodeStatus.isSuccess(status))
             {
                 EquipmentType equipmentType = EquipmentType.convertToEquipmentType(result.getEquipment());
@@ -99,14 +98,15 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                 {
                     publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 
-                    mCaptureActivityPresenter.turnGameOn(result.getGameName(),
-                                                         result.getSteamGameId(),
-                                                         this.adjustGameDuration(result),
-                                                         true);
+                    EventBus.getDefault().post(new TurnGameOnEvent(vrStation,
+                                                                   result.getGameName(),
+                                                                   result.getSteamGameId(),
+                                                                   this.adjustGameDuration(result),
+                                                                   true));
                 }
             }
 
-            return new QrCodeProcessingResult(status, result);
+            return new QrCodeProcessingResult(status, result, vrStation);
         }
         catch (Exception ex)
         {
@@ -141,9 +141,6 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
     private ResultHandler mParsedResultHandler;
     private Bitmap mBarCode;
     private ProgressDialog mProgressDialog;
-
-    private CaptureActivityPresenter mCaptureActivityPresenter;
-    private BoothSettings mBoothSettings;
 
     private static final String TAG = QrCodeProcessingTask.class.getSimpleName();
 }

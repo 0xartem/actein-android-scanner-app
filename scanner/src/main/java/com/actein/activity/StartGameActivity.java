@@ -76,6 +76,8 @@ public class StartGameActivity extends Activity implements ContextOwner
                     CheckBox runTutorial = (CheckBox) findViewById(R.id.check_box_run_tutorial);
 
                     Intent resultIntent = new Intent();
+                    int boothId = getIntent().getIntExtra(StartGame.BOOTH_ID, 0);
+                    resultIntent.putExtra(StartGame.BOOTH_ID, boothId);
                     resultIntent.putExtra(StartGame.GAME_NAME, gameStr);
                     resultIntent.putExtra(StartGame.GAME_STEAM_ID, steamGameId);
                     resultIntent.putExtra(StartGame.DURATION_SECONDS, durationSeconds);

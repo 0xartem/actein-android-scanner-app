@@ -1,16 +1,14 @@
 package com.actein.mvp.view;
 
+import android.graphics.Bitmap;
+
+import com.actein.qr.QrCodeProcessingResult;
+import com.google.zxing.client.android.result.ResultHandler;
+
 public interface CaptureView extends ActivityView
 {
     void restartPreviewAfterDelay(long delayMS);
-
-    void onCountDownStart();
-    void onCountDownTick(String timeLeft);
-    void onCountDownFinish();
-
-    void onGameRunning();
-    void onGameStopped();
-    void onGameLoading();
-
-    void changePcOnlineStatus(boolean online);
+    void processScanningResult(QrCodeProcessingResult result,
+                               ResultHandler resultHandler,
+                               Bitmap barCode);
 }

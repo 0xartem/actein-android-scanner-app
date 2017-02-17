@@ -3,7 +3,6 @@ package com.actein.qr;
 import android.content.Context;
 
 import com.actein.data.QrCodeSettings;
-import com.actein.data.BoothSettings;
 import com.actein.android.utils.InternetTime;
 import com.actein.utils.DateTimeUtils;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
@@ -14,12 +13,10 @@ class QrCodeValidator
 {
     QrCodeValidator(Context context,
                     ActeinCalendarParsedResult acteinCalParsedResult,
-                    QrCodeSettings qrCodeSettings,
-                    BoothSettings boothSettings)
+                    QrCodeSettings qrCodeSettings)
     {
         mActeinCalParsedResult = acteinCalParsedResult;
         mQrCodeSettings = qrCodeSettings;
-        mBoothSettings = boothSettings;
         //TODO: disable temp: mFactoryGeo = new Geo(59.046717, 10.055840);
         mSignatureVerifier = new QrCodeSignatureVerifier(context, acteinCalParsedResult);
     }
@@ -37,9 +34,6 @@ class QrCodeValidator
         QrCodeStatus status = validateDateTime();
         if (!QrCodeStatus.isSuccess(status))
             return status;
-
-        if (!isBoothValid())
-            return QrCodeStatus.WRONG_BOOTH;
 
         //TODO: disable temp:
         /*status = validateLocation();
@@ -82,11 +76,6 @@ class QrCodeValidator
         return QrCodeStatus.SUCCESS;
     }
 
-    private boolean isBoothValid()
-    {
-        return mActeinCalParsedResult.getBoothId() == mBoothSettings.getBoothId();
-    }
-
     //TODO: disable temp:
     /*private QrCodeStatus validateLocation()
     {
@@ -102,7 +91,6 @@ class QrCodeValidator
 
     private QrCodeSignatureVerifier mSignatureVerifier;
     private QrCodeSettings mQrCodeSettings;
-    private BoothSettings mBoothSettings;
     //TODO: disable temp: private Geo mFactoryGeo;
 
     private ActeinCalendarParsedResult mActeinCalParsedResult;

@@ -2,8 +2,7 @@ package com.actein.mvp.model;
 
 import android.util.Log;
 
-import com.actein.data.BoothSettings;
-import com.actein.transport.mqtt.OnlineStatusProtos;
+import com.actein.data.Preferences;
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.LastWillManager;
@@ -12,15 +11,10 @@ import com.actein.transport.mqtt.interfaces.ConnectionObserver;
 import com.actein.transport.mqtt.actions.Action;
 import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
-import com.actein.transport.mqtt.interfaces.PcOnlineStatusHandler;
 import com.actein.vr_events.MqttVrEventsManager;
 import com.actein.vr_events.VrBoothInfoProtos;
-import com.actein.vr_events.VrGameOffProtos;
-import com.actein.vr_events.VrGameOnProtos;
 import com.actein.vr_events.VrGameProtos;
-import com.actein.vr_events.VrGameStatusProtos;
 import com.actein.vr_events.interfaces.VrEventsException;
-import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsManager;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
@@ -34,32 +28,43 @@ import java.util.concurrent.Executors;
 public class ConnectionModel
         implements
         Model,
-        MessageHandler, ConnectionObserver, ActionStatusObserver,
-        VrEventsHandler, PcOnlineStatusHandler
+        MessageHandler, ConnectionObserver, ActionStatusObserver
 {
-    public ConnectionModel(Connection connection,
-                           BoothSettings boothSettings,
-                           ConnectionModelObserver modelObserver)
+    public static synchronized ConnectionModel createInstance(Connection connection,
+                                                              ConnectionModelObserver modelObserver,
+                                                              String clientId)
+    {
+        mSelf = new ConnectionModel(connection, modelObserver, clientId);
+        return mSelf;
+    }
+
+    public static synchronized ConnectionModel getInstance()
+    {
+        return mSelf;
+    }
+
+    private ConnectionModel(Connection connection,
+                            ConnectionModelObserver modelObserver,
+                            String clientId)
     {
         mConnection = connection;
-        mBoothSettings = boothSettings;
         mModelObserver = modelObserver;
 
-        mLastWillManager = new LastWillManager(mConnection, this, this, mBoothSettings.getBoothId());
-
-        VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
-                .newBuilder()
-                .setId(mBoothSettings.getBoothId())
-                .build();
-        mVrEventsManager = new MqttVrEventsManager(mConnection, this, this, vrBoothInfo);
+        mLastWillManager = new LastWillManager(mConnection, this, clientId);
+        mVrEventsManager = new MqttVrEventsManager(mConnection, this);
 
         mMessageHandlers.put("last-will", mLastWillManager);
         mMessageHandlers.put("vr-events", mVrEventsManager.getMessageHandler());
     }
 
-    public BoothSettings getBoothSettings()
+    public VrEventsManager getVrEventsManager()
     {
-        return mBoothSettings;
+        return mVrEventsManager;
+    }
+
+    public LastWillManager getLastWillManager()
+    {
+        return mLastWillManager;
     }
 
     public synchronized boolean isConnected()
@@ -67,16 +72,15 @@ public class ConnectionModel
         return mConnection.getClient().isConnected();
     }
 
-    public synchronized boolean isPcOnline()
-    {
-        return mPcOnlineStatus == OnlineStatusProtos.OnlineStatus.ONLINE;
-    }
-
-    public void publishGameOffEvent()
+    public void publishGameOffEvent(int boothId)
     {
         try
         {
-            mVrEventsManager.getPublisher().publishVrGameOffEvent();
+            VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
+                    .newBuilder()
+                    .setId(boothId)
+                    .build();
+            mVrEventsManager.getPublisher().publishVrGameOffEvent(vrBoothInfo);
         }
         catch (VrEventsException ex)
         {
@@ -85,7 +89,8 @@ public class ConnectionModel
         }
     }
 
-    public void publishGameOnEvent(String gameName,
+    public void publishGameOnEvent(int boothId,
+                                   String gameName,
                                    long steamGameId,
                                    long durationSeconds,
                                    boolean runTutorial)
@@ -99,7 +104,12 @@ public class ConnectionModel
                                                             .setRunTutorial(runTutorial)
                                                             .build();
 
-            mVrEventsManager.getPublisher().publishVrGameOnEvent(vrGame);
+            VrBoothInfoProtos.VrBoothInfo vrBoothInfo = VrBoothInfoProtos.VrBoothInfo
+                    .newBuilder()
+                    .setId(boothId)
+                    .build();
+
+            mVrEventsManager.getPublisher().publishVrGameOnEvent(vrBoothInfo, vrGame);
         }
         catch (VrEventsException ex)
         {
@@ -238,56 +248,6 @@ public class ConnectionModel
         }
     }
 
-    // VrEventsHandler implementation
-    @Override
-    public void handleVrGameOnEvent(VrGameOnProtos.VrGameOnEvent event)
-    {
-    }
-
-    @Override
-    public void handleVrGameOffEvent(VrGameOffProtos.VrGameOffEvent event)
-    {
-    }
-
-    @Override
-    public void handleVrGameStatusEvent(VrGameStatusProtos.VrGameStatusEvent event)
-    {
-        StringBuilder messageBuilder = new StringBuilder();
-        messageBuilder.append("The status event received: ").append(event.getStatus().toString());
-        if (!event.hasError())
-        {
-            Log.i(TAG, messageBuilder.toString());
-            mModelObserver.onVrEventStatusReceived(event.getStatus(), messageBuilder.toString());
-        }
-        else
-        {
-            messageBuilder.append("; Error code: ")
-                          .append(event.getError().getErrorCode().toString())
-                          .append("; Error message: ")
-                          .append(event.getError().getErrorMessage());
-
-            Log.e(TAG, messageBuilder.toString());
-            mModelObserver.onVrEventStatusReceived(event.getStatus(), messageBuilder.toString());
-            mModelObserver.onError(event.getError().getErrorMessage());
-        }
-    }
-
-    // PcOnlineStatusHandler implementation
-    @Override
-    public synchronized void onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus status)
-    {
-        mPcOnlineStatus = status;
-        Log.i(TAG, "PC online status changed: " + status.toString());
-        if (status == OnlineStatusProtos.OnlineStatus.OFFLINE)
-        {
-            mModelObserver.onPcOffline(false);
-        }
-        else
-        {
-            mModelObserver.onPcOnline();
-        }
-    }
-
     private void startManualReconnectThread()
     {
         mReconnectExecutor.execute(new Runnable()
@@ -311,15 +271,14 @@ public class ConnectionModel
 
     private Connection mConnection;
     private ConnectionModelObserver mModelObserver;
-    private OnlineStatusProtos.OnlineStatus mPcOnlineStatus = OnlineStatusProtos.OnlineStatus.UNKNOWN;
 
     private Map<String, MessageHandler> mMessageHandlers = new TreeMap<>();
-    private BoothSettings mBoothSettings;
 
     private VrEventsManager mVrEventsManager;
     private LastWillManager mLastWillManager;
 
     private ExecutorService mReconnectExecutor = Executors.newSingleThreadExecutor();
 
+    private static ConnectionModel mSelf = null;
     private static final String TAG = ConnectionModel.class.getSimpleName();
 }

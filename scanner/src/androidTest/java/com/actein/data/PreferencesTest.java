@@ -1,6 +1,5 @@
 package com.actein.data;
 
-import android.app.Instrumentation;
 import android.content.Context;
 import android.preference.PreferenceManager;
 import android.support.test.InstrumentationRegistry;
@@ -69,10 +68,10 @@ public class PreferencesTest
     }
 
     @Test
-    public void BoothIdTest() throws Exception
+    public void ClientIdTest() throws Exception
     {
-        Preferences.setBoothId(mContext, 64);
-        assertEquals(64, Preferences.getBoothId(mContext));
+        Preferences.setClientId(mContext, "clientId");
+        assertEquals("clientId", Preferences.getClientId(mContext));
     }
 
 }

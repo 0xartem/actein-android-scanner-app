@@ -67,14 +67,14 @@ public class Preferences
         return getSharedPrefs(context).getString(ADMIN_PASSWORD_HASH, "");
     }
 
-    public static void setBoothId(Context context, int boothId)
+    public static void setClientId(Context context, String clientId)
     {
-        getSharedPrefs(context).edit().putInt(BOOTH_ID, boothId).apply();
+        getSharedPrefs(context).edit().putString(CLIENT_ID, clientId).apply();
     }
 
-    public static int getBoothId(Context context)
+    public static String getClientId(Context context)
     {
-        return getSharedPrefs(context).getInt(BOOTH_ID, 0);
+        return getSharedPrefs(context).getString(CLIENT_ID, "");
     }
 
     private static SharedPreferences getSharedPrefs(Context context)
@@ -86,5 +86,5 @@ public class Preferences
     private static final String IS_ADMIN_USER = "is_admin_user";
     private static final String BROKER_ADDR = "broker_addr";
     private static final String PHILIPS_HUE_URI = "philips_hue_uri";
-    private static final String BOOTH_ID = "booth_id";
+    private static final String CLIENT_ID = "client_id";
 }

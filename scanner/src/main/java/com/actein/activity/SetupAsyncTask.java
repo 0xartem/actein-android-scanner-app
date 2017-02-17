@@ -9,8 +9,11 @@ import android.util.Log;
 import com.actein.android.utils.Base64Utils;
 import com.actein.scanner.R;
 import com.actein.data.Preferences;
+import com.actein.service.ConnectionModelService;
 import com.actein.utils.security.HashAlgorithm;
 import com.google.zxing.integration.android.IntentIntegrator;
+
+import java.util.UUID;
 
 public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
 {
@@ -58,7 +61,10 @@ public class SetupAsyncTask extends AsyncTask<SetupParams, Void, Intent>
                     Base64Utils.hashStringToBase64(setupParams.getPassword(), hashAlgorithm).trim()
                     );
             Preferences.setIsAdminUser(mActivity, true);
-            Preferences.setBoothId(mActivity, setupParams.getBoothId());
+            Preferences.setClientId(mActivity, UUID.randomUUID().toString());
+
+            Intent serviceIntent = new Intent(mActivity, ConnectionModelService.class);
+            mActivity.startService(serviceIntent);
 
             IntentIntegrator intentIntegrator = new IntentIntegrator(mActivity);
             intentIntegrator.setDesiredBarcodeFormats(IntentIntegrator.QR_CODE_TYPES);

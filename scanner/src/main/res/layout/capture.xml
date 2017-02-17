@@ -217,14 +217,6 @@
             android:textSize="@dimen/status_result_text_size"
             android:textColor="@color/status_text"/>
 
-  <TextView
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_below="@+id/status_view"
-      android:layout_alignParentEnd="true"
-      android:layout_alignParentRight="true"
-      android:id="@+id/count_down_timer_view"
-      android:visibility="gone"/>
   </RelativeLayout>
 
 </merge>

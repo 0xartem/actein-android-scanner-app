@@ -1,7 +1,5 @@
 package com.actein.activity;
 
-import android.content.Context;
-import android.support.test.InstrumentationRegistry;
 import android.support.test.espresso.intent.rule.IntentsTestRule;
 import android.support.test.filters.LargeTest;
 import android.support.test.runner.AndroidJUnit4;
@@ -58,6 +56,5 @@ public class SetupActivityTest
         assertEquals("87.12.85.73", Preferences.getBrokerAddr(mActivityRule.getActivity()));
         String pwdHash = Base64Utils.hashStringToBase64("123456!", new HashAlgorithm());
         assertEquals(pwdHash, Preferences.getAdminPwdHash(mActivityRule.getActivity()));
-        assertEquals(1, Preferences.getBoothId(mActivityRule.getActivity()));
     }
 }
