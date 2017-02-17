@@ -18,6 +18,7 @@ package com.google.zxing.client.android;
 
 import com.actein.activity.BaseActivity;
 
+import com.actein.activity.VrStationsManagementActivity;
 import com.actein.mvp.view.CaptureView;
 import com.actein.mvp.presenter.CaptureActivityPresenter;
 import com.actein.mvp.presenter.CapturePresenter;
@@ -81,8 +82,6 @@ public final class CaptureActivity
 
     private static final long BULK_MODE_SCAN_DELAY_MS = 1000L;
     private static final int HISTORY_REQUEST_CODE = 0x0000bacc;
-    // TODO: to enum
-    private static final int GAME_START_REQUEST_CODE = 1;
 
     private CameraManager cameraManager;
     private CaptureActivityHandler handler;
