@@ -5,10 +5,9 @@ import com.actein.transport.mqtt.Topics;
 
 public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
 {
-    public PreciseDeliveryConnectionPolicy(int boothId)
+    public PreciseDeliveryConnectionPolicy(String clientId)
     {
-        mLastWillTopic = Topics.EMB_DEVICE_ONLINE_STATUS.replace(Topics.BOOTH_ID,
-                                                                 Integer.toString(boothId));
+        mLastWillTopic = Topics.EMB_DEVICE_ONLINE_STATUS.replace(Topics.EMB_DEVICE_ID, clientId);
     }
 
     @Override

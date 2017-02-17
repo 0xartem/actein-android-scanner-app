@@ -11,7 +11,7 @@ public class PreciseDeliveryConnectionPolicyTest
     @Before
     public void setUp() throws Exception
     {
-        mPolicy = new PreciseDeliveryConnectionPolicy(1);
+        mPolicy = new PreciseDeliveryConnectionPolicy("clientId");
     }
 
     @After
@@ -67,7 +67,7 @@ public class PreciseDeliveryConnectionPolicyTest
     {
         assertEquals("Last will topic is not equal",
                      mPolicy.getLastWillTopic(),
-                     "factory/booths/1/embDevice/status");
+                     "factory/embDevice/clientId/status");
     }
 
     private PreciseDeliveryConnectionPolicy mPolicy;

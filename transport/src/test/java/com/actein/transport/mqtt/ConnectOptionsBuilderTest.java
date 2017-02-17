@@ -13,12 +13,12 @@ public class ConnectOptionsBuilderTest
     public void buildConnectOptions() throws Exception
     {
         MqttConnectOptions options = ConnectOptionsBuilder.buildConnectOptions(
-                new PreciseDeliveryConnectionPolicy(1));
+                new PreciseDeliveryConnectionPolicy("clientId"));
 
         assertTrue(options.isCleanSession());
         assertEquals("Wrong will destination",
                      options.getWillDestination(),
-                     "factory/booths/1/embDevice/status");
+                     "factory/embDevice/clientId/status");
         assertEquals(options.getKeepAliveInterval(), 30);
         assertEquals(options.getConnectionTimeout(), 15);
         assertFalse(options.isAutomaticReconnect());

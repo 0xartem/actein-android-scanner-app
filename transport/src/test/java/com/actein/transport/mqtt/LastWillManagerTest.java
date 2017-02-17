@@ -20,7 +20,7 @@ import static org.mockito.Mockito.*;
 public class LastWillManagerTest
 {
     @Rule
-    private final ExpectedException mThrown = ExpectedException.none();
+    public final ExpectedException mThrown = ExpectedException.none();
 
     @Mock
     private Connection mMockConnection;
@@ -37,7 +37,7 @@ public class LastWillManagerTest
         when(mMockConnection.getSubscriber()).thenReturn(mMockSubscriber);
         when(mMockConnection.getPublisher()).thenReturn(mMockPublisher);
 
-        mLastWillManager = new LastWillManager(mMockConnection, null, null, 25);
+        mLastWillManager = new LastWillManager(mMockConnection, null, "clientId");
     }
 
     @Test
@@ -45,7 +45,7 @@ public class LastWillManagerTest
     {
         mLastWillManager.start();
 
-        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/25/pc/status"),
+        verify(mMockSubscriber, times(1)).subscribe(eq("factory/booths/+/pc/status"),
                                                     any(CommonActionListener.class));
 
         OnlineStatusProtos.OnlineStatusEvent event = OnlineStatusProtos.OnlineStatusEvent
@@ -53,7 +53,7 @@ public class LastWillManagerTest
                 .setStatus(OnlineStatusProtos.OnlineStatus.ONLINE)
                 .build();
 
-        verify(mMockPublisher, times(1)).publish(eq("factory/booths/25/embDevice/status"),
+        verify(mMockPublisher, times(1)).publish(eq("factory/embDevice/clientId/status"),
                                                  eq(event),
                                                  any(CommonActionListener.class));
 
@@ -88,7 +88,7 @@ public class LastWillManagerTest
     {
         mLastWillManager.stop();
 
-        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/25/pc/status"),
+        verify(mMockSubscriber, times(1)).unsubscribe(eq("factory/booths/+/pc/status"),
                                                       any(CommonActionListener.class));
 
         OnlineStatusProtos.OnlineStatusEvent event = OnlineStatusProtos.OnlineStatusEvent
@@ -96,7 +96,7 @@ public class LastWillManagerTest
                 .setStatus(OnlineStatusProtos.OnlineStatus.OFFLINE)
                 .build();
 
-        verify(mMockPublisher, times(1)).publish(eq("factory/booths/25/embDevice/status"),
+        verify(mMockPublisher, times(1)).publish(eq("factory/embDevice/clientId/status"),
                                                  eq(event),
                                                  any(CommonActionListener.class));
     }
