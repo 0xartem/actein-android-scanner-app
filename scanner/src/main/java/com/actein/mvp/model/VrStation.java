@@ -1,9 +1,6 @@
 package com.actein.mvp.model;
 
-
-import android.os.CountDownTimer;
-import android.os.Handler;
-
+import com.actein.helpers.VrStationTimer;
 import com.actein.scanner.R;
 import com.actein.transport.mqtt.OnlineStatusProtos;
 import com.actein.vr_events.VrGameStatusProtos;
@@ -15,10 +12,10 @@ import java.util.TimeZone;
 
 public class VrStation
 {
-    public VrStation(int boothId, VrStationsModel vrStationsModel)
+    public VrStation(int boothId, VrStationTimer vrStationTimer)
     {
-        mVrStationsModel = vrStationsModel;
         mBoothId = boothId;
+        mVrStationTimer = vrStationTimer;
     }
 
     public synchronized boolean isGameRunning()
@@ -132,44 +129,20 @@ public class VrStation
     {
         if (isGameRunning())
         {
-            mGameCountDownTimer = new CountDownTimer(mTime * 1000, 1000)
-            {
-                public void onTick(long millisUntilFinished)
-                {
-                    setTime(millisUntilFinished / 1000);
-                    if (mVrStationsModel.getObserver() != null)
-                        mVrStationsModel.getObserver().onVrStationUpdated();
-                }
-
-                public void onFinish()
-                {
-                    if (mVrStationsModel.getObserver() != null)
-                        mVrStationsModel.getObserver().onVrStationUpdated();
-                }
-            }.start();
+            mVrStationTimer.start(this);
         }
-        else if (isGameStopped() && mGameCountDownTimer != null)
+        else if (isGameStopped())
         {
-            new Handler().post(new Runnable()
-            {
-                @Override
-                public void run()
-                {
-                    mGameCountDownTimer.cancel();
-                    if (mVrStationsModel.getObserver() != null)
-                        mVrStationsModel.getObserver().onVrStationUpdated();
-                }
-            });
+            mVrStationTimer.stop();
         }
     }
 
-    private VrStationsModel mVrStationsModel;
+    private VrStationTimer mVrStationTimer;
 
     private int mBoothId;
     private String mEquipment = "";
     private String mExperience = "";
-    private long mTime;
-    private CountDownTimer mGameCountDownTimer;
+    private long mTime = 0;
 
     private VrGameStatusProtos.VrGameStatus mVrGameStatus = VrGameStatusProtos.VrGameStatus.UNKNOWN;
     private OnlineStatusProtos.OnlineStatus mPcOnlineStatus = OnlineStatusProtos.OnlineStatus.UNKNOWN;

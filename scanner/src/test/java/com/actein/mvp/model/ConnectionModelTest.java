@@ -173,7 +173,7 @@ public class ConnectionModelTest
 
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.OFFLINE);
 
-        verify(mMockSubscriber).unsubscribe(eq("factory/booths/+/pc/vr/game/status"),
+        verify(mMockSubscriber).unsubscribe(eq("factory/booths/+/pc/vr/game/#"),
                                             any(IMqttActionListener.class));
 
         verify(mMockConnection).disconnect(any(IMqttActionListener.class));
@@ -239,7 +239,7 @@ public class ConnectionModelTest
                                        any(IMqttActionListener.class));
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.ONLINE);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/#"),
                                           any(IMqttActionListener.class));
     }
 
@@ -259,7 +259,7 @@ public class ConnectionModelTest
                                        any(IMqttActionListener.class));
         assertEquals(argument.getValue().getStatus(), OnlineStatusProtos.OnlineStatus.ONLINE);
 
-        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/status"),
+        verify(mMockSubscriber).subscribe(eq("factory/booths/+/pc/vr/game/#"),
                                           any(IMqttActionListener.class));
 
         verify(mMockModelObserver).onConnected("MQTT reconnection succeed");

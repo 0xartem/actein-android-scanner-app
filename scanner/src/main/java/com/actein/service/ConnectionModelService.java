@@ -36,7 +36,7 @@ public class ConnectionModelService extends Service implements ConnectionModelOb
                 new MqttBrokerEndPoint(brokerAddr),
                 new MqttClientEndPoint(clientId),
                 new PreciseDeliveryConnectionPolicy(clientId)
-                                                         );
+                );
 
         mConnectionModel = ConnectionModel.createInstance(connection, this, clientId);
         mConnectionModel.getVrEventsManager()

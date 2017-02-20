@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.actein.event.PcOfflineEvent;
 import com.actein.event.PcOnlineEvent;
+import com.actein.helpers.VrStationTimer;
 import com.actein.transport.mqtt.OnlineStatusProtos;
 import com.actein.transport.mqtt.interfaces.PcOnlineStatusHandler;
 import com.actein.vr_events.VrBoothInfoProtos;
@@ -36,7 +37,7 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
         mVrStationModelObserver = vrStationsModelObserver;
     }
 
-    synchronized VrStationsModelObserver getObserver()
+    public synchronized VrStationsModelObserver getObserver()
     {
         return mVrStationModelObserver;
     }
@@ -132,7 +133,7 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
         VrStation vrStation = findVrStation(boothId);
         if (vrStation == null)
         {
-            vrStation = new VrStation(boothId, this);
+            vrStation = new VrStation(boothId, new VrStationTimer(this));
             mVrStations.add(vrStation);
             vrStation.setEquipment("HTC Vive");
         }
