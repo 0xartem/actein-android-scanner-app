@@ -2,6 +2,7 @@ package com.google.zxing.client.result;
 
 import com.google.zxing.Result;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
  * @author Artem Brazhnikov
  */
 
-public class ActeinVEventResultParser extends ResultParser
+class ActeinVEventResultParser extends ResultParser
 {
     @Override
     public ActeinCalendarParsedResult parse(Result result)
@@ -31,7 +32,7 @@ public class ActeinVEventResultParser extends ResultParser
         String equipment = matchSingleVCardPrefixedField("EQUIPMENT", rawText, true);
         String gameName = matchSingleVCardPrefixedField("GAME", rawText, true);
         String steamGameIdStr = matchSingleVCardPrefixedField("STEAM_GAME_ID", rawText, true);
-        String boothIdStr = matchSingleVCardPrefixedField("BOOTH", rawText, true);
+        String boothIdsStr = matchSingleVCardPrefixedField("BOOTH", rawText, true);
 
         int version = 1;
         if (versionStr != null)
@@ -55,13 +56,13 @@ public class ActeinVEventResultParser extends ResultParser
         }
 
         if (equipment == null || gameName == null ||
-            steamGameIdStr == null || boothIdStr == null)
+            steamGameIdStr == null || boothIdsStr == null)
         {
             return null;
         }
 
         long steamGameId = Long.parseLong(steamGameIdStr);
-        int boothId = Integer.parseInt(boothIdStr);
+        List<Integer> boothIds = parseBooths(boothIdsStr);
 
         return new ActeinCalendarParsedResult(version,
                                               bid,
@@ -69,7 +70,8 @@ public class ActeinVEventResultParser extends ResultParser
                                               equipment,
                                               gameName,
                                               steamGameId,
-                                              boothId,
+                                              boothIdsStr,
+                                              boothIds,
                                               signature,
                                               signedData,
                                               calendarParsedResult);
@@ -81,5 +83,16 @@ public class ActeinVEventResultParser extends ResultParser
     {
         List<String> values = VCardResultParser.matchSingleVCardPrefixedField(prefix, rawText, trim, false);
         return values == null || values.isEmpty() ? null : values.get(0);
+    }
+
+    private List<Integer> parseBooths(final String boothIdsStr)
+    {
+        List<Integer> boothIds = new ArrayList<>();
+        String[] booths = boothIdsStr.split(";");
+        for (String booth : booths)
+        {
+            boothIds.add(Integer.parseInt(booth));
+        }
+        return boothIds;
     }
 }

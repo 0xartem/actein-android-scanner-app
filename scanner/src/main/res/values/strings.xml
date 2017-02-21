@@ -100,7 +100,7 @@
     <string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
     <string name="msg_connection_lost">Connection to the server is lost.</string>
     <string name="msg_request_pc_offline">Can not process network request. PC client is offline.</string>
-    <string name="msg_game_already_running">Game is already running, please wait.</string>
+    <string name="msg_game_already_running">Game on booth %1$d is already running, please wait.</string>
     <string name="msg_too_little_time">Too little time. Please expand time interval.</string>
 
     <string name="preferences_qr_settings_title">QR code settings</string>
@@ -174,7 +174,8 @@
     <string name="alert_dialog_qr_code_expired">The QR code has already expired.</string>
     <string name="alert_dialog_qr_code_wrong_location">Wrong location. Your actual location is: %1$s</string>
     <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
-    <string name="alert_dialog_qr_code_success">QR code scanning succeed. You can enter the booth, take the equipment (%1$s) and have fun!</string>
+    <string name="alert_dialog_qr_code_success_single">QR code scanning succeed. Enter booth: %1$s, take the equipment (%2$s) and have fun!</string>
+    <string name="alert_dialog_qr_code_success_multiple">QR code scanning succeed. Enter booths: %1$s, take the equipment (%2$s) and have fun!</string>
 
     <string name="start_game_start_button">Start</string>
     <string name="start_game_hours_text">Hours</string>

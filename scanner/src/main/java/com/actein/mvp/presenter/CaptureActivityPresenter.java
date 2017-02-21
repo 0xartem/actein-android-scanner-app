@@ -42,11 +42,12 @@ public class CaptureActivityPresenter implements CapturePresenter,
                                   ResultHandler resultHandler,
                                   Bitmap barCode)
     {
-        if (result.getVrStation().isGameRunning())
+        if (result.hasBusyBooths())
         {
             mCaptureView.showInfoDialog(mCaptureView.getActivityContext()
                                                     .getResources()
-                                                    .getString(R.string.msg_game_already_running),
+                                                    .getString(R.string.msg_game_already_running,
+                                                               result.getBusyBoothId()),
                                         new DialogInterface.OnClickListener()
                                         {
                                             @Override

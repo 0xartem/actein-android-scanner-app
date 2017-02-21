@@ -1,16 +1,15 @@
 package com.actein.qr;
 
-import com.actein.mvp.model.VrStation;
 import com.google.zxing.client.result.ActeinCalendarParsedResult;
 
 public class QrCodeProcessingResult
 {
     public QrCodeProcessingResult(QrCodeStatus status,
                                   ActeinCalendarParsedResult parsedResult,
-                                  VrStation vrStation)
+                                  int busyBoothId)
     {
         mStatus = status;
-        mVrStation = vrStation;
+        mBusyBoothId = busyBoothId;
         mParsedResult = parsedResult;
     }
 
@@ -25,9 +24,14 @@ public class QrCodeProcessingResult
         return mStatus;
     }
 
-    public VrStation getVrStation()
+    public boolean hasBusyBooths()
     {
-        return mVrStation;
+        return mBusyBoothId != -1;
+    }
+
+    public Integer getBusyBoothId()
+    {
+        return mBusyBoothId;
     }
 
     public ActeinCalendarParsedResult getParsedResult()
@@ -36,6 +40,6 @@ public class QrCodeProcessingResult
     }
 
     private QrCodeStatus mStatus;
-    private VrStation mVrStation;
+    private int mBusyBoothId;
     private ActeinCalendarParsedResult mParsedResult;
 }

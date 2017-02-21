@@ -3,6 +3,7 @@ package com.google.zxing.client.result;
 import com.actein.utils.DateTimeUtils;
 
 import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -21,7 +22,8 @@ public class ActeinCalendarParsedResult extends ParsedResult
                                       String equipment,
                                       String gameName,
                                       long steamGameId,
-                                      int boothId,
+                                      String boothIdsStr,
+                                      List<Integer> boothIds,
                                       String signature,
                                       byte[] signedData,
                                       CalendarParsedResult calendarParsedResult)
@@ -34,7 +36,8 @@ public class ActeinCalendarParsedResult extends ParsedResult
         this.equipment = equipment;
         this.gameName = gameName;
         this.steamGameId = steamGameId;
-        this.boothId = boothId;
+        this.boothIdsStr = boothIdsStr;
+        this.boothIds = boothIds;
         this.signature = signature;
         this.signedData = signedData;
         this.calendarParsedResult = calendarParsedResult;
@@ -70,9 +73,14 @@ public class ActeinCalendarParsedResult extends ParsedResult
         return steamGameId;
     }
 
-    public int getBoothId()
+    public String getBoothIdsStr()
     {
-        return boothId;
+        return boothIdsStr;
+    }
+
+    public List<Integer> getBoothIds()
+    {
+        return boothIds;
     }
 
     public String getSignature()
@@ -105,7 +113,7 @@ public class ActeinCalendarParsedResult extends ParsedResult
         maybeAppend(eventType, result);
         maybeAppend(equipment, result);
         maybeAppend(gameName, result);
-        maybeAppend(Integer.toString(boothId), result);
+        maybeAppend(boothIdsStr, result);
         return result.toString();
     }
 
@@ -115,7 +123,8 @@ public class ActeinCalendarParsedResult extends ParsedResult
     private final String equipment;
     private final String gameName;
     private final long steamGameId;
-    private final int boothId;
+    private final String boothIdsStr;
+    private final List<Integer> boothIds;
 
     private final String signature;
     private final byte[] signedData;

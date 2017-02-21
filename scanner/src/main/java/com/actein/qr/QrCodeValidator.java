@@ -45,12 +45,17 @@ class QrCodeValidator
 
     private boolean isParsedResultDataValid()
     {
+        for (int boothId : mActeinCalParsedResult.getBoothIds())
+        {
+            if (boothId <= 0)
+                return false;
+        }
+
         return (mActeinCalParsedResult.getVersion() > 0 &&
                 mActeinCalParsedResult.getBid() != null &&
                 mActeinCalParsedResult.getEquipment() != null &&
                 mActeinCalParsedResult.getGameName() != null &&
                 mActeinCalParsedResult.getSteamGameId() >= 0 &&
-                mActeinCalParsedResult.getBoothId() > 0 &&
                 mActeinCalParsedResult.getInnerCalendarResult().getStart() != null &&
                 mActeinCalParsedResult.getInnerCalendarResult().getEnd() != null);
     }

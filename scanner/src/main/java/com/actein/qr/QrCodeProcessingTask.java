@@ -89,8 +89,8 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
             );
 
             QrCodeStatus status = qrCodeValidator.validateQrCode();
-            VrStation vrStation = VrStationsModel.getInstance().findVrStation(result.getBoothId());
-            if (QrCodeStatus.isSuccess(status))
+            int busyBoothId = checkBusyBooths(result);
+            if (QrCodeStatus.isSuccess(status) && busyBoothId == -1)
             {
                 EquipmentType equipmentType = EquipmentType.convertToEquipmentType(result.getEquipment());
                 if (equipmentType == EquipmentType.HTC_VIVE ||
@@ -98,21 +98,38 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
                 {
                     publishProgress(mContext.getString(R.string.progress_dlg_turn_vr_on_msg));
 
-                    EventBus.getDefault().post(new TurnGameOnEvent(vrStation,
-                                                                   result.getGameName(),
-                                                                   result.getSteamGameId(),
-                                                                   this.adjustGameDuration(result),
-                                                                   true));
+                    for (Integer boothId : result.getBoothIds())
+                    {
+                        VrStation vrStation = VrStationsModel.getInstance().findVrStation(boothId);
+
+                        EventBus.getDefault()
+                                .post(new TurnGameOnEvent(vrStation,
+                                                          result.getGameName(),
+                                                          result.getSteamGameId(),
+                                                          this.adjustGameDuration(result),
+                                                          true));
+                    }
                 }
             }
 
-            return new QrCodeProcessingResult(status, result, vrStation);
+            return new QrCodeProcessingResult(status, result, busyBoothId);
         }
         catch (Exception ex)
         {
             Log.e(TAG, ex.toString(), ex);
         }
         return new QrCodeProcessingResult(QrCodeStatus.QR_CODE_INVALID);
+    }
+
+    private int checkBusyBooths(ActeinCalendarParsedResult result)
+    {
+        for (Integer boothId : result.getBoothIds())
+        {
+            VrStation vrStation = VrStationsModel.getInstance().findVrStation(boothId);
+            if (vrStation.isGameRunning())
+                return boothId;
+        }
+        return -1;
     }
 
     private long adjustGameDuration(ActeinCalendarParsedResult result)

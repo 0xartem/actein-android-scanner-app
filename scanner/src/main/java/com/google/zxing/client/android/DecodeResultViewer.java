@@ -250,8 +250,18 @@ class DecodeResultViewer
             message = mActivity.getString(R.string.alert_dialog_qr_code_digital_sign);
             break;
         case SUCCESS:
-            message = mActivity.getString(R.string.alert_dialog_qr_code_success,
-                                          result.getParsedResult().getEquipment());
+            if (result.getParsedResult().getBoothIds().size() == 1)
+            {
+                message = mActivity.getString(R.string.alert_dialog_qr_code_success_single,
+                                              result.getParsedResult().getBoothIdsStr(),
+                                              result.getParsedResult().getEquipment());
+            }
+            else
+            {
+                message = mActivity.getString(R.string.alert_dialog_qr_code_success_multiple,
+                                              result.getParsedResult().getBoothIdsStr(),
+                                              result.getParsedResult().getEquipment());
+            }
             break;
         case QR_CODE_INVALID:
         default:
