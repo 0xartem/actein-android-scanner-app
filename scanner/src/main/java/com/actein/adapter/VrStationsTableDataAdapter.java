@@ -1,6 +1,7 @@
 package com.actein.adapter;
 
 import android.content.Context;
+import android.util.TypedValue;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
@@ -11,6 +12,7 @@ import com.actein.event.TurnGameOffEvent;
 import com.actein.mvp.model.VrStation;
 import com.actein.controls.SortableVrStationsTableView;
 import com.actein.mvp.view.VrStationsView;
+import com.actein.scanner.R;
 
 import org.greenrobot.eventbus.EventBus;
 
@@ -108,7 +110,8 @@ public class VrStationsTableDataAdapter extends TableDataAdapter<VrStation>
         final TextView textView = new TextView(getContext());
         textView.setText(value);
         textView.setPadding(20, 10, 20, 10);
-        textView.setTextSize(16);
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,
+                             getResources().getDimension(R.dimen.vr_stations_text_size));
         return textView;
     }
 

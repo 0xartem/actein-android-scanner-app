@@ -183,10 +183,10 @@
     <string name="start_game_seconds_text">Seconds</string>
     <string name="start_game_run_tutorial_text">Run tutorial before the game</string>
 
-    <string name="booth_id_table_header">Booth Id</string>
+    <string name="booth_id_table_header">Booth</string>
     <string name="equipment_table_header">Equipment</string>
     <string name="start_stop_table_header">Start/Stop</string>
-    <string name="online_status_table_header">PC Status</string>
+    <string name="online_status_table_header">PC</string>
     <string name="experience_table_header">Experience</string>
     <string name="time_table_header">Time Left</string>
 </resources>

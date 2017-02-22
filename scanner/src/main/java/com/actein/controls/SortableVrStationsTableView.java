@@ -51,7 +51,7 @@ public class SortableVrStationsTableView extends SortableTableView<VrStation>
         tableColumnWeightModel.setColumnWeight(Columns.BOOTH_CL.getValue(), 2);
         tableColumnWeightModel.setColumnWeight(Columns.EQUIPMENT_CL.getValue(), 3);
         tableColumnWeightModel.setColumnWeight(Columns.START_STOP_CL.getValue(), 2);
-        tableColumnWeightModel.setColumnWeight(Columns.ONLINE_STATUS_CL.getValue(), 2);
+        tableColumnWeightModel.setColumnWeight(Columns.ONLINE_STATUS_CL.getValue(), 1);
         tableColumnWeightModel.setColumnWeight(Columns.EXPERIENCE_CL.getValue(), 3);
         tableColumnWeightModel.setColumnWeight(Columns.TIME_LEFT_CL.getValue(), 2);
         setColumnModel(tableColumnWeightModel);
