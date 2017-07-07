@@ -134,8 +134,7 @@ public class QrCodeProcessingTask extends AsyncTask<Void, String, QrCodeProcessi
 
     private long adjustGameDuration(ActeinCalendarParsedResult result)
     {
-        long fiveMinutes = 5 * 60; // time to grab equipment
-        long durationSeconds = result.getDurationSeconds() + fiveMinutes;
+        long durationSeconds = result.getDurationSeconds();
         if (!mQrCodeSettings.isAllowEarlyQrCodes() && !mQrCodeSettings.isAllowExpiredQrCodes())
         {
             Date now = new Date();
