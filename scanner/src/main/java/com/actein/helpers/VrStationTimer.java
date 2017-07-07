@@ -19,13 +19,13 @@ public class VrStationTimer
         {
             public void onTick(long millisUntilFinished)
             {
-                vrStation.setTime(millisUntilFinished / 1000);
-                if (mVrStationModel.getObserver() != null)
-                    mVrStationModel.getObserver().onVrStationUpdated();
+                final long secondsLeft = millisUntilFinished / 1000;
+                vrStation.setTime(secondsLeft);
             }
 
             public void onFinish()
             {
+                vrStation.setTime(0);
                 if (mVrStationModel.getObserver() != null)
                     mVrStationModel.getObserver().onVrStationUpdated();
             }
@@ -42,8 +42,7 @@ public class VrStationTimer
                 public void run()
                 {
                     mGameCountDownTimer.cancel();
-                    if (mVrStationModel.getObserver() != null)
-                        mVrStationModel.getObserver().onVrStationUpdated();
+                    mGameCountDownTimer.onFinish();
                 }
             });
         }

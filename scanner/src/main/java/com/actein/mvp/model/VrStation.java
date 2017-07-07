@@ -57,12 +57,12 @@ public class VrStation
     public synchronized void setVrGameStatus(final VrGameStatusProtos.VrGameStatus status)
     {
         mVrGameStatus = status;
+        updateCountDownView();
         if (isGameStopped())
         {
             setExperience("");
             setTime(0);
         }
-        updateCountDownView();
     }
 
     public synchronized int getRunningIcon()

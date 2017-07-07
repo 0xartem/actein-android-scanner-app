@@ -1,6 +1,7 @@
 package com.actein.mvp.model;
 
 
+import android.os.Handler;
 import android.util.Log;
 
 import com.actein.event.PcOfflineEvent;
@@ -45,11 +46,26 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
     @Override
     public void onCreate()
     {
+        mUpdateTask = new Runnable()
+        {
+            @Override
+            public void run()
+            {
+                if (mVrStationModelObserver != null)
+                {
+                    mVrStationModelObserver.onVrStationUpdated();
+                }
+                mUpdateHandler.postDelayed(this, TIMER_UPDATE_PERIOD_MILLIS);
+            }
+        };
+
+        mUpdateHandler.postDelayed(mUpdateTask, TIMER_UPDATE_PERIOD_MILLIS);
     }
 
     @Override
     public void onDestroy(boolean isChangingConfiguration)
     {
+        mUpdateHandler.removeCallbacks(mUpdateTask);
     }
 
     @Override
@@ -82,6 +98,9 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
     public synchronized void handleVrGameStatusEvent(VrBoothInfoProtos.VrBoothInfo boothInfo,
                                                      VrGameStatusProtos.VrGameStatusEvent event)
     {
+        VrStation vrStation = ensureVrStationAdded(boothInfo.getId());
+        vrStation.setVrGameStatus(event.getStatus());
+
         StringBuilder messageBuilder = new StringBuilder();
         messageBuilder.append("The status event received: ").append(event.getStatus().toString())
                       .append("; Booth: ").append(boothInfo.getId());
@@ -91,18 +110,13 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
         }
         else
         {
+            vrStation.setExperience(event.getError().getErrorMessage());
+
             messageBuilder.append("; Error code: ").append(event.getError().getErrorCode().toString())
                           .append("; Error message: ").append(event.getError().getErrorMessage());
 
             Log.e(TAG, messageBuilder.toString());
-            if (mVrStationModelObserver != null)
-            {
-                mVrStationModelObserver.onError(event.getError().getErrorMessage());
-            }
         }
-
-        VrStation vrStation = ensureVrStationAdded(boothInfo.getId());
-        vrStation.setVrGameStatus(event.getStatus());
 
         if (mVrStationModelObserver != null)
             mVrStationModelObserver.onVrStationUpdated();
@@ -157,9 +171,13 @@ public class VrStationsModel implements Model, VrEventsHandler, PcOnlineStatusHa
         return mVrStations;
     }
 
+    private Runnable mUpdateTask;
+    private final Handler mUpdateHandler = new Handler();
+
     private List<VrStation> mVrStations = new ArrayList<>();
     private VrStationsModelObserver mVrStationModelObserver;
 
+    private static final long TIMER_UPDATE_PERIOD_MILLIS = 5000;
     private static final String TAG = VrStationsModel.class.getSimpleName();
     private static VrStationsModel mSelf;
 }
