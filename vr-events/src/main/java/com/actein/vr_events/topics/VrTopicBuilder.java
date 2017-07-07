@@ -4,7 +4,7 @@ import com.actein.transport.mqtt.Topics;
 
 public class VrTopicBuilder
 {
-    public VrTopicBuilder setToAll()
+    public VrTopicBuilder setToGameAll()
     {
         mTopicBuilder = new StringBuilder(VrTopics.VR_PC_GAME_ALL);
         return this;
@@ -31,6 +31,12 @@ public class VrTopicBuilder
     public VrTopicBuilder setAllBooths()
     {
         setBoothIdOrWildcard("+");
+        return this;
+    }
+
+    public VrTopicBuilder setBoothDigitPattern()
+    {
+        setBoothIdOrWildcard("\\d+");
         return this;
     }
 

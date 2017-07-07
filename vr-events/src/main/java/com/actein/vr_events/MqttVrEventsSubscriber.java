@@ -10,41 +10,45 @@ import com.actein.transport.mqtt.actions.CommonActionListener;
 import com.actein.vr_events.interfaces.VrEventsException;
 import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsSubscriber;
+import com.actein.transport.mqtt.BoothIdParser;
 import com.actein.vr_events.topics.VrTopicBuilder;
 import com.google.protobuf.InvalidProtocolBufferException;
 
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.regex.Pattern;
+
 class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
 {
-    MqttVrEventsSubscriber(
-            Subscriber subscriber,
-            VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
-            VrEventsHandler vrEventsHandler,
-            ActionStatusObserver actionObserver)
+    MqttVrEventsSubscriber(Subscriber subscriber,
+                           ActionStatusObserver actionObserver)
     {
         mSubscriber = subscriber;
-        mVrEventsHandler = vrEventsHandler;
 
         mSubscribeListener = new CommonActionListener(Action.SUBSCRIBE, actionObserver);
         mUnsubscribeListener = new CommonActionListener(Action.UNSUBSCRIBE, actionObserver);
 
-        mAllVrEventsTopic = new VrTopicBuilder().setToAll()
-                                                .setBoothId(vrBoothInfo.getId())
+        mGameStatusVrTopicPattern = Pattern.compile(new VrTopicBuilder().setToGameStatus()
+                                                                        .setBoothDigitPattern()
+                                                                        .build());
+
+        mGameOnVrTopicPattern = Pattern.compile(new VrTopicBuilder().setToGameOn()
+                                                                    .setBoothDigitPattern()
+                                                                    .build());
+
+        mGameOffVrTopicPattern = Pattern.compile(new VrTopicBuilder().setToGameOff()
+                                                                     .setBoothDigitPattern()
+                                                                     .build());
+
+        mAllVrEventsTopic = new VrTopicBuilder().setToGameAll()
+                                                .setAllBooths()
                                                 .build();
 
         mGameStatusVrTopic = new VrTopicBuilder().setToGameStatus()
-                                                 .setBoothId(vrBoothInfo.getId())
+                                                 .setAllBooths()
                                                  .build();
 
-        mGameOnVrTopic = new VrTopicBuilder().setToGameOn()
-                                             .setBoothId(vrBoothInfo.getId())
-                                             .build();
-
-        mGameOffVrTopic = new VrTopicBuilder().setToGameOff()
-                                              .setBoothId(vrBoothInfo.getId())
-                                              .build();
     }
 
     @Override
@@ -104,56 +108,70 @@ class MqttVrEventsSubscriber implements VrEventsSubscriber, MessageHandler
     }
 
     @Override
+    public void registerVrEventsHandler(VrEventsHandler vrEventsHandler)
+    {
+        mVrEventsHandler = vrEventsHandler;
+    }
+
+    @Override
     public void handleMessage(String topic, MqttMessage message) throws Exception
     {
-        if (topic.equals(mGameOnVrTopic))
+        if (mGameOnVrTopicPattern.matcher(topic).matches())
         {
-            processGameOnEvent(message);
+            processGameOnEvent(topic, message);
         }
-        else if (topic.equals(mGameOffVrTopic))
+        else if (mGameOffVrTopicPattern.matcher(topic).matches())
         {
-            processGameOffEvent(message);
+            processGameOffEvent(topic, message);
         }
-        else if (topic.equals(mGameStatusVrTopic))
+        else if (mGameStatusVrTopicPattern.matcher(topic).matches())
         {
-            processVrStatusEvent(message);
+            processVrStatusEvent(topic, message);
         }
     }
 
-    private void processGameOnEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processGameOnEvent(String topic, MqttMessage message) throws InvalidProtocolBufferException
     {
         VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent
                 .parseFrom(message.getPayload());
         if (mVrEventsHandler != null)
         {
-            mVrEventsHandler.handleVrGameOnEvent(event);
+            mVrEventsHandler.handleVrGameOnEvent(buildBoothInfo(topic), event);
         }
     }
 
-    private void processGameOffEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processGameOffEvent(String topic, MqttMessage message) throws InvalidProtocolBufferException
     {
         VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent
                 .parseFrom(message.getPayload());
         if (mVrEventsHandler != null)
         {
-            mVrEventsHandler.handleVrGameOffEvent(event);
+            mVrEventsHandler.handleVrGameOffEvent(buildBoothInfo(topic), event);
         }
     }
 
-    private void processVrStatusEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processVrStatusEvent(String topic, MqttMessage message) throws InvalidProtocolBufferException
     {
         VrGameStatusProtos.VrGameStatusEvent event = VrGameStatusProtos.VrGameStatusEvent
                 .parseFrom(message.getPayload());
         if (mVrEventsHandler != null)
         {
-            mVrEventsHandler.handleVrGameStatusEvent(event);
+            mVrEventsHandler.handleVrGameStatusEvent(buildBoothInfo(topic),event);
         }
     }
 
+    private VrBoothInfoProtos.VrBoothInfo buildBoothInfo(String topic)
+    {
+        int boothId = BoothIdParser.parseBoothId(topic);
+        return VrBoothInfoProtos.VrBoothInfo.newBuilder().setId(boothId).build();
+    }
+
+    private final Pattern mGameStatusVrTopicPattern;
+    private final Pattern mGameOnVrTopicPattern;
+    private final Pattern mGameOffVrTopicPattern;
+
     private final String mAllVrEventsTopic;
     private final String mGameStatusVrTopic;
-    private final String mGameOnVrTopic;
-    private final String mGameOffVrTopic;
 
     private Subscriber mSubscriber;
     private VrEventsHandler mVrEventsHandler;

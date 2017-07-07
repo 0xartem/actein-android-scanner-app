@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (C) 2008 ZXing authors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+<resources xmlns:tools="http://schemas.android.com/tools">
+  <string-array name="country_codes" tools:ignore="MissingTranslation">
+    <item>-</item>
+    <item>AR</item>
+    <item>AU</item>
+    <item>BR</item>
+    <item>BG</item>
+    <item>CA</item>
+    <item>CH</item>
+    <item>CN</item>
+    <item>CZ</item>
+    <item>DE</item>
+    <item>DK</item>
+    <item>ES</item>
+    <item>FI</item>
+    <item>FR</item>
+    <item>GB</item>
+    <item>GR</item>
+    <item>HU</item>
+    <item>ID</item>
+    <item>IT</item>
+    <item>JP</item>
+    <item>KR</item>
+    <item>NL</item>
+    <item>PL</item>
+    <item>PT</item>
+    <item>RO</item>    
+    <item>RU</item>
+    <item>SE</item>
+    <item>SK</item>
+    <item>SI</item>
+    <item>TR</item>
+    <item>TW</item>
+    <item>US</item>
+  </string-array>
+  <string-array name="preferences_front_light_values" tools:ignore="MissingTranslation">
+    <item>ON</item>
+    <item>AUTO</item>
+    <item>OFF</item>
+  </string-array>
+  <string-array name="preferences_front_light_options">
+    <item>@string/preferences_front_light_on</item>
+    <item>@string/preferences_front_light_auto</item>
+    <item>@string/preferences_front_light_off</item>
+  </string-array>
+  <string-array name="games_list">
+    <!-- <item>Acan\'s Call: Act 1|501180</item> -->
+    <item>Accounting|518580</item>
+    <item>AirMech Command|364630</item>
+    <item>Arizona Sunshine|342180</item>
+    <item>Audioshield|412740</item>
+    <item>Batman: Arkham VR|502820</item>
+    <item>Brookhaven Experiment|440630</item>
+    <item>Climbey|520010</item>
+    <item>Google Earth VR|348250</item>
+    <item>Hover Junkers|380220</item>
+    <item>IronWolf VR|552080</item>
+    <item>Job Simulator|448280</item>
+    <item>Nevrosa: Prelude|598070</item>
+    <item>Onward|496240</item>
+    <!-- <item>Paranormal Activity: The Lost Soul|467660</item> -->
+    <!-- <item>Portal Stories: VR|446750</item> -->
+    <item>Racket NX|428080</item>
+    <item>Rec Room|471710</item>
+    <item>Space Pirate Trainer|418650</item>
+    <item>The Gallery - Episode 1: Call of the Starseed|270130</item>
+    <item>The Lab|450390</item>
+    <item>Tilt Brush|327140</item>
+    <item>Thumper|356400</item>
+    <item>Trickster|512220</item>
+    <item>Vanishing Realms|322770 </item>
+    <item>Waltz of the Wizard|436820</item>
+  </string-array>
+</resources>

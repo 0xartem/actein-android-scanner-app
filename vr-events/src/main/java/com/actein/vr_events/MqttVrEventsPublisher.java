@@ -15,27 +15,26 @@ import org.eclipse.paho.client.mqttv3.MqttException;
 class MqttVrEventsPublisher implements VrEventsPublisher
 {
     MqttVrEventsPublisher(Publisher publisher,
-                          VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
                           ActionStatusObserver actionObserver)
     {
         mPublisher = publisher;
-        mVrBoothInfo = vrBoothInfo;
         mPublishListener = new CommonActionListener(Action.PUBLISH, actionObserver);
     }
 
     @Override
-    public void publishVrGameOnEvent(VrGameProtos.VrGame vrGame) throws VrEventsException
+    public void publishVrGameOnEvent(VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
+                                     VrGameProtos.VrGame vrGame) throws VrEventsException
     {
         try
         {
             VrGameOnProtos.VrGameOnEvent event = VrGameOnProtos.VrGameOnEvent
                     .newBuilder()
-                    .setVrBoothInfo(mVrBoothInfo)
+                    .setVrBoothInfo(vrBoothInfo)
                     .setGame(vrGame)
                     .build();
 
             String topic = new VrTopicBuilder().setToGameOn()
-                                               .setBoothId(mVrBoothInfo.getId())
+                                               .setBoothId(vrBoothInfo.getId())
                                                .build();
 
             mPublisher.publish(topic, event, mPublishListener, false);
@@ -48,17 +47,17 @@ class MqttVrEventsPublisher implements VrEventsPublisher
     }
 
     @Override
-    public void publishVrGameOffEvent() throws VrEventsException
+    public void publishVrGameOffEvent(VrBoothInfoProtos.VrBoothInfo vrBoothInfo) throws VrEventsException
     {
         try
         {
             VrGameOffProtos.VrGameOffEvent event = VrGameOffProtos.VrGameOffEvent
                     .newBuilder()
-                    .setVrBoothInfo(mVrBoothInfo)
+                    .setVrBoothInfo(vrBoothInfo)
                     .build();
 
             String topic = new VrTopicBuilder().setToGameOff()
-                                               .setBoothId(mVrBoothInfo.getId())
+                                               .setBoothId(vrBoothInfo.getId())
                                                .build();
 
             mPublisher.publish(topic, event, mPublishListener, false);
@@ -71,13 +70,15 @@ class MqttVrEventsPublisher implements VrEventsPublisher
     }
 
     @Override
-    public void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status) throws VrEventsException
+    public void publishVrGameStatusEvent(VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
+                                         VrGameStatusProtos.VrGameStatus status) throws VrEventsException
     {
-        publishVrGameStatusEvent(status, null);
+        publishVrGameStatusEvent(vrBoothInfo, status, null);
     }
 
     @Override
-    public void publishVrGameStatusEvent(VrGameStatusProtos.VrGameStatus status,
+    public void publishVrGameStatusEvent(VrBoothInfoProtos.VrBoothInfo vrBoothInfo,
+                                         VrGameStatusProtos.VrGameStatus status,
                                          VrGameErrorProtos.VrGameError error) throws VrEventsException
     {
         try
@@ -92,7 +93,7 @@ class MqttVrEventsPublisher implements VrEventsPublisher
             }
 
             String topic = new VrTopicBuilder().setToGameStatus()
-                                               .setBoothId(mVrBoothInfo.getId())
+                                               .setBoothId(vrBoothInfo.getId())
                                                .build();
 
             mPublisher.publish(topic, builder.build(), mPublishListener);
@@ -106,7 +107,6 @@ class MqttVrEventsPublisher implements VrEventsPublisher
 
     private Publisher mPublisher;
     private CommonActionListener mPublishListener;
-    private VrBoothInfoProtos.VrBoothInfo mVrBoothInfo;
 
     private static String TAG = MqttVrEventsPublisher.class.getSimpleName();
 }

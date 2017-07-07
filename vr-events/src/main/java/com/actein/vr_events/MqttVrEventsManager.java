@@ -4,7 +4,6 @@ import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.actions.ActionStatusObserver;
 import com.actein.transport.mqtt.interfaces.MessageHandler;
 import com.actein.vr_events.interfaces.VrEventsException;
-import com.actein.vr_events.interfaces.VrEventsHandler;
 import com.actein.vr_events.interfaces.VrEventsManager;
 import com.actein.vr_events.interfaces.VrEventsPublisher;
 import com.actein.vr_events.interfaces.VrEventsSubscriber;
@@ -12,20 +11,15 @@ import com.actein.vr_events.interfaces.VrEventsSubscriber;
 public class MqttVrEventsManager implements VrEventsManager
 {
     public MqttVrEventsManager(Connection connection,
-                               VrEventsHandler vrEventsHandler,
-                               ActionStatusObserver actionObserver,
-                               VrBoothInfoProtos.VrBoothInfo vrBoothInfo)
+                               ActionStatusObserver actionObserver)
     {
         mVrEventsPublisher = new MqttVrEventsPublisher(
                 connection.getPublisher(),
-                vrBoothInfo,
                 actionObserver
         );
 
         mVrEventsSubscriber = new MqttVrEventsSubscriber(
                 connection.getSubscriber(),
-                vrBoothInfo,
-                vrEventsHandler,
                 actionObserver
         );
     }
@@ -34,13 +28,13 @@ public class MqttVrEventsManager implements VrEventsManager
     public synchronized void start() throws VrEventsException
     {
         mIsRunning = true;
-        mVrEventsSubscriber.subscribeToStatusEvent();
+        mVrEventsSubscriber.subscribeToAll();
     }
 
     @Override
     public synchronized void stop() throws VrEventsException
     {
-        mVrEventsSubscriber.unsubscribeFromStatusEvent();
+        mVrEventsSubscriber.unsubscribeFromAll();
         mIsRunning = false;
     }
 

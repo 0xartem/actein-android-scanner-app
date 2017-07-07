@@ -4,5 +4,5 @@ import com.actein.transport.mqtt.OnlineStatusProtos;
 
 public interface PcOnlineStatusHandler
 {
-    void onPcOnlineStatusChanged(OnlineStatusProtos.OnlineStatus status);
+    void onPcOnlineStatusChanged(int boothId, OnlineStatusProtos.OnlineStatus status);
 }

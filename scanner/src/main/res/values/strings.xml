@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?><!--
+ Copyright (C) 2014 ZXing authors
+
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+ -->
+<resources>
+    <string name="app_name">Actein Scanner</string>
+    <string name="okButtonCaption">OK</string>
+    <string name="brokerAddressHint">MQTT Broker Address</string>
+    <string name="brokerDefaultAddress">95.85.61.247</string>
+    <string name="philipsHueBridgeAddressHint">Philips Hue Bridge Address</string>
+    <string name="adminPasswordHint">Admin Password</string>
+    <string name="toastIncorrectBrokerAddress">Please enter correct broker address</string>
+    <string name="toastIncorrectPhilipsHueBridge">Please enter correct Philips Hue bridge address</string>
+    <string name="toastEmptyAdminPassword">Please enter admin password</string>
+    <string name="progressDialogMessage">Loading&#8230;</string>
+    <string name="acteinLogoDescription">Actein logo</string>
+
+    <string name="app_picker_name">Applications</string>
+    <string name="bookmark_picker_name">Bookmarks</string>
+    <string name="button_add_calendar">Add to calendar</string>
+    <string name="button_add_contact">Add contact</string>
+    <string name="button_book_search">Book Search</string>
+    <string name="button_cancel">Cancel</string>
+    <string name="button_custom_product_search">Custom search</string>
+    <string name="button_dial">Dial number</string>
+    <string name="button_email">Send email</string>
+    <string name="button_get_directions">Get directions</string>
+    <string name="button_mms">Send MMS</string>
+    <string name="button_ok">OK</string>
+    <string name="button_open_browser">Open browser</string>
+    <string name="button_product_search">Product search</string>
+    <string name="button_search_book_contents">Search contents</string>
+    <string name="button_share_app">Application</string>
+    <string name="button_share_bookmark">Bookmark</string>
+    <string name="button_share_by_email">Share via email</string>
+    <string name="button_share_by_sms">Share via SMS</string>
+    <string name="button_share_clipboard">Clipboard</string>
+    <string name="button_share_contact">Contact</string>
+    <string name="button_show_map">Show map</string>
+    <string name="button_sms">Send SMS</string>
+    <string name="button_web_search">Web search</string>
+    <string name="button_wifi">Connect to Network</string>
+    <string name="contents_contact">Contact info</string>
+    <string name="contents_email">Email address</string>
+    <string name="contents_location">Geographic coordinates</string>
+    <string name="contents_phone">Phone number</string>
+    <string name="contents_sms">SMS address</string>
+    <string name="contents_text">Plain text</string>
+    <string name="history_clear_text">Clear history</string>
+    <string name="history_clear_one_history_text">Clear</string>
+    <string name="history_email_title">Qr code Scanner history</string>
+    <string name="history_empty">Empty</string>
+    <string name="history_empty_detail">No qr code scans have been recorded</string>
+    <string name="history_send">Send history</string>
+    <string name="history_title">History</string>
+    <string name="menu_encode_mecard">Use MECARD</string>
+    <string name="menu_encode_vcard">Use vCard</string>
+    <string name="menu_vr_stations_mgmnt">VR Stations</string>
+    <string name="menu_help">Help</string>
+    <string name="menu_history">History</string>
+    <string name="menu_settings">Settings</string>
+    <string name="menu_share">Share</string>
+    <string name="msg_bulk_mode_scanned">Bulk mode: qr code scanned and saved</string>
+    <string name="msg_camera_framework_bug">Sorry, the Android camera encountered a problem. You may need to restart the device.</string>
+    <string name="msg_default_format">Format</string>
+    <string name="msg_default_meta">Metadata</string>
+    <string name="msg_default_mms_subject">Hi</string>
+    <string name="msg_default_status">Please place a qr code inside the viewfinder rectangle to scan it. If you\'re having trouble scanning, make sure to hold the qr code steady. If the camera is unable to focus, try moving the qr code further or closer from the device.</string>
+    <string name="msg_default_time">Time</string>
+    <string name="msg_default_type">Type</string>
+    <string name="msg_encode_contents_failed">Could not encode a qr code from the data provided.</string>
+    <string name="msg_error">Error</string>
+    <string name="msg_info">Info</string>
+    <string name="msg_google_books">Google</string>
+    <string name="msg_google_product">Google</string>
+    <string name="msg_intent_failed">Sorry, the requested application could not be launched. The qr code contents may be invalid.</string>
+    <string name="msg_invalid_value">Invalid value</string>
+    <string name="msg_redirect">Redirect</string>
+    <string name="msg_sbc_book_not_searchable">Sorry, this book is not searchable.</string>
+    <string name="msg_sbc_failed">Sorry, the search encountered a problem.</string>
+    <string name="msg_sbc_no_page_returned">No page returned</string>
+    <string name="msg_sbc_page">Page</string>
+    <string name="msg_sbc_results">Results</string>
+    <string name="msg_sbc_searching_book">Searching book\u2026</string>
+    <string name="msg_sbc_snippet_unavailable">Snippet not available</string>
+    <string name="msg_share_explanation">You can share data by displaying a qr code on your screen and scanning it with another phone.</string>
+    <string name="msg_share_text">Or type some text and press Enter</string>
+    <string name="msg_sure">Are you sure?</string>
+    <string name="msg_unmount_usb">Sorry, the SD card is not accessible.</string>
+    <string name="msg_connection_lost">Connection to the server is lost.</string>
+    <string name="msg_request_pc_offline">Can not process network request. PC client is offline.</string>
+    <string name="msg_game_already_running">Game on booth %1$d is already running, please wait.</string>
+    <string name="msg_too_little_time">Too little time. Please expand time interval.</string>
+
+    <string name="preferences_qr_settings_title">QR code settings</string>
+    <string name="preferences_allow_early_qr_codes_title">Allow early QR codes</string>
+    <string name="preferences_allow_expired_qr_codes_title">Allow expired QR codes</string>
+
+    <string name="preferences_user_settings_title">User settings</string>
+    <string name="preferences_change_user_user">Log out of admin</string>
+    <string name="preferences_change_user_admin">Log in as admin</string>
+    <string name="preferences_enter_admin_pwd_msg_title">Please enter admin password</string>
+    <string name="preferences_password_incorrect_msg">The password is incorrect."</string>
+    <string name="preferences_change_admin_pwd_title">Change admin password</string>
+    <string name="preferences_password_changed_msg">Admin password updated.</string>
+    <string name="preferences_same_password_msg">The password is the same. Please try another one.</string>
+
+    <string name="preferences_actions_title">When a qr code is found\u2026</string>
+    <string name="preferences_auto_focus_title">Use auto focus</string>
+
+    <string name="preferences_bulk_mode_summary">Scan and save many qr codes continuously</string>
+    <string name="preferences_bulk_mode_title">Bulk scan mode</string>
+    <string name="preferences_copy_to_clipboard_title">Copy to clipboard</string>
+    <string name="preferences_custom_product_search_summary" formatted="false">Substitutions: %s = contents, %f = format, %t = type</string>
+    <string name="preferences_custom_product_search_title">Custom search URL</string>
+
+    <string name="preferences_device_bug_workarounds_title">Device Bug Workarounds</string>
+    <string name="preferences_disable_barcode_scene_mode_title">No qr code scene mode</string>
+    <string name="preferences_disable_continuous_focus_summary">Use only standard focus mode</string>
+    <string name="preferences_disable_continuous_focus_title">No continuous focus</string>
+    <string name="preferences_disable_exposure_title">No exposure</string>
+    <string name="preferences_disable_metering_title">No metering</string>
+    <string name="preferences_front_camera_title">Use front camera</string>
+    <string name="preferences_front_light_summary">Improves scanning in low light, but may cause glare.</string>
+    <string name="preferences_front_light_title">Use front light</string>
+    <string name="preferences_front_light_auto">Automatic</string>
+    <string name="preferences_front_light_off">Off</string>
+    <string name="preferences_front_light_on">On</string>
+    <string name="preferences_general_title">General settings</string>
+    <string name="preferences_history_summary">Store your scans in History</string>
+    <string name="preferences_history_title">Add to History</string>
+
+    <string name="preferences_name">Settings</string>
+    <string name="preferences_orientation_title">No automatic rotation</string>
+    <string name="preferences_play_beep_title">Beep</string>
+    <string name="preferences_remember_duplicates_summary">Store multiple scans of the same qr code in History</string>
+    <string name="preferences_remember_duplicates_title">Remember duplicates</string>
+    <string name="preferences_result_title">Result settings</string>
+
+    <string name="preferences_search_country">Search country</string>
+
+    <string name="preferences_vibrate_title">Vibrate</string>
+    <string name="result_address_book">Found contact info</string>
+    <string name="result_calendar">Found calendar event</string>
+    <string name="actein_result_calendar">Found actein calendar event</string>
+    <string name="result_email_address">Found email address</string>
+    <string name="result_geo">Found geographic coordinates</string>
+    <string name="result_isbn">Found book</string>
+    <string name="result_product">Found product</string>
+    <string name="result_sms">Found SMS address</string>
+    <string name="result_tel">Found phone number</string>
+    <string name="result_text">Found plain text</string>
+    <string name="result_uri">Found URL</string>
+    <string name="result_wifi">Found WLAN Configuration</string>
+    <string name="sbc_name">Google Book Search</string>
+    <string name="wifi_changing_network">Requesting connection to network\u2026</string>
+
+    <string name="progress_dlg_loading_msg">Loading&#8230;</string>
+    <string name="progress_dlg_qr_validation_msg">QR code validation&#8230;</string>
+    <string name="progress_dlg_turn_vr_on_msg">Turning the game on&#8230;</string>
+    <string name="alert_dialog_qr_code_invalid">Scanning failed. QR code is invalid.</string>
+    <string name="alert_dialog_qr_code_not_started_yet">The QR code time has not started yet.</string>
+    <string name="alert_dialog_qr_code_expired">The QR code has already expired.</string>
+    <string name="alert_dialog_qr_code_wrong_location">Wrong location. Your actual location is: %1$s</string>
+    <string name="alert_dialog_qr_code_digital_sign">Digital signature is corrupted.</string>
+    <string name="alert_dialog_qr_code_success_single">QR code scanning succeed. Enter booth: %1$s, take the equipment (%2$s) and have fun!</string>
+    <string name="alert_dialog_qr_code_success_multiple">QR code scanning succeed. Enter booths: %1$s, take the equipment (%2$s) and have fun!</string>
+
+    <string name="start_game_start_button">Start</string>
+    <string name="start_game_hours_text">Hours</string>
+    <string name="start_game_minutes_text">Minutes</string>
+    <string name="start_game_seconds_text">Seconds</string>
+    <string name="start_game_run_tutorial_text">Run tutorial before the game</string>
+
+    <string name="booth_id_table_header">Booth</string>
+    <string name="equipment_table_header">Equipment</string>
+    <string name="start_stop_table_header">Start/Stop</string>
+    <string name="online_status_table_header">PC</string>
+    <string name="experience_table_header">Experience</string>
+    <string name="time_table_header">Time Left</string>
+</resources>

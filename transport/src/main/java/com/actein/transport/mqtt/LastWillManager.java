@@ -12,34 +12,46 @@ import com.google.protobuf.InvalidProtocolBufferException;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import java.util.regex.Pattern;
+
 public class LastWillManager implements MessageHandler
 {
     public LastWillManager(Connection connection,
                            ActionStatusObserver actionObserver,
-                           PcOnlineStatusHandler pcOnlineStatusHandler,
-                           int boothId)
+                           String clientId)
     {
         mPublisher = connection.getPublisher();
         mSubscriber = connection.getSubscriber();
-        mPcOnlineStatusHandler = pcOnlineStatusHandler;
         mActionObserver = actionObserver;
 
-        mPcLastWillTopic = Topics.PC_ONLINE_STATUS.replace(Topics.BOOTH_ID,
-                                                           Integer.toString(boothId));
-        mEmbDeviceLastWillTopic = Topics.EMB_DEVICE_ONLINE_STATUS.replace(Topics.BOOTH_ID,
-                                                                          Integer.toString(boothId));
+        mPcLastWillTopic = Topics.PC_ONLINE_STATUS.replace(Topics.BOOTH_ID, "+");
+        mPcLastWillTopicPattern = Pattern.compile(Topics.PC_ONLINE_STATUS.replace(Topics.BOOTH_ID, "\\d+"));
+
+        mEmbDeviceLastWillTopic = Topics.EMB_DEVICE_ONLINE_STATUS.replace(Topics.EMB_DEVICE_ID, clientId);
     }
 
-    public void start() throws MqttException
+    public synchronized void start() throws MqttException
     {
+        mIsRunning = true;
         subscribeToPcLastWill();
         publishEmbDeviceOnlineStatus(true);
     }
 
-    public void stop() throws MqttException
+    public synchronized void stop() throws MqttException
     {
         unsubscribeFromPcLastWill();
         publishEmbDeviceOnlineStatus(false);
+        mIsRunning = false;
+    }
+
+    public synchronized boolean isRunning()
+    {
+        return mIsRunning;
+    }
+
+    public void registerPcOnlineStatusHandler(PcOnlineStatusHandler pcOnlineStatusHandler)
+    {
+        mPcOnlineStatusHandler = pcOnlineStatusHandler;
     }
 
     public void publishEmbDeviceOnlineStatus(boolean online) throws MqttException
@@ -74,25 +86,33 @@ public class LastWillManager implements MessageHandler
 
     public void handleMessage(String topic, MqttMessage message) throws Exception
     {
-        if (topic.equals(mPcLastWillTopic))
+        if (mPcLastWillTopicPattern.matcher(topic).matches())
         {
-            processOnlineStatusEvent(message);
+            processOnlineStatusEvent(topic, message);
         }
     }
 
-    private void processOnlineStatusEvent(MqttMessage message) throws InvalidProtocolBufferException
+    private void processOnlineStatusEvent(String topic,
+                                          MqttMessage message) throws InvalidProtocolBufferException
     {
         OnlineStatusProtos.OnlineStatusEvent event = OnlineStatusProtos.OnlineStatusEvent
                 .parseFrom(message.getPayload());
 
         if (mPcOnlineStatusHandler != null)
         {
-            mPcOnlineStatusHandler.onPcOnlineStatusChanged(event.getStatus());
+            int boothId = BoothIdParser.parseBoothId(topic);
+            mPcOnlineStatusHandler.onPcOnlineStatusChanged(boothId, event.getStatus());
         }
     }
 
-    private String mPcLastWillTopic;
-    private String mEmbDeviceLastWillTopic;
+
+    private boolean mIsRunning = false;
+
+    private final Pattern mPcLastWillTopicPattern;
+
+    private final String mPcLastWillTopic;
+    private final String mEmbDeviceLastWillTopic;
+
     private Publisher mPublisher;
     private Subscriber mSubscriber;
     private PcOnlineStatusHandler mPcOnlineStatusHandler;
