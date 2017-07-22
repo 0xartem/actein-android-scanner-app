@@ -2,7 +2,6 @@ package com.actein.mvp.model;
 
 import android.util.Log;
 
-import com.actein.data.Preferences;
 import com.actein.transport.mqtt.Connection;
 import com.actein.transport.mqtt.MqttSubscriberCallback;
 import com.actein.transport.mqtt.LastWillManager;
@@ -130,7 +129,6 @@ public class ConnectionModel
         catch (MqttException ex)
         {
             Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.getMessage());
         }
     }
 
@@ -191,7 +189,6 @@ public class ConnectionModel
         catch (MqttException | VrEventsException ex)
         {
             Log.e(TAG, ex.toString(), ex);
-            mModelObserver.onError(ex.getMessage());
         }
     }
 
@@ -241,7 +238,7 @@ public class ConnectionModel
         case SUBSCRIBE:
         case UNSUBSCRIBE:
         case PUBLISH:
-            mModelObserver.onError(message);
+            Log.e(TAG, message);
             break;
         default:
             throw new UnsupportedOperationException("Unknown action type");
@@ -263,7 +260,6 @@ public class ConnectionModel
                 catch (Exception ex)
                 {
                     Log.e(TAG, ex.toString(), ex);
-                    mModelObserver.onError(ex.getMessage());
                 }
             }
         });
