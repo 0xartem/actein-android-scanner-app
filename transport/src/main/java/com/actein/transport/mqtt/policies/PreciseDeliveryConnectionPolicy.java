@@ -49,6 +49,12 @@ public class PreciseDeliveryConnectionPolicy extends DefaultConnectionPolicy
     }
 
     @Override
+    public int getMaxInflight()
+    {
+        return 20;
+    }
+
+    @Override
     public boolean shouldUseLastWill()
     {
         return true;

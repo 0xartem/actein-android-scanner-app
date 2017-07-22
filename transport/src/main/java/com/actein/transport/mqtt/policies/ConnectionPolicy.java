@@ -14,4 +14,5 @@ public interface ConnectionPolicy
 
     int getKeepAliveInterval();
     int getConnectionTimeout();
+    int getMaxInflight();
 }

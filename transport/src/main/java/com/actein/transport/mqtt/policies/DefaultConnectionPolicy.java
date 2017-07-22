@@ -21,4 +21,10 @@ abstract class DefaultConnectionPolicy implements ConnectionPolicy
     {
         return MqttConnectOptions.CONNECTION_TIMEOUT_DEFAULT;
     }
+
+    @Override
+    public int getMaxInflight()
+    {
+        return MqttConnectOptions.MAX_INFLIGHT_DEFAULT;
+    }
 }
