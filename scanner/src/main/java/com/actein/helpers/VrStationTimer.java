@@ -43,6 +43,7 @@ public class VrStationTimer
                 {
                     mGameCountDownTimer.cancel();
                     mGameCountDownTimer.onFinish();
+                    mGameCountDownTimer = null;
                 }
             });
         }
