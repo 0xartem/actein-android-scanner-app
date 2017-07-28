@@ -127,11 +127,11 @@ public class VrStation
 
     private void updateCountDownView()
     {
-        if (isGameRunning())
+        if (isGameRunning() && !mVrStationTimer.isRunning())
         {
             mVrStationTimer.start(this);
         }
-        else if (isGameStopped())
+        else if (isGameStopped() && mVrStationTimer.isRunning())
         {
             mVrStationTimer.stop();
         }

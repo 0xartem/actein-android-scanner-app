@@ -13,42 +13,64 @@ public class VrStationTimer
         mVrStationModel = vrStationsModel;
     }
 
-    public synchronized void start(final VrStation vrStation)
+    public void start(final VrStation vrStation)
     {
-        mGameCountDownTimer = new CountDownTimer(vrStation.getTime() * 1000, 1000)
+        synchronized (locker)
         {
-            public void onTick(long millisUntilFinished)
+            mGameCountDownTimer = new CountDownTimer(vrStation.getTime() * 1000, 1000)
             {
-                final long secondsLeft = millisUntilFinished / 1000;
-                vrStation.setTime(secondsLeft);
-            }
+                public void onTick(long millisUntilFinished)
+                {
+                    final long secondsLeft = millisUntilFinished / 1000;
+                    vrStation.setTime(secondsLeft);
+                }
 
-            public void onFinish()
-            {
-                vrStation.setTime(0);
-                if (mVrStationModel.getObserver() != null)
-                    mVrStationModel.getObserver().onVrStationUpdated();
-            }
-        }.start();
+                public void onFinish()
+                {
+                    vrStation.setTime(0);
+                    if (mVrStationModel.getObserver() != null)
+                        mVrStationModel.getObserver().onVrStationUpdated();
+                }
+            }.start();
+
+            mRunning = true;
+        }
+    }
+
+    public boolean isRunning()
+    {
+        synchronized (locker)
+        {
+            return mRunning;
+        }
     }
 
     public synchronized void stop()
     {
-        if (mGameCountDownTimer != null)
+        synchronized (locker)
         {
-            new Handler().post(new Runnable()
+            if (mGameCountDownTimer != null)
             {
-                @Override
-                public void run()
+                new Handler().post(new Runnable()
                 {
-                    mGameCountDownTimer.cancel();
-                    mGameCountDownTimer.onFinish();
-                    mGameCountDownTimer = null;
-                }
-            });
+                    @Override
+                    public void run()
+                    {
+                        synchronized (locker)
+                        {
+                            mGameCountDownTimer.cancel();
+                            mGameCountDownTimer.onFinish();
+                            mGameCountDownTimer = null;
+                            mRunning = false;
+                        }
+                    }
+                });
+            }
         }
     }
 
+    private final Object locker = new Object();
     private CountDownTimer mGameCountDownTimer;
     private VrStationsModel mVrStationModel;
+    private boolean mRunning = false;
 }
